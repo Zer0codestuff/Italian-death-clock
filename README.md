@@ -21,6 +21,18 @@ pnpm build
 
 The site loads the untouched JSON packs from `public/data/italy.json` and `public/data/international.json` at runtime. Simulator inputs stay in the browser and are not submitted anywhere.
 
+## Deploy on Railway
+
+Railway builds the production image from `Dockerfile`. The build stage compiles the Vite app, then Caddy serves the generated `dist` directory on Railway's assigned `PORT`. The service exposes `/health` for deployment checks and falls back to `index.html` for client-side routes.
+
+Deploy the public GitHub repository and select the branch to publish:
+
+```text
+Zer0codestuff/Italian-death-clock
+```
+
+No runtime environment variables are required.
+
 ## Structure
 
 - `src/App.tsx` contains the seven-scene narrative and simulator controls.

@@ -16,9 +16,11 @@ pnpm lint
 pnpm build
 ```
 
+Railway builds the root `Dockerfile` and serves the Vite output through Caddy. The container listens on Railway's `PORT`, exposes `/health`, and supports SPA fallbacks. No runtime variables are required.
+
 ## Current status and recent changes
 
-The complete local site, responsive narrative, source catalog, simulators, chart layer, tests and SVG favicon are implemented. The interface audit fixed color contrast, control sizing, range progress, numeric input editing, section navigation and responsive layouts. The source catalog is now part of the header navigation. Personal inputs precede their output on narrow screens, and dense comparisons expose clear horizontal-scroll or stacked layouts. A persistent header control switches the full interface, charts, tables, source metadata and number formatting between Italian and English.
+The complete local site, responsive narrative, source catalog, simulators, chart layer, tests and SVG favicon are implemented. The interface audit fixed color contrast, control sizing, range progress, numeric input editing, section navigation and responsive layouts. The source catalog is now part of the header navigation. Personal inputs precede their output on narrow screens, and dense comparisons expose clear horizontal-scroll or stacked layouts. A persistent header control switches the full interface, charts, tables, source metadata and number formatting between Italian and English. A production Docker and Caddy setup is ready for Railway deployment from GitHub.
 
 The current UI has been checked at 1440px, 901px, 768px, 375px and 320px, including both languages and the production preview. Automated axe checks report no violations at desktop and 375px. The production build, TypeScript check and 17 tests pass.
 
@@ -38,4 +40,4 @@ The current UI has been checked at 1440px, 901px, 768px, 375px and 320px, includ
 - Do not claim a precise pension-system collapse date.
 - Do not call a simulation result a user's INPS pension.
 - Do not imply that high amounts or multiple benefits prove abuse.
-- Do not add analytics, personal data collection, hosting metadata or deployment configuration.
+- Do not add analytics, personal data collection, or deployment providers beyond the current Railway setup.
