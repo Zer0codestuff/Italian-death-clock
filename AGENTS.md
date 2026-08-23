@@ -2,7 +2,9 @@
 
 ## Purpose and architecture
 
-`Il conto della pensione` is a local Vite React TypeScript one-page story for Italian workers aged 20 to 45. `src/App.tsx` composes seven scenes, `src/components/Charts.tsx` renders SVG charts, `src/lib/copy.ts` contains the bilingual interface copy, and `src/lib/simulators.ts` owns the personal and macro formulas. `src/lib/i18n.tsx` persists the selected language and updates document metadata, while `src/lib/language.ts` exposes the context and hook. Runtime data comes from the two JSON packs in `public/data`.
+`Italian Death Clock` is a Vite React TypeScript one-page data story that explains the Italian pension system to a general audience. `src/App.tsx` composes six minimal scenes and the source footer. `src/lib/statementCopy.ts` contains the bilingual narrative, `src/lib/storyMath.ts` owns the replacement-rate interpolation and real-to-nominal example, and `src/lib/i18n.tsx` persists the selected language. The live story loads official Italian data from `public/data/italy.json`. The international pack remains in the repository but is not required by the page.
+
+The interface uses pure black, warm white and signal red. Scroll progress drives sticky story scenes without scroll hijacking. The two transparent editorial illustrations are `public/assets/payg-flow.png` and `public/assets/demographic-load.png`; exact data remains in HTML, CSS and SVG.
 
 ## Run, build and test
 
@@ -20,19 +22,19 @@ Railway builds the root `Dockerfile` and serves the Vite output through Caddy. T
 
 ## Current status and recent changes
 
-The complete local site, responsive narrative, source catalog, simulators, chart layer, tests and SVG favicon are implemented. The interface audit fixed color contrast, control sizing, range progress, numeric input editing, section navigation and responsive layouts. The source catalog is now part of the header navigation. Personal inputs precede their output on narrow screens, and dense comparisons expose clear horizontal-scroll or stacked layouts. A persistent header control switches the full interface, charts, tables, source metadata and number formatting between Italian and English. Railway production tracks `codex/railway-deployment` and publishes at `https://italian-death-clock-production.up.railway.app`.
+The statement redesign replaces the former dashboard, macro controls and personal pension estimate. The opening timer is anchored to 1 January 2036 only as a visual countdown to the official peak year, not as a collapse date. The personal example shows a projected gross replacement rate, 13 annual payments, 2026 purchasing power and the matching future face value under an explicit 2% inflation scenario. It is not an INPS pension calculation.
 
-The current UI has been checked at 1440px, 901px, 768px, 375px and 320px, including both languages and the production preview. Automated axe checks report no violations at desktop and 375px. The production build, TypeScript check and 17 tests pass.
+Italian and English are complete. The current implementation has been visually checked at 1440px and 375px, including scroll states, language switching, loading, source links and horizontal bounds. TypeScript, the production build and 18 tests pass locally. Railway production remains at `https://italian-death-clock-production.up.railway.app`; publish this branch only after its pull request is ready.
 
 ## Constraints and known issues
 
 - Keep every claim paired with a visible truth label and direct source/year context.
 - Treat official projections as conditional model outputs, not observations.
-- Keep all currency outputs in constant 2026 euros unless explicitly labelled otherwise.
-- The macro simulator is a transparent flow proxy, not a national accounts or INPS balance model.
+- Keep all purchasing-power outputs in constant 2026 euros and label future nominal amounts with their inflation scenario.
+- Keep the countdown tied to the official 2036 peak year and retain the explanation that the source specifies a year, not an exact day.
 - Verify the rendered site at 375px and desktop widths after meaningful UI changes.
-- Keep the mobile scroll hint, keyboard focus and horizontal overflow on the pension-pillar matrix. The wide table is intentional below desktop width.
-- The subtle hero background gradient makes axe mark some contrast checks as incomplete. Manually verify hero colors against the dark base when changing that palette.
+- Preserve reduced-motion behavior, 44px controls, visible keyboard focus and zero document-level horizontal overflow.
+- Keep image-generated illustrations decorative to the explanation. Exact quantities must remain accessible as text or SVG.
 
 ## Do not
 
@@ -41,3 +43,4 @@ The current UI has been checked at 1440px, 901px, 768px, 375px and 320px, includ
 - Do not call a simulation result a user's INPS pension.
 - Do not imply that high amounts or multiple benefits prove abuse.
 - Do not add analytics, personal data collection, or deployment providers beyond the current Railway setup.
+- Do not reintroduce dashboard cards, macro sliders, international comparisons, glass effects, gradients or decorative motion.

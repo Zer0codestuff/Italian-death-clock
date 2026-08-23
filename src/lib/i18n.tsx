@@ -7,12 +7,12 @@ const STORAGE_KEY = "pension-language";
 
 const pageMetadata: Record<Language, { title: string; description: string }> = {
   it: {
-    title: "Il conto della pensione",
-    description: "Dati, simulazioni e confronti per capire come si distribuisce il rischio previdenziale.",
+    title: "Italian Death Clock | Il conto della pensione",
+    description: "Una storia visuale per capire il conto del sistema pensionistico italiano.",
   },
   en: {
-    title: "The pension bill",
-    description: "Data, simulations and comparisons that show how pension risk is distributed.",
+    title: "Italian Death Clock | The pension bill",
+    description: "A visual story explaining the bill behind Italy’s pension system.",
   },
 };
 
