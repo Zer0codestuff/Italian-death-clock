@@ -32,13 +32,14 @@ import type {
 import "./styles.css";
 
 const navItems = [
-  ["alert", "L'allarme"],
-  ["anni", "I tuoi anni"],
-  ["patto", "Il patto"],
-  ["pressione", "La pressione"],
-  ["risultato", "Il risultato"],
-  ["leve", "Le leve"],
-  ["confronto", "Il confronto"],
+  ["alert", "L'allarme", "1"],
+  ["anni", "I tuoi anni", "2"],
+  ["patto", "Il patto", "3"],
+  ["pressione", "La pressione", "4"],
+  ["risultato", "Il risultato", "5"],
+  ["leve", "Le leve", "6"],
+  ["confronto", "Il confronto", "7"],
+  ["fonti", "Fonti", "∞"],
 ] as const;
 
 const defaultPersonal: PersonalInputs = {
@@ -263,10 +264,10 @@ const Header = ({ activeId, onNavigate }: { activeId: string; onNavigate: (id: s
   <header className="site-header">
     <a className="site-logo" href="#alert" aria-label="Torna all'inizio"><span className="site-logo__mark">/</span><span>IL CONTO<br />DELLA PENSIONE</span></a>
     <nav className="desktop-nav" aria-label="Navigazione narrativa">
-      {navItems.map(([id, label]) => <a className={activeId === id ? "is-active" : ""} href={`#${id}`} aria-current={activeId === id ? "location" : undefined} key={id}><span>{navItems.findIndex((item) => item[0] === id) + 1}</span>{label}</a>)}
+      {navItems.map(([id, label, number]) => <a className={activeId === id ? "is-active" : ""} href={`#${id}`} aria-current={activeId === id ? "location" : undefined} key={id}><span>{number}</span>{label}</a>)}
     </nav>
-    <label className="mobile-nav-label" htmlFor="mobile-nav">Vai a una scena</label>
-    <select id="mobile-nav" className="mobile-nav" value={activeId} aria-label="Vai a una scena" onChange={(event) => onNavigate(event.target.value)}>
+    <label className="mobile-nav-label" htmlFor="mobile-nav">Vai a una sezione</label>
+    <select id="mobile-nav" className="mobile-nav" value={activeId} aria-label="Vai a una sezione" onChange={(event) => onNavigate(event.target.value)}>
       {navItems.map(([id, label]) => <option value={id} key={id}>{label}</option>)}
     </select>
   </header>
@@ -594,7 +595,8 @@ const ComparisonScene = ({ international, sources }: { international: Internatio
         </div>
         <div className="pillar-matrix-wrap">
           <div className="matrix-heading"><span className="eyebrow eyebrow--light">Architetture, non classifiche</span><h3>Chi paga cosa</h3><p>Il primo pilastro svizzero è PAYG. Gli asset enormi appartengono soprattutto al secondo pilastro finanziato.</p></div>
-          <div className="pillar-matrix" role="table" aria-label="Confronto dei pilastri pensionistici">
+          <p className="scroll-hint" id="pillar-scroll-hint">Su schermi stretti, scorri orizzontalmente per confrontare tutti i paesi.</p>
+          <div className="pillar-matrix" role="table" aria-label="Confronto dei pilastri pensionistici" aria-describedby="pillar-scroll-hint" tabIndex={0}>
             <div className="pillar-matrix__row pillar-matrix__row--head" role="row"><div role="columnheader">Pilastro</div>{countryOrder.map((code) => <div role="columnheader" key={code}>{countryNames[code]}</div>)}</div>
             {pillarRows.slice(0, 3).map((row) => <div className="pillar-matrix__row" role="row" key={String(row.id)}><div role="rowheader"><strong>{pillarLabels[String(row.id)] ?? String(row.label)}</strong></div>{countryOrder.map((code) => { const value = row.values?.[code]; const funding = String(value?.funding ?? ""); return <div role="cell" key={code}><span className={`funding-pill funding-pill--${funding.includes("funded") ? "funded" : "payg"}`}>{translateFunding(funding)}</span><small>{translateMandate(String(value?.mandate ?? ""))}</small><SourceChip id={String(value?.sourceIds?.[0] ?? "")} sources={sources} /></div>; })}</div>)}
           </div>
@@ -608,7 +610,7 @@ const ComparisonScene = ({ international, sources }: { international: Internatio
 };
 
 const SourcesSection = ({ sources }: { sources: Record<string, Source> }) => (
-  <section className="sources-section" id="fonti" aria-labelledby="fonti-title">
+  <section className="scene sources-section" id="fonti" aria-labelledby="fonti-title">
     <div className="section-inner">
       <SectionKicker number="∞" label="Fonti e metodo" />
       <div className="sources-heading"><h2 id="fonti-title">Il conto è aperto.</h2><p>Ogni numero qui sopra rimanda a una fonte. Gli anni e i perimetri restano visibili perché il contesto fa parte del dato.</p></div>

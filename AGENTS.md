@@ -18,7 +18,9 @@ pnpm build
 
 ## Current status and recent changes
 
-The complete local site, responsive narrative, source catalog, simulators, chart layer, tests and SVG favicon are implemented. The first pass includes browser-local loading and error states, reduced-motion support and source-linked methodology panels.
+The complete local site, responsive narrative, source catalog, simulators, chart layer, tests and SVG favicon are implemented. The interface audit fixed color contrast, control sizing, range progress, numeric input editing, section navigation and responsive layouts. The source catalog is now part of the header navigation. Personal inputs precede their output on narrow screens, and dense comparisons expose clear horizontal-scroll or stacked layouts.
+
+The current UI has been checked at 1440px, 768px, 375px and 320px. Automated axe checks report no violations at desktop and 375px. The production build, TypeScript check and 14 tests pass.
 
 ## Constraints and known issues
 
@@ -27,6 +29,8 @@ The complete local site, responsive narrative, source catalog, simulators, chart
 - Keep all currency outputs in constant 2026 euros unless explicitly labelled otherwise.
 - The macro simulator is a transparent flow proxy, not a national accounts or INPS balance model.
 - Verify the rendered site at 375px and desktop widths after meaningful UI changes.
+- Keep the mobile scroll hint, keyboard focus and horizontal overflow on the pension-pillar matrix. The wide table is intentional below desktop width.
+- The subtle hero background gradient makes axe mark some contrast checks as incomplete. Manually verify hero colors against the dark base when changing that palette.
 
 ## Do not
 
