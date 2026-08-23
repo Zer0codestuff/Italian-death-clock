@@ -1,0 +1,1637 @@
+{
+  "metadata": {
+    "country": "Italy",
+    "title": "Italian pension system data pack",
+    "language": "en",
+    "asOfDate": "2026-08-23",
+    "observedCoverage": "INPS pension stock at 2026-01-01, INPS 2025 financial accounts, and INPS beneficiary data at 2024-12-31",
+    "projectionHorizon": 2070,
+    "currency": "EUR",
+    "moneyUnit": "EUR million unless stated otherwise",
+    "statusVocabulary": {
+      "observed": "Published administrative, statistical, or financial data for a stated reference date",
+      "derived": "Calculated from published values in this file; no new forecast assumption is added",
+      "official_baseline": "Historical or base-year value used by an official projection model",
+      "official_projection": "Forward-looking value from an official model, not an observed outcome"
+    },
+    "primarySourceFamilies": [
+      "INPS",
+      "Ragioneria Generale dello Stato and MEF",
+      "Istat",
+      "Eurostat",
+      "European Commission",
+      "OECD"
+    ],
+    "sourceIds": [
+      "inps_observatory_2026",
+      "inps_beneficiaries_2024",
+      "inps_budget_2025",
+      "ec_ageing_2024_italy",
+      "istat_population_2025",
+      "inps_retirement_age",
+      "inps_requirements_2026",
+      "inps_pension_law_2026",
+      "inps_pension_law_2025",
+      "oecd_italy_note_2025",
+      "oecd_contributions_2025",
+      "oecd_expenditure_2025",
+      "eurostat_pension_expenditure_2026"
+    ]
+  },
+  "headlineMetrics": [
+    {
+      "id": "inps_current_benefits",
+      "label": "INPS pensions and allowances in force",
+      "value": 21257999,
+      "unit": "benefits",
+      "year": 2026,
+      "referenceDate": "2026-01-01",
+      "status": "observed",
+      "sourceId": "inps_observatory_2026",
+      "definition": "All current INPS pension benefits in the published stock, including previdenziale and assistenziale benefits. This is not a count of unique people."
+    },
+    {
+      "id": "inps_current_annualized_amount",
+      "label": "Annualized INPS amount in force",
+      "value": 353480.3,
+      "unit": "EUR million",
+      "year": 2026,
+      "referenceDate": "2026-01-01",
+      "status": "observed",
+      "sourceId": "inps_observatory_2026",
+      "definition": "January monthly amount multiplied by 13, or by 12 for attendance allowances, under the INPS observatory definition."
+    },
+    {
+      "id": "inps_previdenziale_share",
+      "label": "Previdenziale share of current benefits",
+      "value": 79.2,
+      "unit": "percent of benefits",
+      "year": 2026,
+      "referenceDate": "2026-01-01",
+      "status": "observed",
+      "sourceId": "inps_observatory_2026",
+      "definition": "Benefits classified by INPS as previdenziale, mainly contributory old-age, invalidity, and survivor pensions."
+    },
+    {
+      "id": "inps_assistenziale_share",
+      "label": "Assistenziale share of current benefits",
+      "value": 20.8,
+      "unit": "percent of benefits",
+      "year": 2026,
+      "referenceDate": "2026-01-01",
+      "status": "observed",
+      "sourceId": "inps_observatory_2026",
+      "definition": "Benefits classified by INPS as assistenziale, including civil invalidity and social pensions or allowances."
+    },
+    {
+      "id": "unique_pensioners_2024",
+      "label": "Unique pensioners",
+      "value": 16305880,
+      "unit": "people",
+      "year": 2024,
+      "referenceDate": "2024-12-31",
+      "status": "observed",
+      "sourceId": "inps_beneficiaries_2024",
+      "definition": "People receiving at least one pension benefit in the INPS beneficiary observatory."
+    },
+    {
+      "id": "inps_contribution_revenue_2025",
+      "label": "INPS contribution revenue",
+      "value": 294194,
+      "unit": "EUR million",
+      "year": 2025,
+      "status": "observed",
+      "sourceId": "inps_budget_2025",
+      "definition": "Competence-accounted contribution revenue in the INPS General Accounts for 2025."
+    },
+    {
+      "id": "inps_pension_outlays_2025",
+      "label": "INPS pension outlays",
+      "value": 325067,
+      "unit": "EUR million",
+      "year": 2025,
+      "status": "observed",
+      "sourceId": "inps_budget_2025",
+      "definition": "Institutional pension benefits recorded in the INPS 2025 budget, covering private and public managements."
+    },
+    {
+      "id": "inps_state_transfers_2025",
+      "label": "State current transfers to INPS",
+      "value": 165419,
+      "unit": "EUR million",
+      "year": 2025,
+      "status": "observed",
+      "sourceId": "inps_budget_2025",
+      "definition": "Current state transfers in the INPS budget. The GIAS detail totals EUR 165,252 million, with a small reconciliation difference to the broader state-transfer line."
+    },
+    {
+      "id": "public_pension_expenditure_peak",
+      "label": "Projected gross public pension expenditure peak",
+      "value": 17.3,
+      "unit": "percent of GDP",
+      "year": 2036,
+      "status": "official_projection",
+      "sourceId": "ec_ageing_2024_italy",
+      "definition": "Peak in the 2024 Ageing Report Italy baseline, under its public-pension perimeter and policy assumptions."
+    },
+    {
+      "id": "public_pension_expenditure_2070",
+      "label": "Projected gross public pension expenditure in 2070",
+      "value": 13.7,
+      "unit": "percent of GDP",
+      "year": 2070,
+      "status": "official_projection",
+      "sourceId": "ec_ageing_2024_italy",
+      "definition": "Official baseline projection. It is not a forecast of a collapse date or a guarantee about future legislation."
+    },
+    {
+      "id": "istat_population_2050",
+      "label": "Projected resident population",
+      "value": 54.7,
+      "unit": "million residents",
+      "year": 2050,
+      "status": "official_projection",
+      "sourceId": "istat_population_2025",
+      "definition": "Istat median scenario based on the resident population at 2024-01-01; rounded to one decimal million."
+    },
+    {
+      "id": "istat_age65_share_2050",
+      "label": "Residents aged 65 and over",
+      "value": 34.6,
+      "unit": "percent of population",
+      "year": 2050,
+      "status": "official_projection",
+      "sourceId": "istat_population_2025",
+      "definition": "Istat median scenario."
+    }
+  ],
+  "cashFlow": {
+    "moneyUnit": "EUR million",
+    "accountingBasis": "INPS competence accounts unless a field says otherwise",
+    "annualCurrentRevenueHistory": [
+      {
+        "year": 2015,
+        "contributionRevenue": 214787,
+        "currentTransfers": 103957,
+        "otherCurrentRevenue": 4355,
+        "currentRevenueTotal": 323098,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "year": 2021,
+        "contributionRevenue": 236893,
+        "currentTransfers": 144945,
+        "otherCurrentRevenue": 4544,
+        "currentRevenueTotal": 386382,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "year": 2022,
+        "contributionRevenue": 256138,
+        "currentTransfers": 159566,
+        "otherCurrentRevenue": 4893,
+        "currentRevenueTotal": 420597,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "year": 2023,
+        "contributionRevenue": 269152,
+        "currentTransfers": 164822,
+        "otherCurrentRevenue": 5219,
+        "currentRevenueTotal": 439193,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "year": 2024,
+        "contributionRevenue": 284047,
+        "currentTransfers": 180740,
+        "otherCurrentRevenue": 5985,
+        "currentRevenueTotal": 470772,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "year": 2025,
+        "contributionRevenue": 294194,
+        "currentTransfers": 165492,
+        "otherCurrentRevenue": 5363,
+        "currentRevenueTotal": 465049,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      }
+    ],
+    "annualInstitutionalBenefitsHistory": [
+      {
+        "year": 2015,
+        "totalInstitutionalBenefits": 307831,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "year": 2021,
+        "totalInstitutionalBenefits": 359843,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "year": 2022,
+        "totalInstitutionalBenefits": 380718,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "year": 2023,
+        "totalInstitutionalBenefits": 398063,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "year": 2024,
+        "totalInstitutionalBenefits": 417408,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "year": 2025,
+        "totalInstitutionalBenefits": 425613,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      }
+    ],
+    "latest2025": {
+      "contributionRevenue": 294194,
+      "currentTransfers": 165492,
+      "stateCurrentTransfers": 165419,
+      "otherCurrentRevenue": 5363,
+      "capitalRevenue": 15402,
+      "giroRevenue": 90752,
+      "totalInflows": 571210,
+      "pensionOutlays": 325067,
+      "incomeSupportOutlays": 19768,
+      "institutionalBenefits": 425613,
+      "otherCurrentOutlays": 25622,
+      "capitalOutlays": 12405,
+      "totalOutlays": 554392,
+      "financialCompetenceBalance": 16818,
+      "status": "observed",
+      "sourceId": "inps_budget_2025"
+    },
+    "contributionsByInsuredGroup2025": [
+      {
+        "group": "private employees",
+        "value": 192692,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "group": "public employees",
+        "value": 65557,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "group": "self-employed",
+        "value": 24129,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "group": "parasubordinate and liberal professionals",
+        "value": 11815,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "group": "total",
+        "value": 294194,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      }
+    ],
+    "giasTransfers2025": [
+      {
+        "category": "pension-related charges",
+        "value": 70645,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "category": "social pensions and allowances",
+        "value": 5090,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "category": "civil invalidity",
+        "value": 23579,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "category": "income support",
+        "value": 8276,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "category": "social inclusion",
+        "value": 5241,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "category": "family benefits",
+        "value": 25324,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "category": "contribution relief",
+        "value": 24244,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "category": "other GIAS items",
+        "value": 2853,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "category": "GIAS total",
+        "value": 165252,
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      }
+    ],
+    "crossPerimeterBenchmarks": [
+      {
+        "measure": "Eurostat ESSPROS pension expenditure",
+        "year": 2022,
+        "value": 15.5,
+        "unit": "percent of GDP",
+        "status": "observed",
+        "sourceId": "eurostat_pension_expenditure_2026",
+        "definition": "Pension expenditure by the ESSPROS social-protection-function classification."
+      },
+      {
+        "measure": "OECD public cash old-age and survivor benefits",
+        "year": 2021,
+        "value": 16.1,
+        "unit": "percent of GDP",
+        "status": "observed",
+        "sourceId": "oecd_expenditure_2025",
+        "definition": "Internationally comparable public cash old-age and survivor benefit expenditure."
+      },
+      {
+        "measure": "Ageing Report public pension expenditure",
+        "year": 2022,
+        "value": 15.6,
+        "unit": "percent of GDP",
+        "status": "official_baseline",
+        "sourceId": "ec_ageing_2024_italy",
+        "definition": "Public pension perimeter used in the EC and MEF/RGS Ageing Report model."
+      }
+    ],
+    "derivedRatios2025": [
+      {
+        "id": "pension_outlays_to_contributions",
+        "label": "Pension outlays divided by contribution revenue",
+        "value": 1.1049,
+        "unit": "ratio",
+        "status": "derived",
+        "calculation": "325067 / 294194",
+        "sourceId": "inps_budget_2025",
+        "warning": "This is not a balance-sheet deficit. It compares two INPS competence-accounting lines with different perimeters and excludes state transfers and other revenues."
+      },
+      {
+        "id": "contribution_share_current_revenue",
+        "label": "Contribution share of current revenue",
+        "value": 63.3,
+        "unit": "percent",
+        "status": "derived",
+        "calculation": "294194 / 465049 * 100",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "id": "transfer_share_current_revenue",
+        "label": "Current transfer share of current revenue",
+        "value": 35.6,
+        "unit": "percent",
+        "status": "derived",
+        "calculation": "165492 / 465049 * 100",
+        "sourceId": "inps_budget_2025"
+      }
+    ],
+    "perimeterNotes": [
+      "The INPS budget reports competence revenues and outlays. It is not the same series as the annualized stock of benefits paid in January or the Eurostat ESSPROS pension function.",
+      "GIAS is a state-funded account that records assistance and pension-policy charges. It should not be presented as an unexplained pension shortfall.",
+      "The institutional-benefits history is broader than pensions because it includes income support, family benefits, and other services."
+    ]
+  },
+  "spendingProjection": {
+    "sourceId": "ec_ageing_2024_italy",
+    "status": "official_projection",
+    "projectionModel": "2024 Ageing Report, Italy country fiche prepared by MEF and RGS with Sogei",
+    "modelVintage": "Policy and system information at 2023-09-30; projections finalized in autumn 2023",
+    "unit": "percent of GDP unless stated otherwise",
+    "baselineByYear": [
+      {
+        "year": 2022,
+        "grossPublicPensionExpenditure": 15.6,
+        "netPublicPensionExpenditure": 12.6,
+        "publicPensionContributions": 10.9,
+        "publicSystemBalance": -4.7,
+        "pensionersThousands": 14760,
+        "employmentThousands": 23181,
+        "pensionersToWorkers": 0.6,
+        "age65PlusThousands": 14120,
+        "workingAge20to64Thousands": 34605,
+        "oldAgeDependencyRatio": 0.4,
+        "status": "official_baseline",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2030,
+        "grossPublicPensionExpenditure": 16.6,
+        "netPublicPensionExpenditure": 13.5,
+        "publicPensionContributions": 11.2,
+        "publicSystemBalance": -5.5,
+        "pensionersThousands": 15755,
+        "employmentThousands": 23122,
+        "pensionersToWorkers": 0.7,
+        "age65PlusThousands": 16081,
+        "workingAge20to64Thousands": 33519,
+        "oldAgeDependencyRatio": 0.5,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2040,
+        "grossPublicPensionExpenditure": 17.1,
+        "netPublicPensionExpenditure": 13.8,
+        "publicPensionContributions": 11.2,
+        "publicSystemBalance": -5.8,
+        "pensionersThousands": 17222,
+        "employmentThousands": 22770,
+        "pensionersToWorkers": 0.8,
+        "age65PlusThousands": 18876,
+        "workingAge20to64Thousands": 31034,
+        "oldAgeDependencyRatio": 0.6,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2050,
+        "grossPublicPensionExpenditure": 15.5,
+        "netPublicPensionExpenditure": 12.5,
+        "publicPensionContributions": 11.3,
+        "publicSystemBalance": -4.2,
+        "pensionersThousands": 17523,
+        "employmentThousands": 22332,
+        "pensionersToWorkers": 0.8,
+        "age65PlusThousands": 19370,
+        "workingAge20to64Thousands": 29354,
+        "oldAgeDependencyRatio": 0.7,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2060,
+        "grossPublicPensionExpenditure": 13.7,
+        "netPublicPensionExpenditure": 11.1,
+        "publicPensionContributions": 11.4,
+        "publicSystemBalance": -2.3,
+        "pensionersThousands": 16406,
+        "employmentThousands": 22127,
+        "pensionersToWorkers": 0.7,
+        "age65PlusThousands": 18452,
+        "workingAge20to64Thousands": 28539,
+        "oldAgeDependencyRatio": 0.6,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2070,
+        "grossPublicPensionExpenditure": 13.7,
+        "netPublicPensionExpenditure": 11.1,
+        "publicPensionContributions": 11.3,
+        "publicSystemBalance": -2.4,
+        "pensionersThousands": 15457,
+        "employmentThousands": 21924,
+        "pensionersToWorkers": 0.7,
+        "age65PlusThousands": 17955,
+        "workingAge20to64Thousands": 27396,
+        "oldAgeDependencyRatio": 0.7,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      }
+    ],
+    "officialPeak": {
+      "year": 2036,
+      "grossPublicPensionExpenditure": 17.3,
+      "netPublicPensionExpenditure": 14.0,
+      "publicPensionContributions": 11.4,
+      "publicSystemBalance": -6.0,
+      "status": "official_projection",
+      "sourceId": "ec_ageing_2024_italy"
+    },
+    "schemeBreakdownByYear": [
+      {
+        "year": 2022,
+        "oldAgeAndEarlyRetirement": 12.9,
+        "earningsRelated": 12.7,
+        "minimumNonContributory": 0.3,
+        "disability": 0.3,
+        "survivor": 2.3,
+        "status": "official_baseline",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2030,
+        "oldAgeAndEarlyRetirement": 14.0,
+        "earningsRelated": 13.7,
+        "minimumNonContributory": 0.3,
+        "disability": 0.3,
+        "survivor": 2.4,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2040,
+        "oldAgeAndEarlyRetirement": 14.4,
+        "earningsRelated": 14.0,
+        "minimumNonContributory": 0.4,
+        "disability": 0.3,
+        "survivor": 2.4,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2050,
+        "oldAgeAndEarlyRetirement": 13.0,
+        "earningsRelated": 12.6,
+        "minimumNonContributory": 0.4,
+        "disability": 0.3,
+        "survivor": 2.1,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2060,
+        "oldAgeAndEarlyRetirement": 11.6,
+        "earningsRelated": 11.2,
+        "minimumNonContributory": 0.4,
+        "disability": 0.3,
+        "survivor": 1.8,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2070,
+        "oldAgeAndEarlyRetirement": 11.8,
+        "earningsRelated": 11.4,
+        "minimumNonContributory": 0.3,
+        "disability": 0.3,
+        "survivor": 1.5,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      }
+    ],
+    "benefitAndReplacementProfile": [
+      {
+        "year": 2022,
+        "publicSchemeBenefitRatio": 69,
+        "oldAgeEarningsRelatedBenefitRatio": 71,
+        "oldAgeEarningsRelatedReplacementRate": 59,
+        "status": "official_baseline",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2030,
+        "publicSchemeBenefitRatio": 71,
+        "oldAgeEarningsRelatedBenefitRatio": 73,
+        "oldAgeEarningsRelatedReplacementRate": 55,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2040,
+        "publicSchemeBenefitRatio": 65,
+        "oldAgeEarningsRelatedBenefitRatio": 67,
+        "oldAgeEarningsRelatedReplacementRate": 50,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2050,
+        "publicSchemeBenefitRatio": 57,
+        "oldAgeEarningsRelatedBenefitRatio": 58,
+        "oldAgeEarningsRelatedReplacementRate": 46,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2060,
+        "publicSchemeBenefitRatio": 53,
+        "oldAgeEarningsRelatedBenefitRatio": 54,
+        "oldAgeEarningsRelatedReplacementRate": 50,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2070,
+        "publicSchemeBenefitRatio": 56,
+        "oldAgeEarningsRelatedBenefitRatio": 58,
+        "oldAgeEarningsRelatedReplacementRate": 52,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      }
+    ],
+    "participationAndExit": [
+      {
+        "year": 2022,
+        "participationAge55to64": 57.9,
+        "participationAge65to74": 9.4,
+        "averageLabourExitAgeMen": 64.0,
+        "averageLabourExitAgeWomen": 64.5,
+        "retirementDurationMen": 18.6,
+        "retirementDurationWomen": 23.6,
+        "status": "official_baseline",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2030,
+        "participationAge55to64": null,
+        "participationAge65to74": null,
+        "averageLabourExitAgeMen": 65.2,
+        "averageLabourExitAgeWomen": 65.6,
+        "retirementDurationMen": 20.5,
+        "retirementDurationWomen": 22.8,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2040,
+        "participationAge55to64": null,
+        "participationAge65to74": null,
+        "averageLabourExitAgeMen": 66.0,
+        "averageLabourExitAgeWomen": 66.3,
+        "retirementDurationMen": 20.6,
+        "retirementDurationWomen": 23.8,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2050,
+        "participationAge55to64": null,
+        "participationAge65to74": null,
+        "averageLabourExitAgeMen": 66.7,
+        "averageLabourExitAgeWomen": 67.1,
+        "retirementDurationMen": 20.6,
+        "retirementDurationWomen": 23.7,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2060,
+        "participationAge55to64": null,
+        "participationAge65to74": null,
+        "averageLabourExitAgeMen": 67.6,
+        "averageLabourExitAgeWomen": 68.0,
+        "retirementDurationMen": 20.6,
+        "retirementDurationWomen": 23.6,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "year": 2070,
+        "participationAge55to64": 76.3,
+        "participationAge65to74": 33.0,
+        "averageLabourExitAgeMen": 68.6,
+        "averageLabourExitAgeWomen": 69.0,
+        "retirementDurationMen": 20.5,
+        "retirementDurationWomen": 23.5,
+        "status": "official_projection",
+        "sourceId": "ec_ageing_2024_italy"
+      }
+    ],
+    "sensitivityGrossExpenditureDelta": [
+      {
+        "scenario": "higher life expectancy by 2 years",
+        "deltaPercentagePoints": [
+          {"year": 2030, "value": 0},
+          {"year": 2040, "value": 0},
+          {"year": 2050, "value": 0.1},
+          {"year": 2060, "value": 0.1},
+          {"year": 2070, "value": -0.1}
+        ],
+        "status": "official_sensitivity",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "scenario": "higher net migration by 33 percent",
+        "deltaPercentagePoints": [
+          {"year": 2030, "value": -0.2},
+          {"year": 2040, "value": -0.4},
+          {"year": 2050, "value": -0.6},
+          {"year": 2060, "value": -0.6},
+          {"year": 2070, "value": -0.6}
+        ],
+        "status": "official_sensitivity",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "scenario": "lower net migration by 33 percent",
+        "deltaPercentagePoints": [
+          {"year": 2030, "value": 0.2},
+          {"year": 2040, "value": 0.4},
+          {"year": 2050, "value": 0.7},
+          {"year": 2060, "value": 0.8},
+          {"year": 2070, "value": 0.7}
+        ],
+        "status": "official_sensitivity",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "scenario": "lower fertility by 20 percent",
+        "deltaPercentagePoints": [
+          {"year": 2030, "value": 0},
+          {"year": 2040, "value": 0},
+          {"year": 2050, "value": 0.1},
+          {"year": 2060, "value": 0.4},
+          {"year": 2070, "value": 0.6}
+        ],
+        "status": "official_sensitivity",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "scenario": "higher employment among older workers by 10 percentage points",
+        "deltaPercentagePoints": [
+          {"year": 2030, "value": -1.2},
+          {"year": 2040, "value": -0.7},
+          {"year": 2050, "value": 0.3},
+          {"year": 2060, "value": 0.5},
+          {"year": 2070, "value": 0.3}
+        ],
+        "status": "official_sensitivity",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "scenario": "constant retirement age",
+        "deltaPercentagePoints": [
+          {"year": 2030, "value": 0.3},
+          {"year": 2040, "value": 0.9},
+          {"year": 2050, "value": 0.7},
+          {"year": 2060, "value": 1.0},
+          {"year": 2070, "value": 1.2}
+        ],
+        "status": "official_sensitivity",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "scenario": "constant benefit ratio",
+        "deltaPercentagePoints": [
+          {"year": 2030, "value": 0},
+          {"year": 2040, "value": 0},
+          {"year": 2050, "value": 1.4},
+          {"year": 2060, "value": 2.2},
+          {"year": 2070, "value": 1.5}
+        ],
+        "status": "official_sensitivity",
+        "sourceId": "ec_ageing_2024_italy"
+      }
+    ],
+    "perimeterDefinition": "The Ageing Report public pension perimeter covers public old-age, survivor, and contribution-related disability pensions, plus some old-age allowances and social supplements. It is slightly below the Eurostat ESSPROS total because some disability, work-injury, war-pension, and other items are outside the model."
+  },
+  "demography": {
+    "istatMedianPopulation": [
+      {
+        "year": 2024,
+        "populationMillions": 59.0,
+        "status": "official_baseline",
+        "sourceId": "istat_population_2025"
+      },
+      {
+        "year": 2030,
+        "populationMillions": 58.5,
+        "status": "official_projection",
+        "sourceId": "istat_population_2025"
+      },
+      {
+        "year": 2050,
+        "populationMillions": 54.7,
+        "status": "official_projection",
+        "sourceId": "istat_population_2025"
+      },
+      {
+        "year": 2080,
+        "populationMillions": 45.8,
+        "status": "official_projection",
+        "sourceId": "istat_population_2025"
+      }
+    ],
+    "istatAgeShares": [
+      {
+        "year": 2024,
+        "age0to14": 12.2,
+        "age15to64": 63.5,
+        "age65Plus": 24.3,
+        "age85Plus": 3.9,
+        "status": "official_baseline",
+        "sourceId": "istat_population_2025"
+      },
+      {
+        "year": 2050,
+        "age0to14": 11.2,
+        "age15to64": 54.3,
+        "age65Plus": 34.6,
+        "age85Plus": 7.2,
+        "status": "official_projection",
+        "sourceId": "istat_population_2025"
+      }
+    ],
+    "istatAverageAge": [
+      {"year": 2024, "averageAge": 46.6, "status": "official_baseline", "sourceId": "istat_population_2025"},
+      {"year": 2030, "averageAge": 48.0, "status": "official_projection", "sourceId": "istat_population_2025"},
+      {"year": 2040, "averageAge": 49.7, "status": "official_projection", "sourceId": "istat_population_2025"},
+      {"year": 2050, "averageAge": 50.8, "status": "official_projection", "sourceId": "istat_population_2025"},
+      {"year": 2080, "averageAge": 51.0, "status": "official_projection", "sourceId": "istat_population_2025"}
+    ],
+    "istatConfidenceIntervals2050": {
+      "confidenceLevel": 90,
+      "populationMillions": {"low": 52.5, "median": 54.7, "high": 56.8},
+      "age15to64Share": {"low": 53.2, "median": 54.3, "high": 55.4},
+      "age65PlusShare": {"low": 33.2, "median": 34.6, "high": 35.9},
+      "status": "official_projection",
+      "sourceId": "istat_population_2025"
+    },
+    "fertilityMigrationLongevity": [
+      {
+        "indicator": "total fertility rate",
+        "year": 2024,
+        "value": 1.18,
+        "unit": "births per woman",
+        "status": "official_baseline",
+        "sourceId": "istat_population_2025"
+      },
+      {
+        "indicator": "total fertility rate",
+        "year": 2080,
+        "value": 1.46,
+        "unit": "births per woman",
+        "status": "official_projection",
+        "sourceId": "istat_population_2025"
+      },
+      {
+        "indicator": "women aged 15 to 49",
+        "year": 2024,
+        "value": 11.5,
+        "unit": "million women",
+        "status": "official_baseline",
+        "sourceId": "istat_population_2025"
+      },
+      {
+        "indicator": "women aged 15 to 49",
+        "year": 2050,
+        "value": 9.1,
+        "unit": "million women",
+        "status": "official_projection",
+        "sourceId": "istat_population_2025"
+      },
+      {
+        "indicator": "women aged 15 to 49",
+        "year": 2080,
+        "value": 7.6,
+        "unit": "million women",
+        "status": "official_projection",
+        "sourceId": "istat_population_2025"
+      },
+      {
+        "indicator": "life expectancy at birth, men",
+        "year": 2080,
+        "value": 86.1,
+        "unit": "years",
+        "status": "official_projection",
+        "sourceId": "istat_population_2025"
+      },
+      {
+        "indicator": "life expectancy at birth, women",
+        "year": 2080,
+        "value": 89.7,
+        "unit": "years",
+        "status": "official_projection",
+        "sourceId": "istat_population_2025"
+      }
+    ],
+    "medianNetMigrationThousands": [
+      {
+        "period": "2024 to 2040",
+        "value": 200,
+        "unit": "thousand people per year",
+        "qualifier": "Istat describes the median path as below 200 thousand per year",
+        "status": "official_projection",
+        "sourceId": "istat_population_2025"
+      },
+      {
+        "period": "after 2040",
+        "value": 165,
+        "unit": "thousand people per year",
+        "status": "official_projection",
+        "sourceId": "istat_population_2025"
+      }
+    ],
+    "interpretationNotes": [
+      "The Istat old-age dependency ratio is residents aged 65 and over divided by residents aged 15 to 64, multiplied by 100.",
+      "Istat and the Ageing Report use different population vintages, age bands, and projection models. Their values should be compared directionally, not merged into one series."
+    ]
+  },
+  "beneficiaries": {
+    "inpsStock2026": {
+      "referenceDate": "2026-01-01",
+      "benefitCount": 21257999,
+      "annualizedAmountEURm": 353480.3,
+      "averageMonthlyBenefitEUR": 1283.8,
+      "status": "observed",
+      "sourceId": "inps_observatory_2026",
+      "perimeter": "INPS current stock, including GDP public employees and assistential benefits, excluding former INPGI in the cited report"
+    },
+    "inpsStockByClassification2026": [
+      {
+        "classification": "previdenziale",
+        "benefitCount": 16840238,
+        "annualizedAmountEURm": 324962.9,
+        "shareOfBenefits": 79.2,
+        "shareOfAmount": 91.9,
+        "status": "observed",
+        "sourceId": "inps_observatory_2026"
+      },
+      {
+        "classification": "assistenziale",
+        "benefitCount": 4417761,
+        "annualizedAmountEURm": 28517.3,
+        "shareOfBenefits": 20.8,
+        "shareOfAmount": 8.1,
+        "status": "observed",
+        "sourceId": "inps_observatory_2026"
+      },
+      {
+        "classification": "total",
+        "benefitCount": 21257999,
+        "annualizedAmountEURm": 353480.3,
+        "shareOfBenefits": 100.0,
+        "shareOfAmount": 100.0,
+        "status": "observed",
+        "sourceId": "inps_observatory_2026"
+      }
+    ],
+    "inpsStockByBenefitType2026": [
+      {
+        "benefitType": "old-age",
+        "benefitCount": 11902815,
+        "averageMonthlyBenefitEUR": 1717.5,
+        "status": "observed",
+        "sourceId": "inps_observatory_2026"
+      },
+      {
+        "benefitType": "contributory invalidity",
+        "benefitCount": 820709,
+        "averageMonthlyBenefitEUR": 1144.4,
+        "status": "observed",
+        "sourceId": "inps_observatory_2026"
+      },
+      {
+        "benefitType": "survivor",
+        "benefitCount": 4116714,
+        "averageMonthlyBenefitEUR": 878.1,
+        "status": "observed",
+        "sourceId": "inps_observatory_2026"
+      },
+      {
+        "benefitType": "social pension or allowance",
+        "benefitCount": 914621,
+        "averageMonthlyBenefitEUR": null,
+        "status": "observed",
+        "sourceId": "inps_observatory_2026"
+      },
+      {
+        "benefitType": "civil invalidity",
+        "benefitCount": 3503140,
+        "averageMonthlyBenefitEUR": null,
+        "status": "observed",
+        "sourceId": "inps_observatory_2026"
+      },
+      {
+        "benefitType": "assistenziale total",
+        "benefitCount": 4417761,
+        "averageMonthlyBenefitEUR": 519.0,
+        "status": "observed",
+        "sourceId": "inps_observatory_2026"
+      }
+    ],
+    "beneficiaryObservatory2024": {
+      "referenceDate": "2024-12-31",
+      "benefitCounts": [
+        {
+          "category": "old-age, invalidity and survivors total",
+          "benefitCount": 17757257,
+          "annualizedAmountEURm": 330389,
+          "status": "observed",
+          "sourceId": "inps_beneficiaries_2024"
+        },
+        {
+          "category": "old-age",
+          "benefitCount": 12373259,
+          "annualizedAmountEURm": 268248,
+          "status": "observed",
+          "sourceId": "inps_beneficiaries_2024"
+        },
+        {
+          "category": "contributory invalidity",
+          "benefitCount": 899344,
+          "annualizedAmountEURm": 13205,
+          "status": "observed",
+          "sourceId": "inps_beneficiaries_2024"
+        },
+        {
+          "category": "survivors",
+          "benefitCount": 4484654,
+          "annualizedAmountEURm": 48936,
+          "status": "observed",
+          "sourceId": "inps_beneficiaries_2024"
+        },
+        {
+          "category": "indennitarie",
+          "benefitCount": 613189,
+          "annualizedAmountEURm": 4386,
+          "status": "observed",
+          "sourceId": "inps_beneficiaries_2024"
+        },
+        {
+          "category": "assistenziale",
+          "benefitCount": 4644565,
+          "annualizedAmountEURm": 29357,
+          "status": "observed",
+          "sourceId": "inps_beneficiaries_2024"
+        },
+        {
+          "category": "all benefits",
+          "benefitCount": 23015011,
+          "annualizedAmountEURm": 364132,
+          "status": "observed",
+          "sourceId": "inps_beneficiaries_2024"
+        }
+      ],
+      "uniquePensioners": 16305880,
+      "malePensioners": 7918215,
+      "femalePensioners": 8387665,
+      "uniquePensionerIncomeAnnualizedEURm": 364132,
+      "status": "observed",
+      "sourceId": "inps_beneficiaries_2024",
+      "definition": "Pensioner income sums all benefits received by a person, regardless of whether the benefit is previdenziale, indennitario, or assistenziale."
+    },
+    "interpretationNotes": [
+      "The 2026 INPS stock counts benefits. The 2024 beneficiary observatory counts both benefits and unique people, so 23.015 million benefits and 16.306 million pensioners are not contradictory.",
+      "Category counts in the multiple-benefit tables overlap because one pensioner can belong to several benefit categories."
+    ]
+  },
+  "amountDistribution": {
+    "benefitsByMonthlyAmount2024": [
+      {"band": "up to 499.99", "benefitCount": 4487514, "shareOfBenefits": 19.5, "annualizedAmountEURm": 15378, "shareOfAmount": 4.2, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "500 to 999.99", "benefitCount": 7918272, "shareOfBenefits": 34.4, "annualizedAmountEURm": 65409, "shareOfAmount": 18.0, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "1000 to 1499.99", "benefitCount": 3152019, "shareOfBenefits": 13.7, "annualizedAmountEURm": 46788, "shareOfAmount": 12.8, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "1500 to 1999.99", "benefitCount": 2526969, "shareOfBenefits": 11.0, "annualizedAmountEURm": 53177, "shareOfAmount": 14.6, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "2000 to 2499.99", "benefitCount": 1757402, "shareOfBenefits": 7.6, "annualizedAmountEURm": 47146, "shareOfAmount": 12.9, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "2500 to 2999.99", "benefitCount": 1373692, "shareOfBenefits": 6.0, "annualizedAmountEURm": 44790, "shareOfAmount": 12.3, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "3000 to 3499.99", "benefitCount": 804240, "shareOfBenefits": 3.5, "annualizedAmountEURm": 30960, "shareOfAmount": 8.5, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "3500 to 3999.99", "benefitCount": 336858, "shareOfBenefits": 1.5, "annualizedAmountEURm": 15048, "shareOfAmount": 4.1, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "4000 to 4499.99", "benefitCount": 179147, "shareOfBenefits": 0.8, "annualizedAmountEURm": 9096, "shareOfAmount": 2.5, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "4500 to 4999.99", "benefitCount": 115430, "shareOfBenefits": 0.5, "annualizedAmountEURm": 6564, "shareOfAmount": 1.8, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "5000 and over", "benefitCount": 363468, "shareOfBenefits": 1.6, "annualizedAmountEURm": 29775, "shareOfAmount": 8.2, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "total", "benefitCount": 23015011, "shareOfBenefits": 100.0, "annualizedAmountEURm": 364132, "shareOfAmount": 100.0, "status": "observed", "sourceId": "inps_beneficiaries_2024"}
+    ],
+    "pensionsByMonthlyAmount2026": [
+      {"band": "up to 749.99", "benefitCount": 9704016, "shareOfBenefits": 45.7, "lowIncomeLinkedCount": 4091750, "status": "observed", "sourceId": "inps_observatory_2026"},
+      {"band": "750 to 1499.99", "benefitCount": 4755025, "shareOfBenefits": 22.4, "status": "observed", "sourceId": "inps_observatory_2026"},
+      {"band": "1500 to 2249.99", "benefitCount": 3379134, "shareOfBenefits": 15.9, "status": "observed", "sourceId": "inps_observatory_2026"},
+      {"band": "2250 to 2999.99", "benefitCount": 2033890, "shareOfBenefits": 9.6, "status": "observed", "sourceId": "inps_observatory_2026"},
+      {"band": "3000 and over", "benefitCount": 1385934, "shareOfBenefits": 6.5, "status": "observed", "sourceId": "inps_observatory_2026"},
+      {"band": "total", "benefitCount": 21257999, "shareOfBenefits": 100.0, "status": "observed", "sourceId": "inps_observatory_2026"}
+    ],
+    "pensionerIncomeBands2024": [
+      {"band": "up to 499.99", "pensionerCount": 1688187, "shareOfPensioners": 10.4, "annualizedIncomeEURm": 6197, "shareOfIncome": 1.7, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "500 to 999.99", "pensionerCount": 2894224, "shareOfPensioners": 17.7, "annualizedIncomeEURm": 26034, "shareOfIncome": 7.1, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "1000 to 1499.99", "pensionerCount": 2842180, "shareOfPensioners": 17.4, "annualizedIncomeEURm": 43028, "shareOfIncome": 11.8, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "1500 to 1999.99", "pensionerCount": 2740844, "shareOfPensioners": 16.8, "annualizedIncomeEURm": 57772, "shareOfIncome": 15.9, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "2000 to 2499.99", "pensionerCount": 2128910, "shareOfPensioners": 13.1, "annualizedIncomeEURm": 57195, "shareOfIncome": 15.7, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "2500 to 2999.99", "pensionerCount": 1616775, "shareOfPensioners": 9.9, "annualizedIncomeEURm": 52799, "shareOfIncome": 14.5, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "3000 to 3499.99", "pensionerCount": 1048541, "shareOfPensioners": 6.4, "annualizedIncomeEURm": 40449, "shareOfIncome": 11.1, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "3500 to 3999.99", "pensionerCount": 492679, "shareOfPensioners": 3.0, "annualizedIncomeEURm": 22007, "shareOfIncome": 6.0, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "4000 to 4499.99", "pensionerCount": 252237, "shareOfPensioners": 1.5, "annualizedIncomeEURm": 12796, "shareOfIncome": 3.5, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "4500 to 4999.99", "pensionerCount": 151236, "shareOfPensioners": 0.9, "annualizedIncomeEURm": 8595, "shareOfIncome": 2.4, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "5000 and over", "pensionerCount": 450067, "shareOfPensioners": 2.8, "annualizedIncomeEURm": 37259, "shareOfIncome": 10.2, "status": "observed", "sourceId": "inps_beneficiaries_2024"},
+      {"band": "total", "pensionerCount": 16305880, "shareOfPensioners": 100.0, "annualizedIncomeEURm": 364132, "shareOfIncome": 100.0, "status": "observed", "sourceId": "inps_beneficiaries_2024"}
+    ],
+    "interpretationNotes": [
+      "A benefit amount band is not a person income band. A pensioner income band sums every benefit received by that person.",
+      "In the 2024 beneficiary data, 53.9 percent of benefits were below EUR 1,000 per month, while 28.1 percent of unique pensioners had total pension income below EUR 1,000. The difference is mainly a multiple-benefit and unit-of-count issue.",
+      "The INPS report says that only 42.2 percent of benefits at or below EUR 749.99 were linked to low-income provisions in its defined set. A low benefit amount alone does not establish household poverty or a policy error.",
+      "A high amount band records an administrative distribution. It does not establish abuse, illegality, or an unfair award."
+    ]
+  },
+  "multipleBenefits": {
+    "referenceDate": "2024-12-31",
+    "categories": [
+      {
+        "category": "old-age",
+        "categoryPensioners": 11443352,
+        "sameTypeOnlyPensioners": 8279190,
+        "sameTypeOnlyShare": 72.3,
+        "cumulatedWithOtherTypesPensioners": 3164162,
+        "cumulatedShare": 27.7,
+        "totalBenefitsHeldByCategoryPensioners": 16398577,
+        "averageBenefitsPerCategoryPensioner": 1.43,
+        "status": "observed",
+        "sourceId": "inps_beneficiaries_2024"
+      },
+      {
+        "category": "contributory invalidity",
+        "categoryPensioners": 890395,
+        "sameTypeOnlyPensioners": 480505,
+        "sameTypeOnlyShare": 54.0,
+        "cumulatedWithOtherTypesPensioners": 409890,
+        "cumulatedShare": 46.0,
+        "totalBenefitsHeldByCategoryPensioners": 1516045,
+        "averageBenefitsPerCategoryPensioner": 1.70,
+        "status": "observed",
+        "sourceId": "inps_beneficiaries_2024"
+      },
+      {
+        "category": "survivor",
+        "categoryPensioners": 4154044,
+        "sameTypeOnlyPensioners": 1315094,
+        "sameTypeOnlyShare": 31.7,
+        "cumulatedWithOtherTypesPensioners": 2838950,
+        "cumulatedShare": 68.3,
+        "totalBenefitsHeldByCategoryPensioners": 8267300,
+        "averageBenefitsPerCategoryPensioner": 1.99,
+        "status": "observed",
+        "sourceId": "inps_beneficiaries_2024"
+      },
+      {
+        "category": "indennitarie",
+        "categoryPensioners": 604647,
+        "sameTypeOnlyPensioners": 172078,
+        "sameTypeOnlyShare": 28.5,
+        "cumulatedWithOtherTypesPensioners": 432569,
+        "cumulatedShare": 71.5,
+        "totalBenefitsHeldByCategoryPensioners": 1223190,
+        "averageBenefitsPerCategoryPensioner": 2.02,
+        "status": "observed",
+        "sourceId": "inps_beneficiaries_2024"
+      },
+      {
+        "category": "assistenziale",
+        "categoryPensioners": 3932284,
+        "sameTypeOnlyPensioners": 2035695,
+        "sameTypeOnlyShare": 51.8,
+        "cumulatedWithOtherTypesPensioners": 1896589,
+        "cumulatedShare": 48.2,
+        "totalBenefitsHeldByCategoryPensioners": 7319997,
+        "averageBenefitsPerCategoryPensioner": 1.86,
+        "status": "observed",
+        "sourceId": "inps_beneficiaries_2024"
+      }
+    ],
+    "interpretationNotes": [
+      "These category rows overlap. Their pensioner counts and benefits cannot be added to obtain a national total.",
+      "Cumulation can be legally designed, for example an old-age pension with a survivor pension or a benefit linked to invalidity. The table describes combinations, not abuse.",
+      "The 2024 report found that 27.7 percent of old-age pensioners, 46.0 percent of contributory-invalidity pensioners, 68.3 percent of survivor pensioners, 71.5 percent of indennitarie pensioners, and 48.2 percent of assistenziale pensioners received at least one other type."
+    ]
+  },
+  "systemMechanics": {
+    "payg": [
+      {
+        "topic": "financing",
+        "text": "Italy has a mandatory public pay-as-you-go system. Current contributions and state transfers finance current benefits; the public system is not a personal investment account.",
+        "status": "observed_mechanism",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "topic": "notional_accounts",
+        "text": "For the notional defined-contribution part, lifetime contributions are capitalized at nominal GDP growth using a five-year moving average and multiplied by a transformation coefficient linked to mortality and remaining life expectancy.",
+        "status": "observed_mechanism",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "topic": "legacy_defined_benefit",
+        "text": "A defined-benefit formula applies pro rata to contributions before the relevant 1995 or 2011 transition dates, depending on contribution history. People starting after 1 January 1996 are fully in the contributory calculation.",
+        "status": "observed_mechanism",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "topic": "automatic_adjustment",
+        "text": "Statutory retirement ages and transformation coefficients are linked to life expectancy, subject to legislative freezes, exemptions, and timing rules.",
+        "status": "observed_mechanism",
+        "sourceId": "inps_requirements_2026"
+      }
+    ],
+    "contributionRates": [
+      {
+        "group": "private and public employees",
+        "rate": 33.0,
+        "unit": "percent of pensionable pay",
+        "year": 2023,
+        "breakdown": "about one third employee and two thirds employer",
+        "status": "observed_rate",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "group": "self-employed",
+        "rate": 24.0,
+        "unit": "percent",
+        "year": 2023,
+        "status": "observed_rate",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "group": "parasubordinate workers",
+        "rate": 33.0,
+        "unit": "percent",
+        "year": 2023,
+        "qualifier": "24 percent where the worker is already insured elsewhere or is a pensioner",
+        "status": "observed_rate",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "group": "average earner effective mandatory contribution rate",
+        "rate": 33.0,
+        "unit": "percent",
+        "year": 2024,
+        "qualifier": "OECD comparison includes mandatory public pension contributions and may include disability or invalidity coverage; tax-financed benefits are excluded",
+        "status": "observed_rate",
+        "sourceId": "oecd_contributions_2025"
+      }
+    ],
+    "retirementRequirements": [
+      {
+        "path": "ordinary old-age pension",
+        "year": 2026,
+        "minimumAgeYears": 67,
+        "minimumAgeMonths": 0,
+        "minimumContributionYears": 20,
+        "status": "observed_rule",
+        "sourceId": "inps_retirement_age"
+      },
+      {
+        "path": "ordinary old-age pension",
+        "year": 2027,
+        "minimumAgeYears": 67,
+        "minimumAgeMonths": 1,
+        "minimumContributionYears": 20,
+        "status": "observed_rule",
+        "sourceId": "inps_requirements_2026"
+      },
+      {
+        "path": "ordinary old-age pension",
+        "year": 2028,
+        "minimumAgeYears": 67,
+        "minimumAgeMonths": 3,
+        "minimumContributionYears": 20,
+        "status": "observed_rule",
+        "sourceId": "inps_requirements_2026"
+      },
+      {
+        "path": "ordinary early retirement, men",
+        "year": 2026,
+        "minimumContributionYears": 42,
+        "minimumContributionMonths": 10,
+        "status": "observed_rule",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "path": "ordinary early retirement, women",
+        "year": 2026,
+        "minimumContributionYears": 41,
+        "minimumContributionMonths": 10,
+        "status": "observed_rule",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "path": "ordinary early retirement, men",
+        "year": 2027,
+        "minimumContributionYears": 42,
+        "minimumContributionMonths": 11,
+        "status": "observed_rule",
+        "sourceId": "inps_requirements_2026"
+      },
+      {
+        "path": "ordinary early retirement, women",
+        "year": 2027,
+        "minimumContributionYears": 41,
+        "minimumContributionMonths": 11,
+        "status": "observed_rule",
+        "sourceId": "inps_requirements_2026"
+      },
+      {
+        "path": "ordinary early retirement, men",
+        "year": 2028,
+        "minimumContributionYears": 43,
+        "minimumContributionMonths": 1,
+        "status": "observed_rule",
+        "sourceId": "inps_requirements_2026"
+      },
+      {
+        "path": "ordinary early retirement, women",
+        "year": 2028,
+        "minimumContributionYears": 42,
+        "minimumContributionMonths": 1,
+        "status": "observed_rule",
+        "sourceId": "inps_requirements_2026"
+      },
+      {
+        "path": "Quota 103",
+        "year": 2026,
+        "minimumAgeYears": 62,
+        "minimumContributionYears": 41,
+        "qualifier": "Not extended for new maturities; available only to people who had met the requirements by 2025-12-31",
+        "status": "observed_rule",
+        "sourceId": "inps_pension_law_2026"
+      },
+      {
+        "path": "APE Sociale",
+        "year": 2026,
+        "minimumAgeYears": 63,
+        "minimumAgeMonths": 5,
+        "qualifier": "Extended through 2026 for eligible categories; it is not an ordinary old-age pension",
+        "status": "observed_rule",
+        "sourceId": "inps_pension_law_2026"
+      }
+    ],
+    "transitionMechanisms": [
+      {
+        "mechanism": "Quota 100",
+        "period": "2019 to 2021",
+        "ageYears": 62,
+        "contributionYears": 38,
+        "status": "historical_rule",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "mechanism": "Quota 102",
+        "period": "2022",
+        "ageYears": 64,
+        "contributionYears": 38,
+        "status": "historical_rule",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "mechanism": "Quota 103",
+        "period": "2023 to 2025 maturities",
+        "ageYears": 62,
+        "contributionYears": 41,
+        "status": "historical_and_limited_current_rule",
+        "sourceId": "inps_pension_law_2025"
+      },
+      {
+        "mechanism": "NDC transition",
+        "period": "from 1995 onward",
+        "qualifier": "Mixed pro-rata rules apply during the transition; full contributory calculation applies to people starting after 1995",
+        "status": "observed_mechanism",
+        "sourceId": "ec_ageing_2024_italy"
+      },
+      {
+        "mechanism": "life-expectancy link",
+        "period": "2027 onward under current update",
+        "qualifier": "The link was frozen for 2019 to 2026 and exemptions apply to specified strenuous or night work categories",
+        "status": "observed_rule",
+        "sourceId": "inps_requirements_2026"
+      }
+    ],
+    "indexationMechanism": {
+      "generalRuleDescribedInAgeingFiche": [
+        {"band": "up to 4 times the minimum pension", "indexationRate": 100},
+        {"band": "over 4 and up to 5 times the minimum pension", "indexationRate": 90},
+        {"band": "over 5 times the minimum pension", "indexationRate": 75}
+      ],
+      "unit": "percent of inflation adjustment",
+      "status": "projection_mechanism_description",
+      "sourceId": "ec_ageing_2024_italy",
+      "warning": "The fiche also records temporary 2023 to 2024 bands. Do not present this long-run assumption as a complete year-specific calculation for every current pension."
+    },
+    "stateFundedPolicyChannels2025": [
+      {
+        "channel": "share of each pension month",
+        "value": 30000,
+        "unit": "EUR million",
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "channel": "civil-invalidity and related charges",
+        "value": 23579,
+        "unit": "EUR million",
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "channel": "contribution relief",
+        "value": 24244,
+        "unit": "EUR million",
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "channel": "state employee management charges",
+        "value": 14223,
+        "unit": "EUR million",
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "channel": "Poste management charges",
+        "value": 1076,
+        "unit": "EUR million",
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      },
+      {
+        "channel": "Ferrovie deficit",
+        "value": 5162,
+        "unit": "EUR million",
+        "status": "observed",
+        "sourceId": "inps_budget_2025"
+      }
+    ],
+    "uncertainty": [
+      "The Ageing Report baseline holds policy rules and macro-demographic assumptions in a specific model vintage. Later legislation, migration, fertility, employment, productivity, inflation, and life expectancy can move the outcome.",
+      "The official sensitivity table reports changes in gross pension expenditure relative to the baseline. It does not provide a probability distribution.",
+      "A declining expenditure share after the projected 2036 peak reflects the model path and demographic transition. It is not evidence of an inevitable collapse or a policy recommendation."
+    ]
+  },
+  "sourceCatalog": [
+    {
+      "id": "inps_observatory_2026",
+      "publisher": "INPS",
+      "title": "Pensions paid by INPS and pensions liquidated in 2025, statistical observatory",
+      "publicationDate": "2026-03-25",
+      "coverage": "Current stock at 2026-01-01 and new benefits liquidated in 2025; includes GDP public employees in this edition",
+      "url": "https://servizi2.inps.it/servizi/osservatoristatistici/api/getAllegato/?idAllegato=1037",
+      "landingUrl": "https://www.inps.it/it/it/inps-comunica/notizie/dettaglio-news-page.news.2026.03.online-l-osservatorio-sulle-pensioni-erogate-dall-istituto.html"
+    },
+    {
+      "id": "inps_beneficiaries_2024",
+      "publisher": "INPS",
+      "title": "Pension benefits and beneficiaries, statistical observatory",
+      "publicationDate": "2025-10-23",
+      "coverage": "Benefits and unique beneficiaries at 2024-12-31, including amount bands and combinations of benefit types",
+      "url": "https://servizi2.inps.it/servizi/osservatoristatistici/api/getAllegato/?idAllegato=1007",
+      "landingUrl": "https://www.inps.it/it/it/inps-comunica/notizie/dettaglio-news-page.news.2025.10.prestazioni-pensionistiche-e-beneficiari-pubblicato-l-osservatorio.html"
+    },
+    {
+      "id": "inps_budget_2025",
+      "publisher": "INPS",
+      "title": "General Accounts 2025 and explanatory report",
+      "publicationDate": "2026-07-23",
+      "coverage": "INPS competence revenues, transfers, outlays, GIAS, and institutional-benefit aggregates for 2025",
+      "url": "https://www.inps.it/content/dam/inps-site/pdf/allegatinews/Relazione_rendiconto_generale_2025.pdf",
+      "landingUrl": "https://www.inps.it/it/it/dati-e-bilanci/bilanci--rendiconti-e-flussi-finanziari/rendiconti-generali/2025.html"
+    },
+    {
+      "id": "ec_ageing_2024_italy",
+      "publisher": "European Commission, MEF and RGS",
+      "title": "2024 Ageing Report, Italy country fiche",
+      "publicationDate": "2024-04-18",
+      "documentDate": "2024-01-16",
+      "coverage": "Public pension expenditure, contributions, benefit ratios, demography, employment, and sensitivity scenarios through 2070",
+      "url": "https://economy-finance.ec.europa.eu/document/download/82b762d7-21ce-4992-aa97-888fd2c66205_en?filename=2024-ageing-report-country-fiche-Italy.pdf",
+      "landingUrl": "https://economy-finance.ec.europa.eu/publications/2024-ageing-report-economic-and-budgetary-projections-eu-member-states-2022-2070_en"
+    },
+    {
+      "id": "istat_population_2025",
+      "publisher": "Istat",
+      "title": "Population and household projections, base 2024-01-01",
+      "publicationDate": "2025-07-28",
+      "updatedDate": "2025-10-21",
+      "coverage": "Median and 90 percent interval population, age structure, fertility, migration, and longevity scenarios through 2080",
+      "url": "https://www.istat.it/wp-content/uploads/2025/07/Report_Previsioni-della-popolazione-residente-e-delle-famiglie_Base-Base-112024.pdf",
+      "landingUrl": "https://www.istat.it/comunicato-stampa/previsioni-della-popolazione-residente-e-delle-famiglie-base-1-1-2024/"
+    },
+    {
+      "id": "inps_retirement_age",
+      "publisher": "INPS",
+      "title": "Old-age pension service sheet",
+      "publicationDate": "2024-02-08",
+      "updatedDate": "2026-06-12",
+      "coverage": "Ordinary old-age requirements and contributory minimum-pension conditions",
+      "url": "https://www.inps.it/it/it/dettaglio-scheda.it.schede-servizio-strumento.schede-servizi.pensione-di-vecchiaia.html"
+    },
+    {
+      "id": "inps_requirements_2026",
+      "publisher": "INPS",
+      "title": "Updated pension requirements for 2027 and 2028",
+      "publicationDate": "2026-03-17",
+      "coverage": "Age and contribution increases for ordinary old-age and early retirement, plus exemptions",
+      "url": "https://www.inps.it/it/it/inps-comunica/notizie/dettaglio-news-page.news.2026.03.pensioni-requisiti-aggiornati-per-il-2027-e-il-2028.html"
+    },
+    {
+      "id": "inps_pension_law_2026",
+      "publisher": "INPS",
+      "title": "2026 Budget Law, pension changes",
+      "publicationDate": "2026-02-26",
+      "coverage": "APE Sociale extension, limits on Quota 103 and Opzione Donna, and other 2026 rules",
+      "url": "https://www.inps.it/it/it/inps-comunica/notizie/dettaglio-news-page.news.2026.02.legge-di-bilancio-2026-le-novit-sulle-pensioni.html"
+    },
+    {
+      "id": "inps_pension_law_2025",
+      "publisher": "INPS",
+      "title": "2025 Budget Law, pension provisions",
+      "publicationDate": "2025-03-06",
+      "coverage": "Quota 103, APE Sociale, and Opzione Donna provisions for 2025",
+      "url": "https://www.inps.it/it/it/inps-comunica/notizie/dettaglio-news-page.news.2025.03.legge-di-bilancio-2025-disposizioni-in-materia-pensionistica.html"
+    },
+    {
+      "id": "oecd_italy_note_2025",
+      "publisher": "OECD",
+      "title": "Pensions at a Glance 2025, Italy country note",
+      "publicationDate": "2025-11-27",
+      "coverage": "Retirement policy, employment at older ages, NDC transition, public expenditure context, and demographic pressure",
+      "url": "https://www.oecd.org/en/publications/pensions-at-a-glance-2025-country-notes_8a53ef12-en/italy_3dd0d4fa-en.html"
+    },
+    {
+      "id": "oecd_contributions_2025",
+      "publisher": "OECD",
+      "title": "Pensions at a Glance 2025, mandatory pension contributions",
+      "publicationDate": "2025-11-27",
+      "coverage": "Cross-country mandatory contribution rates for 2024",
+      "url": "https://www.oecd.org/en/publications/pensions-at-a-glance-2025_e40274c1-en/full-report/mandatory-pension-contributions_3aa18139.html"
+    },
+    {
+      "id": "oecd_expenditure_2025",
+      "publisher": "OECD",
+      "title": "Pensions at a Glance 2025, public expenditure on pensions",
+      "publicationDate": "2025-11-27",
+      "coverage": "Internationally comparable public cash old-age and survivor benefit expenditure, latest available year mainly 2021",
+      "url": "https://www.oecd.org/en/publications/pensions-at-a-glance-2025_e40274c1-en/full-report/public-expenditure-on-pensions_ddc9a2dd.html"
+    },
+    {
+      "id": "eurostat_pension_expenditure_2026",
+      "publisher": "Eurostat",
+      "title": "Pension expenditure statistics and ESSPROS data",
+      "publicationDate": "2026-04-17",
+      "coverage": "2022 European social protection expenditure by function and pension expenditure context",
+      "url": "https://ec.europa.eu/eurostat/statistics-explained/SEPDF/cache/36405.pdf",
+      "dataUrl": "https://ec.europa.eu/eurostat/databrowser/view/spr_exp_pens/default/table?lang=en"
+    }
+  ],
+  "methodologyNotes": [
+    {
+      "id": "observed-projected-derived",
+      "text": "Every series is marked as observed, official_baseline, official_projection, or derived. Values from an official model are not observations, even when the year is in the past."
+    },
+    {
+      "id": "inps-stock-perimeter",
+      "text": "The 2026 INPS observatory counts benefits in force at 2026-01-01 and annualizes the January amount. It includes previdenziale and assistenziale benefits, and this edition includes GDP public employees."
+    },
+    {
+      "id": "inps-beneficiary-perimeter",
+      "text": "The 2024 INPS beneficiary observatory reports 23.015 million benefits and 16.306 million unique pensioners. Its pensioner income bands sum all benefits received by each person."
+    },
+    {
+      "id": "inps-budget-perimeter",
+      "text": "The 2025 INPS General Accounts are competence accounts. Current revenues, transfers, pension outlays, institutional benefits, and GIAS should not be read as a single cash-flow statement for the whole Italian public sector."
+    },
+    {
+      "id": "eurostat-awg-perimeter",
+      "text": "Eurostat ESSPROS, OECD public cash expenditure, INPS administrative accounts, and the Ageing Report public-pension perimeter differ in functions, institutions, timing, and inclusion of assistance. The same year can therefore have different valid percentages."
+    },
+    {
+      "id": "benefits-versus-people",
+      "text": "A person can receive several benefits. Benefit counts, category pensioner counts, and unique pensioner counts must never be added without checking overlap."
+    },
+    {
+      "id": "amount-bands",
+      "text": "Monthly bands describe January benefit amounts in the INPS stock report or annualized pension income in the beneficiary report. They are not equivalent measures."
+    },
+    {
+      "id": "derived-values",
+      "text": "Derived ratios are simple arithmetic on published values and are rounded only for display. They do not allocate state transfers across individual benefits or estimate an implicit return."
+    },
+    {
+      "id": "uncertainty",
+      "text": "The 2070 path is conditional on the Ageing Report model vintage and assumptions. Use the sensitivity data for scenario context and do not publish a deterministic collapse date."
+    },
+    {
+      "id": "multiple-benefits-interpretation",
+      "text": "Multiple-benefit combinations are a normal feature of a system with old-age, survivor, invalidity, indennitarie, and assistenziale programs. The data alone do not show abuse."
+    },
+    {
+      "id": "rounding",
+      "text": "Shares and amounts can differ by 0.1 from totals because the official reports round percentages and some amounts to millions."
+    }
+  ]
+}

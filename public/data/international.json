@@ -1,0 +1,719 @@
+{
+  "metadata": {
+    "title": "International pension comparison",
+    "description": "A source-linked comparison of pension financing, adequacy, coverage and ageing pressure in Italy, Switzerland, Sweden and the Netherlands.",
+    "version": "1.0.0",
+    "lastReviewed": "2026-08-23",
+    "language": "en",
+    "countryOrder": ["IT", "CH", "SE", "NL"],
+    "primaryComparisonYear": 2024,
+    "scope": "The pack separates public PAYG, notional-account, occupational funded and voluntary arrangements. It includes only indicators with an explicit definition and observed year.",
+    "comparabilityScale": {
+      "high": "The source uses one definition and one observation year for all four countries.",
+      "medium": "The source is harmonised, but country rules, model assumptions or scheme mix limit interpretation.",
+      "low": "The concepts or observation years differ materially. Use the values as context, not as a league table."
+    },
+    "sourcePolicy": "Primary statistical and institutional sources are preferred: OECD, Eurostat, Swiss Federal Social Insurance Office, Swedish Pensions Agency and government, Dutch central bank and Social Insurance Bank, and COVIP.",
+    "importantCaveat": "OECD replacement rates and model retirement ages are projections for a stylised full-career worker. They are not observed outcomes for current retirees."
+  },
+  "countries": {
+    "IT": {
+      "name": "Italy",
+      "iso2": "IT",
+      "systemSummary": "The public first pillar is a PAYG system with a long transition from legacy defined-benefit rules to the notional defined-contribution (NDC) method introduced in 1995. Supplementary occupational funds and personal products are funded and generally voluntary, with private-sector TFR severance pay able to flow into a supplementary fund.",
+      "retirementRules": {
+        "statutoryOrdinaryAgeYears": 67,
+        "statutoryObservedYear": 2025,
+        "oecdModelNormalAgeYears": {"men": 64.8, "women": 63.8, "observedYear": 2024},
+        "effectiveLabourMarketExitAgeYears": {"men": 64.0, "women": 62.6, "observedYear": 2024},
+        "note": "The ordinary statutory age and the OECD model age are different concepts. The country note also describes an early route from age 64 subject to contribution conditions."
+      },
+      "pillars": {
+        "first": {
+          "label": "Public first pillar",
+          "mandate": "mandatory",
+          "funding": "PAYG with legacy defined-benefit rules and an NDC transition",
+          "details": "INPS public pensions. The NDC transition is not yet complete; OECD expects full NDC calculation for new pensioners around 2040.",
+          "sourceIds": ["oecd_italy_country_note"]
+        },
+        "second": {
+          "label": "Supplementary occupational pensions",
+          "mandate": "generally voluntary",
+          "funding": "funded collective or individual pension funds",
+          "details": "Private-sector TFR can be transferred to a supplementary fund by explicit choice or silent-assent rules. COVIP supervises supplementary schemes.",
+          "sourceIds": ["covip_about", "covip_tfr"]
+        },
+        "third": {
+          "label": "Voluntary personal savings",
+          "mandate": "voluntary",
+          "funding": "funded",
+          "details": "Personal pension products and other savings outside mandatory public insurance.",
+          "sourceIds": ["covip_about"]
+        }
+      },
+      "automaticStabilizers": {
+        "mechanisms": [
+          "NDC notional-account calculation",
+          "Annuity conversion and life-expectancy adjustments",
+          "Retirement-age link to life expectancy"
+        ],
+        "policyCaveat": "The OECD country note says the age link was suspended for 2019-2026 and describes a planned restoration in 2027. Treat that date as policy context, not as a guaranteed future outcome.",
+        "sourceIds": ["oecd_italy_country_note"]
+      },
+      "countryNotes": [
+        "OECD reports public expenditure on cash old-age and survivor benefits at about 16% of GDP and says at least one quarter is not financed by pension contributions.",
+        "COVIP's current glossary describes automatic enrolment for private-sector employees first hired after 30 June 2026 unless they opt out or choose another fund within 60 days. The OECD coverage observation predates this change."
+      ],
+      "sourceIds": ["oecd_italy_country_note", "covip_about", "covip_tfr", "covip_auto_enrolment_2026"]
+    },
+    "CH": {
+      "name": "Switzerland",
+      "iso2": "CH",
+      "systemSummary": "Switzerland has three pillars. The first pillar, OASI/AVS, is public and PAYG. The second pillar, occupational BVG/LPP, is a funded capitalisation system for employees above the entry threshold. The third pillar consists of voluntary funded individual savings, including pillars 3a and 3b.",
+      "retirementRules": {
+        "referenceAgeYears": {"men": 65, "women": 65, "observedYear": 2026},
+        "oecdModelNormalAgeYears": {"men": 65, "women": 64, "observedYear": 2024},
+        "effectiveLabourMarketExitAgeYears": {"men": 64.2, "women": 64.5, "observedYear": 2024},
+        "note": "AVS/AHV21 brings the reference age to 65 with a gradual transition for women. The OECD model table reflects the rules used for a person retiring in 2024, so it still reports a 64 normal age for women."
+      },
+      "pillars": {
+        "first": {
+          "label": "OASI/AVS public first pillar",
+          "mandate": "mandatory",
+          "funding": "PAYG",
+          "details": "Current contributions flow directly to current pensioners. OASI funds are not invested as individual retirement assets.",
+          "sourceIds": ["bsv_ch_oasi_payg", "bsv_ch_three_pillars"]
+        },
+        "second": {
+          "label": "BVG/LPP occupational pension",
+          "mandate": "mandatory above the statutory entry threshold",
+          "funding": "funded capitalisation with individual savings capital and interest",
+          "details": "The 2025 entry threshold is CHF 22,680 from one employer. The second pillar complements OASI/AVS.",
+          "sourceIds": ["bsv_ch_occupational_funding", "bsv_ch_three_pillars"]
+        },
+        "third": {
+          "label": "Pillars 3a and 3b",
+          "mandate": "voluntary",
+          "funding": "funded individual savings",
+          "details": "Voluntary private provision outside the mandatory first and second pillars.",
+          "sourceIds": ["bsv_ch_three_pillars"]
+        }
+      },
+      "automaticStabilizers": {
+        "mechanisms": [
+          "Reference-age reform and transitional rules",
+          "PAYG sensitivity to the contributor-to-pensioner ratio and economic growth",
+          "Funded second-pillar accumulation through contributions and interest"
+        ],
+        "note": "The reviewed sources do not identify an automatic PAYG balance-index mechanism equivalent to Sweden's balance brake.",
+        "sourceIds": ["bsv_ch_oasi_payg", "bsv_ch_occupational_funding"]
+      },
+      "countryNotes": [
+        "The Swiss first pillar is PAYG even though Switzerland has very high pension-provider assets relative to GDP. Do not treat the first pillar as a funded individual account.",
+        "The Federal Social Insurance Office says the federal government covers just over one-fifth of OASI expenses."
+      ],
+      "sourceIds": ["bsv_ch_three_pillars", "bsv_ch_oasi_payg", "bsv_ch_occupational_funding"]
+    },
+    "SE": {
+      "name": "Sweden",
+      "iso2": "SE",
+      "systemSummary": "Sweden combines a public NDC income pension financed on a PAYG basis, a funded public premium pension, a guarantee pension and broad occupational pensions. Personal savings are voluntary. The public contribution is split between 16% for the income pension and 2.5% for the premium pension.",
+      "retirementRules": {
+        "statutoryOrdinaryAgeYears": null,
+        "publicClaimEarliestAgeYears": 63,
+        "publicClaimAgeObservedYear": 2025,
+        "oecdModelNormalAgeYears": {"men": 66, "women": 66, "observedYear": 2024},
+        "effectiveLabourMarketExitAgeYears": {"men": 65.1, "women": 65.0, "observedYear": 2024},
+        "note": "Sweden has no fixed retirement age. The public pension can start from 63 under the rules described by the Pensions Agency, while age limits and the guarantee-pension age are linked to life expectancy from 2026."
+      },
+      "pillars": {
+        "first": {
+          "label": "Public income, premium and guarantee pensions",
+          "mandate": "mandatory public pension",
+          "funding": "PAYG NDC income pension plus funded premium pension and tax-financed guarantee pension",
+          "details": "Each year 16% of pensionable income is allocated to the income pension and 2.5% to the premium pension, where the individual can choose funds or use AP7.",
+          "sourceIds": ["sweden_pensionsmyndigheten", "sweden_gov_brief"]
+        },
+        "second": {
+          "label": "Occupational pension",
+          "mandate": "broad collective-agreement or employer coverage",
+          "funding": "funded",
+          "details": "Occupational pensions cover the vast majority of workers. Common contribution levels are about 4.5% to 6%, and the government brief reports occupational assets at about 75% of GDP at end-2024.",
+          "sourceIds": ["sweden_gov_brief"]
+        },
+        "third": {
+          "label": "Personal savings",
+          "mandate": "voluntary",
+          "funding": "funded",
+          "details": "Private saving outside the public and occupational systems.",
+          "sourceIds": ["sweden_pensionsmyndigheten"]
+        }
+      },
+      "automaticStabilizers": {
+        "mechanisms": [
+          "Automatic balancing of the income-pension system",
+          "Balance index that reduces indexation when liabilities exceed assets",
+          "Annuity divisors and age links based on life expectancy"
+        ],
+        "sourceIds": ["sweden_automatic_balancing", "sweden_retirement_rules", "sweden_pensionsmyndigheten"]
+      },
+      "countryNotes": [
+        "The public premium pension and occupational schemes mean that Sweden is not a pure PAYG model. OECD reports public pension reserve funds separately from pension-provider assets.",
+        "The Swedish government brief reports public premium-pension assets at about 45% of GDP, public buffer funds at about 33% of GDP and public plus occupational assets at about 155% of GDP. These components overlap with, and are explained separately from, the OECD asset metric."
+      ],
+      "sourceIds": ["sweden_pensionsmyndigheten", "sweden_retirement_rules", "sweden_gov_brief", "sweden_automatic_balancing"]
+    },
+    "NL": {
+      "name": "Netherlands",
+      "iso2": "NL",
+      "systemSummary": "The Netherlands has a residence-linked AOW state pension financed on a PAYG basis, a very broad workplace pension pillar that is generally mandatory through sector or employer arrangements, and voluntary individual products. The workplace pillar is transitioning from collective defined-benefit promises to defined-contribution arrangements under the Future Pensions Act.",
+      "retirementRules": {
+        "aowAgeYears": 67,
+        "aowAgeObservedYear": 2026,
+        "aowAgeCohortNote": "AOW age is 67 for some 1957-1960 birth cohorts and 67 years and 3 months for January 1961 to September 1964 cohorts; later ages are linked to life expectancy.",
+        "oecdModelNormalAgeYears": {"men": 67, "women": 67, "observedYear": 2024},
+        "effectiveLabourMarketExitAgeYears": {"men": 65.0, "women": 64.7, "observedYear": 2024},
+        "sourceIds": ["svb_nl_aow_age", "oecd_pag2025_current_ages"]
+      },
+      "pillars": {
+        "first": {
+          "label": "AOW state pension",
+          "mandate": "compulsory social insurance for insured residents and workers",
+          "funding": "PAYG",
+          "details": "Current workers' contributions finance current AOW pensions. Full entitlement depends on insured residence or work history.",
+          "sourceIds": ["svb_nl_aow", "svb_nl_aow_payg", "dnb_nl_three_pillars"]
+        },
+        "second": {
+          "label": "Workplace pension",
+          "mandate": "quasi-mandatory where a sector or employer arrangement applies",
+          "funding": "funded occupational arrangements transitioning to defined contribution",
+          "details": "The Future Pensions Act took effect on 1 July 2023. DNB says all funds must comply by 1 January 2028 at the latest, with no guarantee of a fixed pension amount under the new system.",
+          "sourceIds": ["dnb_nl_three_pillars", "dnb_nl_new_system"]
+        },
+        "third": {
+          "label": "Individual pension products",
+          "mandate": "voluntary",
+          "funding": "funded",
+          "details": "Individual income products and other private savings outside AOW and workplace pensions.",
+          "sourceIds": ["dnb_nl_three_pillars"]
+        }
+      },
+      "automaticStabilizers": {
+        "mechanisms": [
+          "AOW age link to life expectancy",
+          "Funded workplace-pension return and risk-sharing rules under the new defined-contribution system",
+          "Transition compensation and fund-level implementation rules"
+        ],
+        "note": "The reviewed sources do not identify a single automatic PAYG balance-index rule for AOW comparable to Sweden's balance brake.",
+        "sourceIds": ["svb_nl_aow_age", "dnb_nl_new_system"]
+      },
+      "countryNotes": [
+        "The high Dutch pension-provider asset ratio largely reflects the funded workplace pillar. It should not be read as funded financing of AOW.",
+        "The 97.4% OECD coverage value is for a mandatory or quasi-mandatory occupational plan and uses 2023 data, while other countries in the table use 2024 or different plan categories."
+      ],
+      "sourceIds": ["dnb_nl_three_pillars", "dnb_nl_new_system", "svb_nl_aow", "svb_nl_aow_age", "svb_nl_aow_payg"]
+    }
+  },
+  "comparableMetrics": [
+    {
+      "id": "public_pension_expenditure_gdp",
+      "label": "Public expenditure on cash old-age and survivor benefits",
+      "observedYear": 2021,
+      "unit": "percent_of_gdp",
+      "definition": "Public expenditure on cash old-age and survivor benefits, as defined in OECD Table 8.2.",
+      "values": {"IT": 16.1, "CH": 6.6, "SE": 8.0, "NL": 6.4},
+      "comparability": "high",
+      "sourceIds": ["oecd_pag2025_public_expenditure"],
+      "notes": ["The OECD table reports the latest observation as 2021 for all four countries. It is not a measure of total pension spending in every national accounting definition."]
+    },
+    {
+      "id": "pension_provider_assets_gdp",
+      "label": "Assets of pension providers",
+      "observedYear": 2024,
+      "yearQualifier": "End-2024 or latest available in the OECD table",
+      "unit": "percent_of_gdp",
+      "definition": "Assets of pension providers in asset-backed pension arrangements, including public or private occupational and personal arrangements. Public pension reserve funds that back unfunded or PAYG schemes are reported separately.",
+      "values": {"IT": 11.7, "CH": 166.9, "SE": 115.8, "NL": 150.9},
+      "comparability": "high",
+      "sourceIds": ["oecd_pag2025_assets"],
+      "notes": ["These are not total household retirement wealth and do not mean that each country's public first pillar is funded."]
+    },
+    {
+      "id": "public_pension_reserve_assets_gdp",
+      "label": "Public pension reserve fund assets",
+      "observedYear": 2024,
+      "yearQualifier": "End-2024 or latest available in the OECD table",
+      "unit": "percent_of_gdp",
+      "definition": "Assets of public pension reserve funds supporting unfunded or PAYG public arrangements. These assets do not represent individual funded pension entitlements.",
+      "values": {"IT": 5.4, "CH": 6.7, "SE": 33.3, "NL": null},
+      "missingReasons": {"NL": "Not applicable in the OECD table"},
+      "comparability": "low",
+      "sourceIds": ["oecd_pag2025_assets"],
+      "notes": ["Keep this series separate from pension-provider assets. A null means not applicable or unavailable, not zero."]
+    },
+    {
+      "id": "mandatory_effective_contribution_rate",
+      "label": "Effective mandatory pension contribution rate",
+      "observedYear": 2024,
+      "unit": "percent_of_gross_average_earnings",
+      "definition": "OECD effective total contribution rate for mandatory and quasi-mandatory pension schemes for private-sector workers, adjusted for earnings ceilings where applicable.",
+      "values": {"IT": 33.0, "CH": 16.6, "SE": 22.3, "NL": 22.0},
+      "comparability": "medium",
+      "sourceIds": ["oecd_pag2025_contributions"],
+      "notes": ["Rates can include other social-insurance components or country-specific scheme features. Italy's rate also finances disability or invalidity benefits, and Swiss rates vary by age and earnings."]
+    },
+    {
+      "id": "oecd_model_normal_retirement_age",
+      "label": "OECD model normal retirement age",
+      "observedYear": 2024,
+      "unit": "years",
+      "definition": "Eligibility age for all mandatory components without penalty for a person starting work at age 22 and retiring in 2024 after an uninterrupted full career. The OECD selects the maximum age when schemes differ.",
+      "values": {
+        "IT": {"men": 64.8, "women": 63.8},
+        "CH": {"men": 65.0, "women": 64.0},
+        "SE": {"men": 66.0, "women": 66.0},
+        "NL": {"men": 67.0, "women": 67.0}
+      },
+      "comparability": "medium",
+      "sourceIds": ["oecd_pag2025_current_ages"],
+      "notes": ["This is a harmonised model concept, not a single statutory age. It can differ from the legal age and from the age at which people actually claim or leave work."]
+    },
+    {
+      "id": "statutory_or_reference_retirement_age",
+      "label": "Statutory or reference retirement age",
+      "observedYear": 2026,
+      "unit": "years",
+      "definition": "A national legal or reference age selected for context. Because Sweden has no fixed retirement age and the other systems use different legal concepts, values are not a harmonised ranking.",
+      "values": {"IT": 67.0, "CH": 65.0, "SE": null, "NL": 67.0},
+      "details": {
+        "IT": "Ordinary statutory age reported by OECD for 2025; early routes have contribution conditions.",
+        "CH": "Reference age after AVS/AHV21, with transitional rules for women.",
+        "SE": "No fixed statutory retirement age; public pension claim can start from 63 under the cited 2025 rules.",
+        "NL": "AOW age is cohort-dependent: 67 for some cohorts and 67 years 3 months for later cohorts covered by the cited SVB table."
+      },
+      "comparability": "low",
+      "sourceIds": ["oecd_italy_country_note", "bsv_ch_occupational_funding", "sweden_retirement_rules", "svb_nl_aow_age"]
+    },
+    {
+      "id": "effective_labour_market_exit_age",
+      "label": "Effective age of labour-market exit",
+      "observedYear": 2024,
+      "unit": "years",
+      "definition": "OECD estimate of the average age of exit from the labour force for workers aged 40 and over, inferred from participation-rate changes. It is not a pension-claiming age.",
+      "values": {
+        "IT": {"men": 64.0, "women": 62.6},
+        "CH": {"men": 64.2, "women": 64.5},
+        "SE": {"men": 65.1, "women": 65.0},
+        "NL": {"men": 65.0, "women": 64.7}
+      },
+      "comparability": "medium",
+      "sourceIds": ["oecd_pag2025_effective_exit"],
+      "notes": ["OECD advises caution with absolute levels; comparisons are more robust than country-specific estimates." ]
+    },
+    {
+      "id": "gross_replacement_rate_average_earner",
+      "label": "Gross pension replacement rate for an average earner",
+      "observedYear": 2024,
+      "unit": "percent_of_individual_gross_earnings",
+      "definition": "OECD modelled gross pension entitlement relative to individual gross earnings for a full-career average earner in mandatory schemes at the current normal retirement age.",
+      "values": {"IT": 70.6, "CH": 42.4, "SE": 63.7, "NL": 74.7},
+      "comparability": "medium",
+      "sourceIds": ["oecd_pag2025_gross_replacement"],
+      "notes": ["This is a modelled entitlement, not an observed outcome. It does not make voluntary savings comparable across countries and cannot capture every household's tax or career history."]
+    },
+    {
+      "id": "net_replacement_rate_average_earner",
+      "label": "Net pension replacement rate for an average earner",
+      "observedYear": 2024,
+      "unit": "percent_of_individual_net_earnings",
+      "definition": "OECD modelled net pension entitlement relative to individual net earnings for a full-career average earner in mandatory schemes at the current normal retirement age, after taxes and social contributions.",
+      "values": {"IT": 79.0, "CH": 47.5, "SE": 66.3, "NL": 96.0},
+      "comparability": "medium",
+      "sourceIds": ["oecd_pag2025_net_replacement"],
+      "notes": ["Tax treatment and mandatory-scheme composition are built into the OECD model. Treat values as scenario outputs rather than promises to an actual retiree."]
+    },
+    {
+      "id": "old_age_dependency_ratio",
+      "label": "Old-age dependency ratio",
+      "observedYear": 2025,
+      "unit": "percent",
+      "definition": "Eurostat indicator OLDDEP1: population aged 65 years or over divided by population aged 15 to 64 years.",
+      "values": {"IT": 39.0, "CH": 29.8, "SE": 33.4, "NL": 32.4},
+      "comparability": "high",
+      "sourceIds": ["eurostat_old_age_dependency"],
+      "notes": ["This is a demographic pressure indicator, not a pension-system dependency ratio and not a forecast of contribution adequacy."]
+    },
+    {
+      "id": "pension_plan_coverage_working_age",
+      "label": "Pension-plan coverage among people aged 15 to 64",
+      "observedYear": "2023-2024",
+      "unit": "percent_of_working_age_population",
+      "definition": "OECD share of the population aged 15 to 64 with assets or accrued rights in a pension plan. Plan categories can overlap and are not a universal active-contributor rate.",
+      "values": {
+        "IT": {"observedYear": 2024, "mandatoryOrQuasiMandatory": null, "voluntaryOccupational": 13.9, "voluntaryPersonal": 16.0, "totalVoluntary": 26.7, "note": "OECD reports mandatory or quasi-mandatory occupational coverage as not applicable; the voluntary categories can overlap."},
+        "CH": {"observedYear": 2023, "mandatoryOrQuasiMandatory": 81.5, "mandatoryCategory": "occupational", "voluntaryOccupational": null, "voluntaryPersonal": null},
+        "SE": {"observedYear": 2024, "mandatoryOrQuasiMandatory": 99.4, "mandatoryCategory": "public premium pension system (PPS)", "voluntaryOccupational": null, "voluntaryPersonal": null},
+        "NL": {"observedYear": 2023, "mandatoryOrQuasiMandatory": 97.4, "mandatoryCategory": "occupational", "voluntaryOccupational": null, "voluntaryPersonal": null}
+      },
+      "comparability": "low",
+      "sourceIds": ["oecd_pag2025_coverage"],
+      "notes": ["The OECD table uses 2023 for Dutch and Swiss occupational observations and 2024 for Italian and Swedish observations. Sweden's value is public PPS coverage, not occupational coverage. Do not add categories or compare them as if they measured the same pillar."]
+    }
+  ],
+  "pillarMatrix": {
+    "columnOrder": ["IT", "CH", "SE", "NL"],
+    "rows": [
+      {
+        "id": "first_pillar",
+        "label": "Public first pillar",
+        "values": {
+          "IT": {"funding": "PAYG mixed with NDC transition", "design": "INPS public pensions with legacy defined-benefit rules and NDC calculation", "mandate": "mandatory", "sourceIds": ["oecd_italy_country_note"]},
+          "CH": {"funding": "PAYG", "design": "OASI/AVS public old-age and survivors insurance", "mandate": "mandatory", "sourceIds": ["bsv_ch_oasi_payg"]},
+          "SE": {"funding": "PAYG NDC plus funded premium account", "design": "Income pension, premium pension and guarantee pension", "mandate": "mandatory public pension", "sourceIds": ["sweden_pensionsmyndigheten", "sweden_gov_brief"]},
+          "NL": {"funding": "PAYG", "design": "AOW residence-linked state pension", "mandate": "compulsory social insurance for insured residents and workers", "sourceIds": ["svb_nl_aow_payg", "dnb_nl_three_pillars"]}
+        }
+      },
+      {
+        "id": "second_pillar",
+        "label": "Workplace or occupational pillar",
+        "values": {
+          "IT": {"funding": "funded", "design": "Supplementary pension funds, often involving TFR", "mandate": "generally voluntary", "sourceIds": ["covip_about", "covip_tfr"]},
+          "CH": {"funding": "funded capitalisation", "design": "BVG/LPP occupational pension with individual savings capital and interest", "mandate": "mandatory above statutory threshold", "sourceIds": ["bsv_ch_occupational_funding"]},
+          "SE": {"funding": "funded", "design": "Broad occupational pension arrangements, commonly 4.5% to 6% contributions", "mandate": "broad collective-agreement or employer coverage", "sourceIds": ["sweden_gov_brief"]},
+          "NL": {"funding": "funded, transitioning to defined contribution", "design": "Workplace pensions moving from collective defined-benefit promises under the Future Pensions Act", "mandate": "quasi-mandatory where sector or employer arrangement applies", "sourceIds": ["dnb_nl_three_pillars", "dnb_nl_new_system"]}
+        }
+      },
+      {
+        "id": "third_pillar",
+        "label": "Voluntary personal pillar",
+        "values": {
+          "IT": {"funding": "funded", "design": "Personal pension products and other private savings", "mandate": "voluntary", "sourceIds": ["covip_about"]},
+          "CH": {"funding": "funded", "design": "Pillars 3a and 3b", "mandate": "voluntary", "sourceIds": ["bsv_ch_three_pillars"]},
+          "SE": {"funding": "funded", "design": "Personal savings outside public and occupational pensions", "mandate": "voluntary", "sourceIds": ["sweden_pensionsmyndigheten"]},
+          "NL": {"funding": "funded", "design": "Individual income products and private savings", "mandate": "voluntary", "sourceIds": ["dnb_nl_three_pillars"]}
+        }
+      },
+      {
+        "id": "automatic_stabilizers",
+        "label": "Major automatic stabilizers",
+        "values": {
+          "IT": {"mechanisms": ["NDC calculation", "annuity and life-expectancy adjustments", "age link to life expectancy"], "sourceIds": ["oecd_italy_country_note"]},
+          "CH": {"mechanisms": ["reference-age reform", "PAYG exposure to demographic and economic conditions", "funded accumulation through contribution and interest"], "sourceIds": ["bsv_ch_oasi_payg", "bsv_ch_occupational_funding"]},
+          "SE": {"mechanisms": ["automatic balancing brake", "balance index", "life-expectancy-linked age and annuity divisors"], "sourceIds": ["sweden_automatic_balancing", "sweden_retirement_rules"]},
+          "NL": {"mechanisms": ["AOW age link to life expectancy", "funded return and risk sharing in the new DC system", "transition compensation rules"], "sourceIds": ["svb_nl_aow_age", "dnb_nl_new_system"]}
+        }
+      }
+    ]
+  },
+  "keyContrasts": [
+    {
+      "id": "swiss_payg_first_pillar",
+      "title": "Switzerland pairs a PAYG first pillar with a large funded second pillar",
+      "evidence": "BSV states that OASI/AVS contributions flow directly to current pensioners and are not invested, while occupational BVG/LPP savings are funded. OECD pension-provider assets are 166.9% of GDP, so this high asset ratio must not be interpreted as funded financing of OASI.",
+      "sourceIds": ["bsv_ch_oasi_payg", "bsv_ch_occupational_funding", "oecd_pag2025_assets"]
+    },
+    {
+      "id": "italy_public_cost",
+      "title": "Italy has the highest public cash pension expenditure in this group",
+      "evidence": "OECD reports 16.1% of GDP in 2021 for Italy, compared with 8.0% in Sweden, 6.6% in Switzerland and 6.4% in the Netherlands. Italy also has the highest effective mandatory contribution rate at 33.0% of gross average earnings in the OECD table.",
+      "sourceIds": ["oecd_pag2025_public_expenditure", "oecd_pag2025_contributions"]
+    },
+    {
+      "id": "funded_assets",
+      "title": "Funded asset depth is much greater in Switzerland, the Netherlands and Sweden than in Italy",
+      "evidence": "OECD pension-provider assets are 166.9% of GDP in Switzerland, 150.9% in the Netherlands, 115.8% in Sweden and 11.7% in Italy. These figures describe funded providers, not the value of PAYG promises.",
+      "sourceIds": ["oecd_pag2025_assets"]
+    },
+    {
+      "id": "swedish_split",
+      "title": "Sweden splits the public contribution between PAYG NDC and funded premium pension",
+      "evidence": "The Swedish Pensions Agency and government brief describe an 18.5% public contribution: 16% to the PAYG income pension and 2.5% to the funded premium pension. Automatic balancing adjusts the income-pension index when liabilities exceed assets.",
+      "sourceIds": ["sweden_pensionsmyndigheten", "sweden_gov_brief", "sweden_automatic_balancing"]
+    },
+    {
+      "id": "dutch_workplace_transition",
+      "title": "The Dutch funded workplace pillar is moving to defined contribution",
+      "evidence": "DNB says the Future Pensions Act took effect on 1 July 2023 and that pension funds must comply by 1 January 2028 at the latest. The new arrangements do not guarantee a fixed pension amount, while AOW remains a separate PAYG state pension.",
+      "sourceIds": ["dnb_nl_new_system", "svb_nl_aow_payg"]
+    },
+    {
+      "id": "ageing_pressure",
+      "title": "Italy faces the highest demographic old-age dependency ratio",
+      "evidence": "Eurostat's 2025 OLDDEP1 ratio is 39.0% in Italy, versus 33.4% in Sweden, 32.4% in the Netherlands and 29.8% in Switzerland.",
+      "sourceIds": ["eurostat_old_age_dependency"]
+    },
+    {
+      "id": "transition_cost",
+      "title": "A PAYG-to-funded shift creates a transition financing cost",
+      "evidence": "OECD and World Bank guidance explains that diverting current contributions into funded accounts creates a financing gap while legacy PAYG claims remain payable. Workers or taxpayers can face a double burden, financing both the residual PAYG system and new funded saving. The pack does not assign a numeric transition cost to any country because no harmonised country estimate was found in the reviewed sources.",
+      "sourceIds": ["oecd_pensions_outlook_2022_transition", "oecd_pensions_outlook_2018_transition", "world_bank_transition_costs"]
+    }
+  ],
+  "sourceCatalog": {
+    "oecd_pag2025_public_expenditure": {
+      "title": "Pensions at a Glance 2025: Public expenditure on pensions",
+      "publisher": "OECD",
+      "url": "https://www.oecd.org/en/publications/pensions-at-a-glance-2025_e40274c1-en/full-report/public-expenditure-on-pensions_ddc9a2dd.html",
+      "accessed": "2026-08-23",
+      "observedYear": 2021,
+      "supports": ["public_pension_expenditure_gdp"],
+      "notes": "Table 8.2. Latest data are 2021 for all four countries."
+    },
+    "oecd_pag2025_assets": {
+      "title": "Pensions at a Glance 2025: Assets earmarked for retirement",
+      "publisher": "OECD",
+      "url": "https://www.oecd.org/en/publications/pensions-at-a-glance-2025_e40274c1-en/full-report/assets-earmarked-for-retirement_089c3f13.html",
+      "accessed": "2026-08-23",
+      "observedYear": 2024,
+      "supports": ["pension_provider_assets_gdp", "public_pension_reserve_assets_gdp"],
+      "notes": "Table 9.2. End-2024 or latest. The table distinguishes pension-provider assets from public pension reserve funds."
+    },
+    "oecd_pag2025_contributions": {
+      "title": "Pensions at a Glance 2025: Mandatory pension contributions",
+      "publisher": "OECD",
+      "url": "https://www.oecd.org/en/publications/pensions-at-a-glance-2025_e40274c1-en/full-report/mandatory-pension-contributions_3aa18139.html",
+      "accessed": "2026-08-23",
+      "observedYear": 2024,
+      "supports": ["mandatory_effective_contribution_rate"],
+      "notes": "Table 8.1. Effective rates adjust for earnings ceilings; country scheme boundaries differ."
+    },
+    "oecd_pag2025_current_ages": {
+      "title": "Pensions at a Glance 2025: Current retirement ages",
+      "publisher": "OECD",
+      "url": "https://www.oecd.org/en/publications/pensions-at-a-glance-2025_e40274c1-en/full-report/current-retirement-ages_0f63b747.html",
+      "accessed": "2026-08-23",
+      "observedYear": 2024,
+      "supports": ["oecd_model_normal_retirement_age", "statutory_or_reference_retirement_age"],
+      "notes": "Table 3.5. Model assumes entry at 22, uninterrupted full career and retirement in 2024."
+    },
+    "oecd_pag2025_effective_exit": {
+      "title": "Pensions at a Glance 2025: Effective age of labour-market exit",
+      "publisher": "OECD",
+      "url": "https://www.oecd.org/en/publications/pensions-at-a-glance-2025_e40274c1-en/full-report/effective-age-of-labour-market-exit_fd1212b7.html",
+      "accessed": "2026-08-23",
+      "observedYear": 2024,
+      "supports": ["effective_labour_market_exit_age"],
+      "notes": "The linked OECD report PDF contains the country table; absolute levels should be interpreted cautiously."
+    },
+    "oecd_pag2025_gross_replacement": {
+      "title": "Pensions at a Glance 2025: Gross pension replacement rates",
+      "publisher": "OECD",
+      "url": "https://www.oecd.org/en/publications/pensions-at-a-glance-2025_e40274c1-en/full-report/gross-pension-replacement-rates_95e3eed6.html",
+      "accessed": "2026-08-23",
+      "observedYear": 2024,
+      "supports": ["gross_replacement_rate_average_earner"],
+      "notes": "Table 4.1. Modelled mandatory-scheme entitlement for a full-career average earner."
+    },
+    "oecd_pag2025_net_replacement": {
+      "title": "Pensions at a Glance 2025: Net pension replacement rates",
+      "publisher": "OECD",
+      "url": "https://www.oecd.org/en/publications/pensions-at-a-glance-2025_e40274c1-en/full-report/net-pension-replacement-rates_a7a9e376.html",
+      "accessed": "2026-08-23",
+      "observedYear": 2024,
+      "supports": ["net_replacement_rate_average_earner"],
+      "notes": "Table 4.4. Net of taxes and social contributions in the OECD model."
+    },
+    "oecd_pag2025_coverage": {
+      "title": "Pensions at a Glance 2025: Participation in pension plans",
+      "publisher": "OECD",
+      "url": "https://www.oecd.org/en/publications/pensions-at-a-glance-2025_e40274c1-en/full-report/participation-in-pension-plans_77f7c663.html",
+      "accessed": "2026-08-23",
+      "observedYear": "2023-2024",
+      "supports": ["pension_plan_coverage_working_age"],
+      "notes": "Table 9.1. Observations use different years and plan categories; members with accrued rights are not necessarily active savers."
+    },
+    "eurostat_old_age_dependency": {
+      "title": "Eurostat demo_pjanind, OLDDEP1 old-age dependency ratio",
+      "publisher": "Eurostat",
+      "url": "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_pjanind?format=JSON&lang=en&indic_de=OLDDEP1&geo=IT&geo=NL&geo=SE&geo=CH",
+      "accessed": "2026-08-23",
+      "observedYear": 2025,
+      "supports": ["old_age_dependency_ratio"],
+      "notes": "OLDDEP1 is the population aged 65 years or over divided by population aged 15 to 64 years."
+    },
+    "oecd_italy_country_note": {
+      "title": "Pensions at a Glance 2025 country notes: Italy",
+      "publisher": "OECD",
+      "url": "https://www.oecd.org/en/publications/pensions-at-a-glance-2025-country-notes_8a53ef12-en/italy_3dd0d4fa-en.html",
+      "accessed": "2026-08-23",
+      "observedYear": 2025,
+      "supports": ["country_IT", "statutory_or_reference_retirement_age"],
+      "notes": "Describes the NDC transition, public expenditure, statutory age and age-link policy context."
+    },
+    "covip_about": {
+      "title": "About COVIP",
+      "publisher": "COVIP, Commissione di vigilanza sui fondi pensione",
+      "url": "https://www.covip.it/en/about-covip",
+      "accessed": "2026-08-23",
+      "observedYear": 2026,
+      "supports": ["country_IT", "pillarMatrix"],
+      "notes": "Official description of COVIP's supervision of supplementary pension schemes."
+    },
+    "covip_tfr": {
+      "title": "COVIP: Conferimento del TFR",
+      "publisher": "COVIP",
+      "url": "https://www.covip.it/per-il-cittadino/educazione-previdenziale/faq/conferimento-tfr",
+      "accessed": "2026-08-23",
+      "observedYear": 2026,
+      "supports": ["country_IT", "pillarMatrix"],
+      "notes": "Official FAQ on explicit choice and silent-assent transfer of private-sector TFR to supplementary funds."
+    },
+    "covip_auto_enrolment_2026": {
+      "title": "COVIP glossary: automatic enrolment",
+      "publisher": "COVIP",
+      "url": "https://www.covip.it/per-il-cittadino/educazione-previdenziale/glossario/adesione",
+      "accessed": "2026-08-23",
+      "observedYear": 2026,
+      "supports": ["country_IT"],
+      "notes": "COVIP describes the legal change for private-sector employees first hired after 30 June 2026, subject to opt-out and fund-choice rules."
+    },
+    "bsv_ch_three_pillars": {
+      "title": "Swiss old-age insurance system",
+      "publisher": "Swiss Federal Social Insurance Office, BSV",
+      "url": "https://www.bsv.admin.ch/en/old-age-insurance-system",
+      "accessed": "2026-08-23",
+      "observedYear": 2025,
+      "supports": ["country_CH", "pillarMatrix"],
+      "notes": "Official three-pillar description, occupational entry threshold and voluntary third pillar."
+    },
+    "bsv_ch_oasi_payg": {
+      "title": "OASI/AVS brochure 2026",
+      "publisher": "Swiss Federal Social Insurance Office, BSV",
+      "url": "https://www.bsv.admin.ch/dam/en/sd-web/HPs3-Czqe8-1/BSV_AHV_BroschureA5_ENG_2026.pdf",
+      "accessed": "2026-08-23",
+      "observedYear": 2026,
+      "supports": ["country_CH", "pillarMatrix", "keyContrasts"],
+      "notes": "Official brochure states that OASI is PAYG, current contributions flow to current pensioners and OASI funds are not invested."
+    },
+    "bsv_ch_occupational_funding": {
+      "title": "Organisation and financing of occupational benefits",
+      "publisher": "Swiss Federal Social Insurance Office, BSV",
+      "url": "https://www.bsv.admin.ch/en/organisation-financing-bvg",
+      "accessed": "2026-08-23",
+      "observedYear": 2026,
+      "supports": ["country_CH", "pillarMatrix"],
+      "notes": "Official page describes the second pillar as generally capitalised and funded through savings capital, contributions and interest."
+    },
+    "sweden_pensionsmyndigheten": {
+      "title": "The pension system in Sweden",
+      "publisher": "Swedish Pensions Agency, Pensionsmyndigheten",
+      "url": "https://www.pensionsmyndigheten.se/other-languages/english-engelska/english-engelska/pension-system-in-sweden",
+      "accessed": "2026-08-23",
+      "observedYear": 2025,
+      "supports": ["country_SE", "pillarMatrix"],
+      "notes": "Official English explanation of public income, premium and guarantee pensions, occupational pension and own savings."
+    },
+    "sweden_retirement_rules": {
+      "title": "Plan your pension",
+      "publisher": "Swedish Pensions Agency, Pensionsmyndigheten",
+      "url": "https://www.pensionsmyndigheten.se/other-languages/english-engelska/english-engelska/plan-your-pension",
+      "accessed": "2026-08-23",
+      "observedYear": 2026,
+      "supports": ["country_SE", "statutory_or_reference_retirement_age", "pillarMatrix"],
+      "notes": "Official page states there is no fixed retirement age, public pension can start from 63 under the cited rules, and age limits are linked to life expectancy."
+    },
+    "sweden_gov_brief": {
+      "title": "The Swedish pension system in brief",
+      "publisher": "Swedish Ministry of Finance",
+      "url": "https://www.government.se/contentassets/c40b1026b5f64cba929445d37d0b3f12/the-swedish-pension-system-in-brief.pdf",
+      "accessed": "2026-08-23",
+      "observedYear": 2025,
+      "supports": ["country_SE", "pillarMatrix", "keyContrasts"],
+      "notes": "Official brief gives the 18.5% public split, occupational contribution range and asset context."
+    },
+    "sweden_automatic_balancing": {
+      "title": "Balanseringen i pensionssystemet",
+      "publisher": "Swedish Pensions Agency, Pensionsmyndigheten",
+      "url": "https://www.pensionsmyndigheten.se/forsta-din-pension/om-pensionssystemet/balanseringen-i-pensionssystemet",
+      "accessed": "2026-08-23",
+      "observedYear": 2026,
+      "supports": ["country_SE", "pillarMatrix", "keyContrasts"],
+      "notes": "Official explanation of the automatic balance mechanism and balance index."
+    },
+    "dnb_nl_three_pillars": {
+      "title": "Pensions in the Netherlands",
+      "publisher": "De Nederlandsche Bank, DNB",
+      "url": "https://www.dnb.nl/en/current-economic-issues/pensions/",
+      "accessed": "2026-08-23",
+      "observedYear": 2026,
+      "supports": ["country_NL", "pillarMatrix"],
+      "notes": "Official three-pillar description: AOW, workplace pension and voluntary individual products."
+    },
+    "dnb_nl_new_system": {
+      "title": "Towards the new pension system",
+      "publisher": "De Nederlandsche Bank, DNB",
+      "url": "https://www.dnb.nl/en/current-economic-issues/pensions/towards-the-new-pension-system/",
+      "accessed": "2026-08-23",
+      "observedYear": 2026,
+      "supports": ["country_NL", "pillarMatrix", "keyContrasts"],
+      "notes": "Official transition page: Future Pensions Act effective 1 July 2023, defined-contribution transition and 1 January 2028 latest compliance date."
+    },
+    "svb_nl_aow": {
+      "title": "What is AOW?",
+      "publisher": "Sociale Verzekeringsbank, SVB",
+      "url": "https://www.svb.nl/en/aow-pension/what-is-aow/what-is-aow",
+      "accessed": "2026-08-23",
+      "observedYear": 2026,
+      "supports": ["country_NL", "pillarMatrix"],
+      "notes": "Official explanation of the Dutch basic state pension and insurance history."
+    },
+    "svb_nl_aow_age": {
+      "title": "Your AOW age",
+      "publisher": "Sociale Verzekeringsbank, SVB",
+      "url": "https://www.svb.nl/nl/aow/aow-leeftijd/uw-aow-leeftijd",
+      "accessed": "2026-08-23",
+      "observedYear": 2026,
+      "supports": ["country_NL", "statutory_or_reference_retirement_age", "pillarMatrix"],
+      "notes": "Official cohort table and life-expectancy linkage for AOW age."
+    },
+    "svb_nl_aow_payg": {
+      "title": "History of social security schemes",
+      "publisher": "Sociale Verzekeringsbank, SVB",
+      "url": "https://www.svb.nl/en/about-the-svb/who-we-are/history-of-social-security-schemes",
+      "accessed": "2026-08-23",
+      "observedYear": 2026,
+      "supports": ["country_NL", "pillarMatrix", "keyContrasts"],
+      "notes": "Official history page explicitly describes AOW financing as PAYG, with current workers financing current pensions."
+    },
+    "oecd_pensions_outlook_2022_transition": {
+      "title": "OECD Pensions Outlook 2022: Transition costs",
+      "publisher": "OECD",
+      "url": "https://www.oecd.org/en/publications/oecd-pensions-outlook-2022_20c7f443-en/full-report/component-4.html",
+      "accessed": "2026-08-23",
+      "observedYear": 2022,
+      "supports": ["keyContrasts", "methodologyNotes"],
+      "notes": "Explains financing gaps when contributions are diverted to funded schemes while legacy PAYG claims remain."
+    },
+    "oecd_pensions_outlook_2018_transition": {
+      "title": "OECD Pensions Outlook 2018: Transition from PAYG to funding",
+      "publisher": "OECD",
+      "url": "https://www.oecd.org/en/publications/oecd-pensions-outlook-2018_pens_outlook-2018-en/full-report/component-4.html",
+      "accessed": "2026-08-23",
+      "observedYear": 2018,
+      "supports": ["keyContrasts", "methodologyNotes"],
+      "notes": "Discusses the double burden and the gradual Swedish reform as an example of a limited funded diversion."
+    },
+    "world_bank_transition_costs": {
+      "title": "Transition costs in pension reform",
+      "publisher": "World Bank",
+      "url": "https://documents1.worldbank.org/curated/en/964361468340745524/pdf/333900rev0PRPNoteTransition.pdf",
+      "accessed": "2026-08-23",
+      "observedYear": 2005,
+      "supports": ["keyContrasts", "methodologyNotes"],
+      "notes": "Primer describing the transition double burden and residual PAYG financing gap."
+    }
+  },
+  "methodologyNotes": [
+    "Country order is fixed as Italy, Switzerland, Sweden and the Netherlands. ISO2 codes are used in every comparable metric.",
+    "A high comparability label means the source definition and observation year align. Medium and low labels are intentional warnings, not missing data.",
+    "Public expenditure is OECD cash old-age and survivor benefits for 2021. Pension-provider assets are funded provider assets for end-2024 or latest and are kept separate from public pension reserve funds.",
+    "A public pension reserve fund is not an individual funded account. Switzerland's OASI first pillar remains PAYG despite the country's high funded provider assets.",
+    "Contribution rates are OECD effective totals for mandatory and quasi-mandatory schemes. National rates can include disability, invalidity or other social insurance, and ceilings and age bands differ.",
+    "OECD replacement rates and model retirement ages use a stylised full-career average earner. They are not observed replacement rates, legal ages in every country or individual forecasts.",
+    "Statutory or reference ages are deliberately separate from effective labour-market exit ages. Sweden has no fixed retirement age, and Dutch AOW age is cohort-dependent.",
+    "Coverage observations are plan-member or accrued-right measures among people aged 15 to 64. Plan categories can overlap, and OECD observation years differ for Italy, Switzerland, Sweden and the Netherlands.",
+    "The transition-cost contrast is directional. OECD and World Bank sources explain the financing mechanism, but this pack does not invent a country-specific euro estimate without a harmonised primary estimate.",
+    "Null values mean not applicable, unavailable or not aligned in the cited source. They must not be rendered as zero.",
+    "All URLs were collected from the cited institutional pages or APIs and reviewed on 2026-08-23."
+  ]
+}
