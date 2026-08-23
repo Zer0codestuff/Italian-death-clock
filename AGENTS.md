@@ -2,7 +2,7 @@
 
 ## Purpose and architecture
 
-`Il conto della pensione` is a local Vite React TypeScript one-page story for Italian workers aged 20 to 45. `src/App.tsx` composes seven scenes, `src/components/Charts.tsx` renders SVG charts, `src/lib/copy.ts` contains the bilingual interface copy, and `src/lib/simulators.ts` owns the personal and macro formulas. `src/lib/i18n.tsx` persists the selected language and updates document metadata. Runtime data comes from the two JSON packs in `public/data`.
+`Il conto della pensione` is a local Vite React TypeScript one-page story for Italian workers aged 20 to 45. `src/App.tsx` composes seven scenes, `src/components/Charts.tsx` renders SVG charts, `src/lib/copy.ts` contains the bilingual interface copy, and `src/lib/simulators.ts` owns the personal and macro formulas. `src/lib/i18n.tsx` persists the selected language and updates document metadata, while `src/lib/language.ts` exposes the context and hook. Runtime data comes from the two JSON packs in `public/data`.
 
 ## Run, build and test
 

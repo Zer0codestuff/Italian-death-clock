@@ -1,5 +1,7 @@
-import { localeFor, useLanguage } from "./i18n";
-import type { Language } from "./i18n";
+import { useLanguage } from "./language";
+import type { Language } from "./language";
+
+const localeFor = (language: Language): string => language === "it" ? "it-IT" : "en-GB";
 
 const unavailable = (language: Language): string => language === "it" ? "n.d." : "n/a";
 

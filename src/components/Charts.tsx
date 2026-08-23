@@ -2,8 +2,8 @@ import type { MacroPoint, TruthLabel } from "../lib/types";
 import { chartXForYear } from "../lib/chartGeometry";
 import { useLocalizedFormat } from "../lib/format";
 import { getAppCopy, getChartCopy } from "../lib/copy";
-import { useLanguage } from "../lib/i18n";
-import type { Language } from "../lib/i18n";
+import { useLanguage } from "../lib/language";
+import type { Language } from "../lib/language";
 
 type SpendingRow = {
   year: number;

@@ -1,5 +1,5 @@
 import type { Source } from "./types";
-import type { Language } from "./i18n";
+import type { Language } from "./language";
 
 const titleTranslations: Record<string, string> = {
   inps_observatory_2026: "Osservatorio INPS sulle pensioni erogate e liquidate nel 2025",

@@ -13,8 +13,8 @@ import {
 import { useLocalizedFormat } from "./lib/format";
 import { deriveEmploymentContext, type EmploymentContext } from "./lib/employmentContext";
 import { FUNDING_LABELS, getAppCopy, MANDATE_LABELS } from "./lib/copy";
-import { useLanguage } from "./lib/i18n";
-import type { Language } from "./lib/i18n";
+import { useLanguage } from "./lib/language";
+import type { Language } from "./lib/language";
 import {
   calculateMacro,
   calculatePersonal,

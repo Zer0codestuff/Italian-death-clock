@@ -26,6 +26,7 @@ The site loads the untouched JSON packs from `public/data/italy.json` and `publi
 - `src/App.tsx` contains the seven-scene narrative and simulator controls.
 - `src/components/Charts.tsx` contains accessible SVG data visualizations.
 - `src/lib/i18n.tsx` owns the persistent language state and document metadata.
+- `src/lib/language.ts` exposes the language context and hook.
 - `src/lib/copy.ts` contains the Italian and English interface copy.
 - `src/lib/simulators.ts` contains the personal and macro formulas.
 - `src/lib/data-integrity.test.ts` checks source links and country scope.
