@@ -1,30 +1,47 @@
-export const euro = (value: number, compact = false): string => {
-  if (!Number.isFinite(value)) return "n.d.";
+import { localeFor, useLanguage } from "./i18n";
+import type { Language } from "./i18n";
+
+const unavailable = (language: Language): string => language === "it" ? "n.d." : "n/a";
+
+export const euro = (value: number, compact = false, language: Language = "it"): string => {
+  if (!Number.isFinite(value)) return unavailable(language);
+  const locale = localeFor(language);
   if (compact && Math.abs(value) >= 1_000_000) {
-    return `${new Intl.NumberFormat("it-IT", { maximumFractionDigits: 1 }).format(value / 1_000_000)} mln €`;
+    const suffix = language === "it" ? "mln €" : "€m";
+    return `${new Intl.NumberFormat(locale, { maximumFractionDigits: 1 }).format(value / 1_000_000)} ${suffix}`;
   }
-  return new Intl.NumberFormat("it-IT", {
+  return new Intl.NumberFormat(locale, {
     style: "currency",
     currency: "EUR",
     maximumFractionDigits: 0,
   }).format(value);
 };
 
-export const numberIt = (value: number, digits = 1): string =>
+export const numberIt = (value: number, digits = 1, language: Language = "it"): string =>
   Number.isFinite(value)
-    ? new Intl.NumberFormat("it-IT", { maximumFractionDigits: digits }).format(value)
-    : "n.d.";
+    ? new Intl.NumberFormat(localeFor(language), { maximumFractionDigits: digits }).format(value)
+    : unavailable(language);
 
-export const percent = (value: number, digits = 1): string =>
+export const percent = (value: number, digits = 1, language: Language = "it"): string =>
   Number.isFinite(value)
-    ? `${new Intl.NumberFormat("it-IT", { maximumFractionDigits: digits }).format(value * 100)}%`
-    : "n.d.";
+    ? `${new Intl.NumberFormat(localeFor(language), { maximumFractionDigits: digits }).format(value * 100)}%`
+    : unavailable(language);
 
-export const percentPoints = (value: number, digits = 1): string =>
+export const percentPoints = (value: number, digits = 1, language: Language = "it"): string =>
   Number.isFinite(value)
-    ? `${new Intl.NumberFormat("it-IT", { maximumFractionDigits: digits }).format(value)}%`
-    : "n.d.";
+    ? `${new Intl.NumberFormat(localeFor(language), { maximumFractionDigits: digits }).format(value)}%`
+    : unavailable(language);
 
-export const millions = (value: number, digits = 1): string =>
-  `${numberIt(value, digits)} mln`;
+export const millions = (value: number, digits = 1, language: Language = "it"): string =>
+  `${numberIt(value, digits, language)} ${language === "it" ? "mln" : "million"}`;
 
+export const useLocalizedFormat = () => {
+  const { language } = useLanguage();
+  return {
+    euro: (value: number, compact = false) => euro(value, compact, language),
+    number: (value: number, digits = 1) => numberIt(value, digits, language),
+    percent: (value: number, digits = 1) => percent(value, digits, language),
+    percentPoints: (value: number, digits = 1) => percentPoints(value, digits, language),
+    millions: (value: number, digits = 1) => millions(value, digits, language),
+  };
+};

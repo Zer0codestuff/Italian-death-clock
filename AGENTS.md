@@ -2,7 +2,7 @@
 
 ## Purpose and architecture
 
-`Il conto della pensione` is a local Vite React TypeScript one-page story for Italian workers aged 20 to 45. `src/App.tsx` composes seven scenes, `src/components/Charts.tsx` renders SVG charts, and `src/lib/simulators.ts` owns the personal and macro formulas. Runtime data comes from the two JSON packs in `public/data`.
+`Il conto della pensione` is a local Vite React TypeScript one-page story for Italian workers aged 20 to 45. `src/App.tsx` composes seven scenes, `src/components/Charts.tsx` renders SVG charts, `src/lib/copy.ts` contains the bilingual interface copy, and `src/lib/simulators.ts` owns the personal and macro formulas. `src/lib/i18n.tsx` persists the selected language and updates document metadata. Runtime data comes from the two JSON packs in `public/data`.
 
 ## Run, build and test
 
@@ -18,9 +18,9 @@ pnpm build
 
 ## Current status and recent changes
 
-The complete local site, responsive narrative, source catalog, simulators, chart layer, tests and SVG favicon are implemented. The interface audit fixed color contrast, control sizing, range progress, numeric input editing, section navigation and responsive layouts. The source catalog is now part of the header navigation. Personal inputs precede their output on narrow screens, and dense comparisons expose clear horizontal-scroll or stacked layouts.
+The complete local site, responsive narrative, source catalog, simulators, chart layer, tests and SVG favicon are implemented. The interface audit fixed color contrast, control sizing, range progress, numeric input editing, section navigation and responsive layouts. The source catalog is now part of the header navigation. Personal inputs precede their output on narrow screens, and dense comparisons expose clear horizontal-scroll or stacked layouts. A persistent header control switches the full interface, charts, tables, source metadata and number formatting between Italian and English.
 
-The current UI has been checked at 1440px, 768px, 375px and 320px. Automated axe checks report no violations at desktop and 375px. The production build, TypeScript check and 14 tests pass.
+The current UI has been checked at 1440px, 901px, 768px, 375px and 320px, including both languages and the production preview. Automated axe checks report no violations at desktop and 375px. The production build, TypeScript check and 17 tests pass.
 
 ## Constraints and known issues
 

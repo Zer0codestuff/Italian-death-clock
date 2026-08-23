@@ -1,4 +1,5 @@
 import type { Source } from "./types";
+import type { Language } from "./i18n";
 
 const titleTranslations: Record<string, string> = {
   inps_observatory_2026: "Osservatorio INPS sulle pensioni erogate e liquidate nel 2025",
@@ -102,18 +103,28 @@ const nonEmpty = (value?: number | string | null): string | null => {
 export const sourceReferenceYear = (source: Source): string | null =>
   nonEmpty(source.observedYear) ?? dateYear(source.updatedDate) ?? dateYear(source.publicationDate) ?? dateYear(source.accessed);
 
-export const sourceMetadataLabel = (source: Source): string => {
+export const sourceMetadataLabel = (source: Source, language: Language = "it"): string => {
   const observed = nonEmpty(source.observedYear);
   const publication = dateYear(source.publicationDate);
   const updated = dateYear(source.updatedDate);
-  if (observed) return updated && updated !== observed ? `${observed} · aggiornata ${updated}` : observed;
-  if (updated && publication && updated !== publication) return `aggiornata ${updated} · pubblicata ${publication}`;
-  if (updated) return `aggiornata ${updated}`;
-  if (publication) return `pubblicata ${publication}`;
+  const labels = language === "it"
+    ? { updated: "aggiornata", published: "pubblicata", accessed: "consultata", missing: "anno non indicato" }
+    : { updated: "updated", published: "published", accessed: "accessed", missing: "year not stated" };
+  if (observed) return updated && updated !== observed ? `${observed} · ${labels.updated} ${updated}` : observed;
+  if (updated && publication && updated !== publication) return `${labels.updated} ${updated} · ${labels.published} ${publication}`;
+  if (updated) return `${labels.updated} ${updated}`;
+  if (publication) return `${labels.published} ${publication}`;
   const accessed = dateYear(source.accessed);
-  return accessed ? `consultata ${accessed}` : "anno non indicato";
+  return accessed ? `${labels.accessed} ${accessed}` : labels.missing;
 };
 
-export const sourceCardTitle = (source: Source): string => titleTranslations[source.id] ?? "Fonte istituzionale collegata al dato mostrato";
+export const sourceCardTitle = (source: Source, language: Language = "it"): string => {
+  if (language === "en") return source.title || "Institutional source linked to the figure";
+  return titleTranslations[source.id] ?? "Fonte istituzionale collegata al dato mostrato";
+};
 
-export const sourceCardNote = (source: Source): string => noteTranslations[source.id] ?? "Fonte istituzionale collegata al dato e al perimetro indicati.";
+export const sourceCardNote = (source: Source, language: Language = "it"): string => {
+  if (language === "it") return noteTranslations[source.id] ?? "Fonte istituzionale collegata al dato e al perimetro indicati.";
+  const sourceWithCoverage = source as Source & { coverage?: string };
+  return source.notes ?? sourceWithCoverage.coverage ?? "Institutional source linked to the stated figure and scope.";
+};

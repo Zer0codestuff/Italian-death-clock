@@ -1,6 +1,9 @@
-import type { MacroPoint } from "../lib/types";
+import type { MacroPoint, TruthLabel } from "../lib/types";
 import { chartXForYear } from "../lib/chartGeometry";
-import { numberIt, percentPoints } from "../lib/format";
+import { useLocalizedFormat } from "../lib/format";
+import { getAppCopy, getChartCopy } from "../lib/copy";
+import { useLanguage } from "../lib/i18n";
+import type { Language } from "../lib/i18n";
 
 type SpendingRow = {
   year: number;
@@ -32,7 +35,7 @@ export const ChartNote = ({ label, detail }: SourceNoteProps) => (
 type TableRow = Record<string, number | string>;
 
 type DataTableMetadata = {
-  truth: string;
+  truth: TruthLabel;
   source: string;
   sourceUrl: string;
   year: string;
@@ -50,51 +53,46 @@ const DataTable = ({
   columns: Array<{ key: string; label: string }>;
   rows: TableRow[];
   metadata: DataTableMetadata;
-}) => (
-  <details className="chart-data-table">
-    <summary>{label}</summary>
-    <div className="chart-data-table__meta">
-      <span className="chart-data-table__truth">{metadata.truth}</span>
-      <a href={metadata.sourceUrl} target={metadata.sourceUrl.startsWith("#") ? undefined : "_blank"} rel={metadata.sourceUrl.startsWith("#") ? undefined : "noreferrer"}>{metadata.source}</a>
-      <span>anno: {metadata.year}</span>
-      <span>unità: {metadata.unit}</span>
-      <span>perimetro: {metadata.perimeter}</span>
-    </div>
-    <div className="chart-data-table__scroll" role="region" aria-label={`Tabella: ${label}`} tabIndex={0}>
-      <table>
-        <thead><tr>{columns.map((column) => <th scope="col" key={column.key}>{column.label}</th>)}</tr></thead>
-        <tbody>{rows.map((row, rowIndex) => <tr key={`${String(row[columns[0]?.key ?? "row"])}-${rowIndex}`}>{columns.map((column, columnIndex) => columnIndex === 0 ? <th scope="row" key={column.key}>{String(row[column.key] ?? "n.d.")}</th> : <td key={column.key}>{String(row[column.key] ?? "n.d.")}</td>)}</tr>)}</tbody>
-      </table>
-    </div>
-  </details>
-);
-
-const categoryLabels: Record<string, string> = {
-  "old-age": "vecchiaia",
-  "contributory invalidity": "invalidità contributiva",
-  survivor: "superstiti",
-  indennitarie: "indennitarie",
-  assistenziale: "assistenziale",
+}) => {
+  const { language } = useLanguage();
+  const copy = getChartCopy(language);
+  const appCopy = getAppCopy(language);
+  return (
+    <details className="chart-data-table">
+      <summary>{label}</summary>
+      <div className="chart-data-table__meta">
+        <span className="chart-data-table__truth">{appCopy.truth[metadata.truth]}</span>
+        <a href={metadata.sourceUrl} target={metadata.sourceUrl.startsWith("#") ? undefined : "_blank"} rel={metadata.sourceUrl.startsWith("#") ? undefined : "noreferrer"}>{metadata.source}</a>
+        <span>{copy.common.year}: {metadata.year}</span>
+        <span>{copy.common.unit}: {metadata.unit}</span>
+        <span>{copy.common.scope}: {metadata.perimeter}</span>
+      </div>
+      <div className="chart-data-table__scroll" role="region" aria-label={`${copy.common.table}: ${label}`} tabIndex={0}>
+        <table>
+          <thead><tr>{columns.map((column) => <th scope="col" key={column.key}>{column.label}</th>)}</tr></thead>
+          <tbody>{rows.map((row, rowIndex) => <tr key={`${String(row[columns[0]?.key ?? "row"])}-${rowIndex}`}>{columns.map((column, columnIndex) => columnIndex === 0 ? <th scope="row" key={column.key}>{String(row[column.key] ?? copy.common.unavailable)}</th> : <td key={column.key}>{String(row[column.key] ?? copy.common.unavailable)}</td>)}</tr>)}</tbody>
+        </table>
+      </div>
+    </details>
+  );
 };
 
-const translateBand = (band: string): string => band
-  .replace(/^up to /, "fino a ")
-  .replace(" to ", " - ")
-  .replace("and over", "e oltre");
-
-const internationalMetricLabels: Record<string, string> = {
-  public_pension_expenditure_gdp: "Spesa pubblica per pensioni sul PIL",
-  pension_provider_assets_gdp: "Attività dei gestori pensionistici sul PIL",
-  mandatory_effective_contribution_rate: "Aliquota contributiva obbligatoria effettiva",
-  old_age_dependency_ratio: "Indice di dipendenza degli anziani",
+const truthClass: Record<TruthLabel, string> = {
+  FATTO: "truth-badge--fact",
+  "PROIEZIONE UFFICIALE": "truth-badge--official",
+  "STIMA DEL MODELLO": "truth-badge--model",
+  SCENARIO: "truth-badge--scenario",
+  "ANALOGIA RETORICA": "truth-badge--rhetorical",
 };
 
-const internationalMetricNotes: Record<string, string> = {
-  public_pension_expenditure_gdp: "La definizione OECD copre le prestazioni pubbliche in denaro per vecchiaia e superstiti.",
-  pension_provider_assets_gdp: "Sono attività di schemi finanziati. Non rappresentano il valore delle promesse PAYG.",
-  mandatory_effective_contribution_rate: "Le aliquote sono armonizzate da OECD, ma i perimetri dei sistemi restano diversi.",
-  old_age_dependency_ratio: "È il rapporto tra popolazione di 65 anni e oltre e popolazione tra 15 e 64 anni.",
+const ChartTruthBadge = ({ label }: { label: TruthLabel }) => {
+  const { language } = useLanguage();
+  return <span className={`truth-badge ${truthClass[label]}`}>{getAppCopy(language).truth[label]}</span>;
 };
+
+const translateBand = (band: string, language: Language): string => language === "it"
+  ? band.replace(/^up to /, "fino a ").replace(" to ", " - ").replace("and over", "e oltre")
+  : band;
 
 const chartWidth = 720;
 const chartHeight = 260;
@@ -161,6 +159,8 @@ export const TimelineChart = ({
   retirementAge: number;
   yearsContributed: number;
 }) => {
+  const { language } = useLanguage();
+  const copy = getChartCopy(language).timeline;
   const minAge = Math.max(16, Math.min(careerStartAge, age) - 2);
   const maxAge = Math.max(retirementAge + 2, 70);
   const xForAge = (value: number) => 44 + ((value - minAge) / (maxAge - minAge)) * 632;
@@ -168,56 +168,59 @@ export const TimelineChart = ({
     <div className="chart-shell chart-shell--timeline">
       <div className="chart-heading">
         <div>
-          <span className="eyebrow">Il tuo asse temporale</span>
-          <h3>Dal primo versamento al giorno scelto</h3>
+          <span className="eyebrow">{copy.eyebrow}</span>
+          <h3>{copy.title}</h3>
         </div>
-        <span className="truth-badge truth-badge--scenario">SCENARIO</span>
+        <ChartTruthBadge label="SCENARIO" />
       </div>
-      <svg className="chart-svg" viewBox="0 0 720 178" role="img" aria-label={`Linea temporale da ${careerStartAge} a ${retirementAge} anni`}>
+      <svg className="chart-svg" viewBox="0 0 720 178" role="img" aria-label={`${copy.aria} ${copy.from} ${careerStartAge} ${copy.to} ${retirementAge} ${copy.years}`}>
         <rect className="timeline-track" x="44" y="78" width="632" height="12" rx="6" />
         <rect className="timeline-paid" x="44" y="78" width={Math.max(0, xForAge(age) - 44)} height="12" rx="6" />
         <rect className="timeline-future" x={xForAge(age)} y="78" width={Math.max(0, xForAge(retirementAge) - xForAge(age))} height="12" rx="6" />
         <line className="timeline-marker timeline-marker--start" x1={xForAge(careerStartAge)} x2={xForAge(careerStartAge)} y1="50" y2="108" />
         <line className="timeline-marker timeline-marker--now" x1={xForAge(age)} x2={xForAge(age)} y1="42" y2="116" />
         <line className="timeline-marker timeline-marker--retire" x1={xForAge(retirementAge)} x2={xForAge(retirementAge)} y1="42" y2="116" />
-        <text className="timeline-label" x={xForAge(careerStartAge)} y="34" textAnchor="middle">inizio</text>
-        <text className="timeline-label timeline-label--now" x={xForAge(age)} y="136" textAnchor="middle">oggi, {age}</text>
-        <text className="timeline-label" x={xForAge(retirementAge)} y="34" textAnchor="middle">scelta, {retirementAge}</text>
-        <text className="timeline-small" x="44" y="164">{minAge} anni</text>
-        <text className="timeline-small" x="676" y="164" textAnchor="end">{maxAge} anni</text>
+        <text className="timeline-label" x={xForAge(careerStartAge)} y="34" textAnchor="middle">{copy.start}</text>
+        <text className="timeline-label timeline-label--now" x={xForAge(age)} y="136" textAnchor="middle">{copy.today}, {age}</text>
+        <text className="timeline-label" x={xForAge(retirementAge)} y="34" textAnchor="middle">{copy.selected}, {retirementAge}</text>
+        <text className="timeline-small" x="44" y="164">{minAge} {copy.years}</text>
+        <text className="timeline-small" x="676" y="164" textAnchor="end">{maxAge} {copy.years}</text>
       </svg>
       <div className="timeline-caption">
-        <span><i className="legend-swatch legend-swatch--paid" /> {yearsContributed} anni già indicati</span>
-        <span><i className="legend-swatch legend-swatch--future" /> anni ancora nel modello</span>
+        <span><i className="legend-swatch legend-swatch--paid" /> {yearsContributed} {copy.entered}</span>
+        <span><i className="legend-swatch legend-swatch--future" /> {copy.future}</span>
       </div>
       <DataTable
-        label="Apri i dati della linea temporale"
-        columns={[{ key: "event", label: "Evento" }, { key: "age", label: "Età" }, { key: "meaning", label: "Lettura" }]}
+        label={copy.open}
+        columns={[{ key: "event", label: copy.columns.event }, { key: "age", label: copy.columns.age }, { key: "meaning", label: copy.columns.meaning }]}
         rows={[
-          { event: "Inizio", age: careerStartAge, meaning: "Primo versamento indicato" },
-          { event: "Oggi", age, meaning: `${yearsContributed} anni già indicati` },
-          { event: "Pensione simulata", age: retirementAge, meaning: "Scenario didattico" },
+          { event: copy.rows.start, age: careerStartAge, meaning: copy.rows.first },
+          { event: copy.rows.today, age, meaning: `${yearsContributed} ${copy.entered}` },
+          { event: copy.rows.pension, age: retirementAge, meaning: copy.rows.scenario },
         ]}
-        metadata={{ truth: "SCENARIO", source: "Modello personale locale", sourceUrl: "#fonti", year: "2026", unit: "anni", perimeter: "input controllati, non estratto conto INPS" }}
+        metadata={{ truth: "SCENARIO", source: copy.source, sourceUrl: "#fonti", year: "2026", unit: copy.unit, perimeter: copy.scope }}
       />
     </div>
   );
 };
 
 export const CashFlowChart = ({ rows }: { rows: CashRow[] }) => {
+  const { language } = useLanguage();
+  const copy = getChartCopy(language).cash;
+  const format = useLocalizedFormat();
   const visible = rows.filter((row) => row.year >= 2015);
   const max = Math.max(...visible.map((row) => row.currentRevenueTotal), ...visible.map((row) => row.contributionRevenue)) * 1.08;
   return (
     <div className="chart-shell">
       <div className="chart-heading">
         <div>
-          <span className="eyebrow">Conto osservato</span>
-          <h3>Entrate correnti INPS, senza trucco</h3>
+          <span className="eyebrow">{copy.eyebrow}</span>
+          <h3>{copy.title}</h3>
         </div>
-        <span className="truth-badge truth-badge--fact">FATTO</span>
+        <ChartTruthBadge label="FATTO" />
       </div>
-      <svg className="chart-svg" viewBox={`0 0 ${chartWidth} ${chartHeight}`} role="img" aria-label="Entrate contributive e trasferimenti correnti INPS dal 2015 al 2025">
-        <GridLines min={0} max={max} format={(value) => `${Math.round(value / 1000)} mld`} />
+      <svg className="chart-svg" viewBox={`0 0 ${chartWidth} ${chartHeight}`} role="img" aria-label={copy.aria}>
+        <GridLines min={0} max={max} format={(value) => `${format.number(Math.round(value / 1000), 0)} ${copy.billion}`} />
         {visible.map((row, index) => {
           const x = scaleX(index, visible.length);
           const barWidth = Math.min(54, (chartWidth - pad.left - pad.right) / visible.length - 14);
@@ -233,21 +236,24 @@ export const CashFlowChart = ({ rows }: { rows: CashRow[] }) => {
         })}
       </svg>
       <div className="chart-legend">
-        <span><i className="legend-swatch legend-swatch--accent" /> Contributi</span>
-        <span><i className="legend-swatch legend-swatch--light" /> Entrate correnti totali</span>
+        <span><i className="legend-swatch legend-swatch--accent" /> {copy.contributions}</span>
+        <span><i className="legend-swatch legend-swatch--light" /> {copy.total}</span>
       </div>
       <DataTable
-        label="Apri i dati osservati"
-        columns={[{ key: "year", label: "Anno" }, { key: "contributionRevenue", label: "Contributi, € mln" }, { key: "currentRevenueTotal", label: "Entrate correnti, € mln" }]}
-        rows={visible.map((row) => ({ year: row.year, contributionRevenue: numberIt(row.contributionRevenue, 0), currentRevenueTotal: numberIt(row.currentRevenueTotal, 0) }))}
-        metadata={{ truth: "FATTO", source: "INPS, rendiconto generale 2025", sourceUrl: "https://www.inps.it/content/dam/inps-site/pdf/allegatinews/Relazione_rendiconto_generale_2025.pdf", year: "2015-2025", unit: "milioni di euro", perimeter: "entrate correnti, contributi e trasferimenti INPS" }}
+        label={copy.open}
+        columns={[{ key: "year", label: copy.columns.year }, { key: "contributionRevenue", label: copy.columns.contributions }, { key: "currentRevenueTotal", label: copy.columns.revenue }]}
+        rows={visible.map((row) => ({ year: row.year, contributionRevenue: format.number(row.contributionRevenue, 0), currentRevenueTotal: format.number(row.currentRevenueTotal, 0) }))}
+        metadata={{ truth: "FATTO", source: copy.source, sourceUrl: "https://www.inps.it/content/dam/inps-site/pdf/allegatinews/Relazione_rendiconto_generale_2025.pdf", year: "2015-2025", unit: copy.unit, perimeter: copy.scope }}
       />
-      <ChartNote label="Dati amministrativi osservati, milioni di euro, 2015-2025." detail="Le entrate correnti includono trasferimenti e altre voci. Non sono un bilancio dello Stato." />
+      <ChartNote label={copy.note} detail={copy.detail} />
     </div>
   );
 };
 
 export const SpendingChart = ({ rows }: { rows: SpendingRow[] }) => {
+  const { language } = useLanguage();
+  const copy = getChartCopy(language).spending;
+  const format = useLocalizedFormat();
   const values = rows.map((row) => row.grossPublicPensionExpenditure);
   const max = Math.max(...values) + 1;
   const min = Math.min(...values) - 1;
@@ -258,13 +264,13 @@ export const SpendingChart = ({ rows }: { rows: SpendingRow[] }) => {
     <div className="chart-shell">
       <div className="chart-heading">
         <div>
-          <span className="eyebrow">La traiettoria pubblicata</span>
-          <h3>Spesa pensionistica lorda sul PIL</h3>
+          <span className="eyebrow">{copy.eyebrow}</span>
+          <h3>{copy.title}</h3>
         </div>
-        <span className="truth-badge truth-badge--official">PROIEZIONE UFFICIALE</span>
+        <ChartTruthBadge label="PROIEZIONE UFFICIALE" />
       </div>
-      <svg className="chart-svg" viewBox={`0 0 ${chartWidth} ${chartHeight}`} role="img" aria-label="Proiezione ufficiale della spesa pensionistica lorda italiana sul PIL fino al 2070">
-        <GridLines min={min} max={max} format={(value) => `${numberIt(value, 1)}%`} />
+      <svg className="chart-svg" viewBox={`0 0 ${chartWidth} ${chartHeight}`} role="img" aria-label={copy.aria}>
+        <GridLines min={min} max={max} format={(value) => `${format.number(value, 1)}%`} />
         <path className="line line--red" d={linePath(values, min, max)} />
         {rows.map((row) => {
           const x = chartXForYear(row.year, firstYear, lastYear);
@@ -277,33 +283,36 @@ export const SpendingChart = ({ rows }: { rows: SpendingRow[] }) => {
           );
         })}
         <line className="peak-marker" x1={peakX} x2={peakX} y1={pad.top} y2={chartHeight - pad.bottom} />
-        <text className="peak-label" x={peakX + 8} y={pad.top + 13}>picco 17,3% nel 2036</text>
+        <text className="peak-label" x={peakX + 8} y={pad.top + 13}>{copy.peak}</text>
       </svg>
       <DataTable
-        label="Apri i dati della proiezione"
-        columns={[{ key: "year", label: "Anno" }, { key: "expenditure", label: "Spesa lorda, % PIL" }, { key: "pensionersToWorkers", label: "Pensionati / occupati" }]}
-        rows={rows.map((row) => ({ year: row.year, expenditure: numberIt(row.grossPublicPensionExpenditure, 1), pensionersToWorkers: numberIt(row.pensionersToWorkers, 1) }))}
-        metadata={{ truth: "PROIEZIONE UFFICIALE", source: "Commissione europea, Ageing Report 2024", sourceUrl: "https://economy-finance.ec.europa.eu/document/download/82b762d7-21ce-4992-aa97-888fd2c66205_en?filename=2024-ageing-report-country-fiche-Italy.pdf", year: "2022-2070", unit: "% del PIL", perimeter: "spesa pubblica lorda italiana nel baseline Ageing Report" }}
+        label={copy.open}
+        columns={[{ key: "year", label: copy.columns.year }, { key: "expenditure", label: copy.columns.expenditure }, { key: "pensionersToWorkers", label: copy.columns.ratio }]}
+        rows={rows.map((row) => ({ year: row.year, expenditure: format.number(row.grossPublicPensionExpenditure, 1), pensionersToWorkers: format.number(row.pensionersToWorkers, 1) }))}
+        metadata={{ truth: "PROIEZIONE UFFICIALE", source: copy.source, sourceUrl: "https://economy-finance.ec.europa.eu/document/download/82b762d7-21ce-4992-aa97-888fd2c66205_en?filename=2024-ageing-report-country-fiche-Italy.pdf", year: "2022-2070", unit: copy.unit, perimeter: copy.scope }}
       />
-      <ChartNote label="Baseline Ageing Report, perimetro pubblico, 2022-2070." detail="Il picco è una condizione del modello, non una data di collasso." />
+      <ChartNote label={copy.note} detail={copy.detail} />
     </div>
   );
 };
 
 export const DemographyChart = ({ ageShares, averageAge }: { ageShares: Array<Record<string, number>>; averageAge: Array<Record<string, number>> }) => {
+  const { language } = useLanguage();
+  const copy = getChartCopy(language).demography;
+  const format = useLocalizedFormat();
   const groups = ageShares.slice(0, 2);
   const colors = ["#f2c94c", "#db4a35", "#172d3b"];
   return (
     <div className="chart-shell">
       <div className="chart-heading">
         <div>
-          <span className="eyebrow">Peso demografico</span>
-          <h3>La stessa popolazione, due fotografie</h3>
+          <span className="eyebrow">{copy.eyebrow}</span>
+          <h3>{copy.title}</h3>
         </div>
-        <span className="truth-badge truth-badge--official">PROIEZIONE UFFICIALE</span>
+        <ChartTruthBadge label="PROIEZIONE UFFICIALE" />
       </div>
       <div className="demography-layout">
-        <svg className="chart-svg chart-svg--demography" viewBox="0 0 390 260" role="img" aria-label="Composizione della popolazione italiana per fasce di età nel 2024 e nel 2050">
+        <svg className="chart-svg chart-svg--demography" viewBox="0 0 390 260" role="img" aria-label={copy.aria}>
           {groups.map((group, groupIndex) => {
             const x = 60 + groupIndex * 150;
             const values = [group.age0to14, group.age15to64, group.age65Plus];
@@ -317,7 +326,7 @@ export const DemographyChart = ({ ageShares, averageAge }: { ageShares: Array<Re
                   y += height + 2;
                   return rect;
                 })}
-                <text className="demography-total" x={x + 54} y="250" textAnchor="middle">100% residenti</text>
+                <text className="demography-total" x={x + 54} y="250" textAnchor="middle">100% {copy.residents}</text>
               </g>
             );
           })}
@@ -329,86 +338,95 @@ export const DemographyChart = ({ ageShares, averageAge }: { ageShares: Array<Re
             <span><i className="legend-swatch" style={{ background: colors[2] }} /> 65+</span>
           </div>
           <div className="age-progression">
-            <span>Età media</span>
-            <strong>{numberIt(averageAge[0]?.averageAge ?? 0, 1)} → {numberIt(averageAge.at(-1)?.averageAge ?? 0, 1)} anni</strong>
-            <small>2024 → 2080, scenario mediano Istat</small>
+            <span>{copy.averageAge}</span>
+            <strong>{format.number(averageAge[0]?.averageAge ?? 0, 1)} → {format.number(averageAge.at(-1)?.averageAge ?? 0, 1)} {copy.years}</strong>
+            <small>{copy.median}</small>
           </div>
         </div>
       </div>
       <DataTable
-        label="Apri i dati demografici"
-        columns={[{ key: "year", label: "Anno" }, { key: "age0to14", label: "0-14, %" }, { key: "age15to64", label: "15-64, %" }, { key: "age65Plus", label: "65+, %" }]}
-        rows={groups.map((group) => ({ year: group.year, age0to14: numberIt(group.age0to14, 1), age15to64: numberIt(group.age15to64, 1), age65Plus: numberIt(group.age65Plus, 1) }))}
-        metadata={{ truth: "PROIEZIONE UFFICIALE", source: "Istat, previsioni della popolazione", sourceUrl: "https://www.istat.it/wp-content/uploads/2025/07/Report_Previsioni-della-popolazione-residente-e-delle-famiglie_Base-Base-112024.pdf", year: "2024 e 2050", unit: "% dei residenti", perimeter: "popolazione residente per fascia d'età, scenario mediano" }}
+        label={copy.open}
+        columns={[{ key: "year", label: copy.columns.year }, { key: "age0to14", label: "0-14, %" }, { key: "age15to64", label: "15-64, %" }, { key: "age65Plus", label: "65+, %" }]}
+        rows={groups.map((group) => ({ year: group.year, age0to14: format.number(group.age0to14, 1), age15to64: format.number(group.age15to64, 1), age65Plus: format.number(group.age65Plus, 1) }))}
+        metadata={{ truth: "PROIEZIONE UFFICIALE", source: copy.source, sourceUrl: "https://www.istat.it/wp-content/uploads/2025/07/Report_Previsioni-della-popolazione-residente-e-delle-famiglie_Base-Base-112024.pdf", year: copy.yearsShown, unit: copy.unit, perimeter: copy.scope }}
       />
-      <ChartNote label="Istat, scenario mediano, quote ufficiali 2024 e 2050." detail="La fascia 15-64 è un indicatore demografico, non il numero degli occupati." />
+      <ChartNote label={copy.note} detail={copy.detail} />
     </div>
   );
 };
 
 export const DistributionChart = ({ rows }: { rows: Array<Record<string, number | string>> }) => {
+  const { language } = useLanguage();
+  const copy = getChartCopy(language).distribution;
+  const format = useLocalizedFormat();
   const visible = rows.filter((row) => row.band !== "total");
   return (
     <div className="chart-shell chart-shell--distribution">
       <div className="chart-heading">
         <div>
-          <span className="eyebrow">Distribuzione osservata</span>
-          <h3>Importo basso non significa stessa storia</h3>
+          <span className="eyebrow">{copy.eyebrow}</span>
+          <h3>{copy.title}</h3>
         </div>
-        <span className="truth-badge truth-badge--fact">FATTO</span>
+        <ChartTruthBadge label="FATTO" />
       </div>
-      <div className="distribution-list" role="img" aria-label="Distribuzione delle prestazioni pensionistiche per importo mensile nel 2024">
+      <div className="distribution-list" role="img" aria-label={copy.aria}>
         {visible.map((row) => (
           <div className="distribution-row" key={String(row.band)}>
-            <div className="distribution-label">€ {translateBand(String(row.band))}</div>
+            <div className="distribution-label">€ {translateBand(String(row.band), language)}</div>
             <div className="distribution-bars">
               <div className="distribution-track"><span className="distribution-fill distribution-fill--red" style={{ width: `${Number(row.shareOfBenefits) * 2.5}%` }} /></div>
               <div className="distribution-track"><span className="distribution-fill distribution-fill--blue" style={{ width: `${Number(row.shareOfAmount) * 2.5}%` }} /></div>
             </div>
-            <div className="distribution-values"><span>{percentPoints(Number(row.shareOfBenefits))} prestazioni</span><span>{percentPoints(Number(row.shareOfAmount))} importi</span></div>
+            <div className="distribution-values"><span>{format.percentPoints(Number(row.shareOfBenefits))} {copy.benefits}</span><span>{format.percentPoints(Number(row.shareOfAmount))} {copy.amounts}</span></div>
           </div>
         ))}
       </div>
-      <div className="chart-legend"><span><i className="legend-swatch legend-swatch--red" /> Quota prestazioni</span><span><i className="legend-swatch legend-swatch--blue" /> Quota importi</span></div>
+      <div className="chart-legend"><span><i className="legend-swatch legend-swatch--red" /> {copy.benefitsShare}</span><span><i className="legend-swatch legend-swatch--blue" /> {copy.amountsShare}</span></div>
       <DataTable
-        label="Apri la distribuzione in tabella"
-        columns={[{ key: "band", label: "Fascia mensile" }, { key: "shareOfBenefits", label: "Quota prestazioni" }, { key: "shareOfAmount", label: "Quota importi" }]}
-        rows={visible.map((row) => ({ band: `€ ${translateBand(String(row.band))}`, shareOfBenefits: `${percentPoints(Number(row.shareOfBenefits))}`, shareOfAmount: `${percentPoints(Number(row.shareOfAmount))}` }))}
-        metadata={{ truth: "FATTO", source: "INPS, osservatorio beneficiari 2024", sourceUrl: "https://servizi2.inps.it/servizi/osservatoristatistici/api/getAllegato/?idAllegato=1007", year: "2024", unit: "% di prestazioni e importi annualizzati", perimeter: "prestazioni pensionistiche per fascia mensile, non persone uniche" }}
+        label={copy.open}
+        columns={[{ key: "band", label: copy.columns.band }, { key: "shareOfBenefits", label: copy.columns.benefits }, { key: "shareOfAmount", label: copy.columns.amounts }]}
+        rows={visible.map((row) => ({ band: `€ ${translateBand(String(row.band), language)}`, shareOfBenefits: format.percentPoints(Number(row.shareOfBenefits)), shareOfAmount: format.percentPoints(Number(row.shareOfAmount)) }))}
+        metadata={{ truth: "FATTO", source: copy.source, sourceUrl: "https://servizi2.inps.it/servizi/osservatoristatistici/api/getAllegato/?idAllegato=1007", year: "2024", unit: copy.unit, perimeter: copy.scope }}
       />
-      <ChartNote label="INPS, beneficiari 2024, importi annualizzati in milioni di euro." detail="Una prestazione non è una persona. Le bande non provano né povertà né abuso." />
+      <ChartNote label={copy.note} detail={copy.detail} />
     </div>
   );
 };
 
-export const MultipleBenefitsChart = ({ rows }: { rows: Array<Record<string, number | string>> }) => (
-  <div className="chart-shell chart-shell--multiple">
-    <div className="chart-heading">
-      <div>
-        <span className="eyebrow">Combinazioni</span>
-        <h3>Più prestazioni, non automaticamente un abuso</h3>
-      </div>
-      <span className="truth-badge truth-badge--fact">FATTO</span>
-    </div>
-    <div className="multiple-list" role="img" aria-label="Quota di pensionati con una sola categoria o con più categorie di prestazione">
-      {rows.map((row) => (
-        <div className="multiple-row" key={String(row.category)}>
-          <div className="multiple-label">{categoryLabels[String(row.category)] ?? String(row.category)}</div>
-          <div className="multiple-bar"><span className="multiple-bar__single" style={{ width: `${Number(row.sameTypeOnlyShare)}%` }} /><span className="multiple-bar__combined" style={{ width: `${Number(row.cumulatedShare)}%` }} /></div>
-          <div className="multiple-number">{percentPoints(Number(row.cumulatedShare))} cumulano</div>
+export const MultipleBenefitsChart = ({ rows }: { rows: Array<Record<string, number | string>> }) => {
+  const { language } = useLanguage();
+  const copy = getChartCopy(language).multiple;
+  const format = useLocalizedFormat();
+  const categories = copy.categories as Record<string, string>;
+  return (
+    <div className="chart-shell chart-shell--multiple">
+      <div className="chart-heading">
+        <div>
+          <span className="eyebrow">{copy.eyebrow}</span>
+          <h3>{copy.title}</h3>
         </div>
-      ))}
+        <ChartTruthBadge label="FATTO" />
+      </div>
+      <div className="multiple-list" role="img" aria-label={copy.aria}>
+        {rows.map((row) => (
+          <div className="multiple-row" key={String(row.category)}>
+            <div className="multiple-label">{categories[String(row.category)] ?? String(row.category)}</div>
+            <div className="multiple-bar"><span className="multiple-bar__single" style={{ width: `${Number(row.sameTypeOnlyShare)}%` }} /><span className="multiple-bar__combined" style={{ width: `${Number(row.cumulatedShare)}%` }} /></div>
+            <div className="multiple-number">{format.percentPoints(Number(row.cumulatedShare))} {copy.combined}</div>
+          </div>
+        ))}
+      </div>
+      <div className="chart-legend"><span><i className="legend-swatch legend-swatch--yellow" /> {copy.single}</span><span><i className="legend-swatch legend-swatch--navy" /> {copy.withOther}</span></div>
+      <DataTable
+        label={copy.open}
+        columns={[{ key: "category", label: copy.columns.category }, { key: "sameTypeOnlyShare", label: copy.columns.single }, { key: "cumulatedShare", label: copy.columns.combined }]}
+        rows={rows.map((row) => ({ category: categories[String(row.category)] ?? String(row.category), sameTypeOnlyShare: format.percentPoints(Number(row.sameTypeOnlyShare)), cumulatedShare: format.percentPoints(Number(row.cumulatedShare)) }))}
+        metadata={{ truth: "FATTO", source: copy.source, sourceUrl: "https://servizi2.inps.it/servizi/osservatoristatistici/api/getAllegato/?idAllegato=1007", year: "2024", unit: copy.unit, perimeter: copy.scope }}
+      />
+      <ChartNote label={copy.note} detail={copy.detail} />
     </div>
-    <div className="chart-legend"><span><i className="legend-swatch legend-swatch--yellow" /> Solo tipo</span><span><i className="legend-swatch legend-swatch--navy" /> Con almeno un altro tipo</span></div>
-    <DataTable
-      label="Apri le combinazioni in tabella"
-      columns={[{ key: "category", label: "Categoria" }, { key: "sameTypeOnlyShare", label: "Solo tipo" }, { key: "cumulatedShare", label: "Con altri tipi" }]}
-      rows={rows.map((row) => ({ category: categoryLabels[String(row.category)] ?? String(row.category), sameTypeOnlyShare: `${percentPoints(Number(row.sameTypeOnlyShare))}`, cumulatedShare: `${percentPoints(Number(row.cumulatedShare))}` }))}
-      metadata={{ truth: "FATTO", source: "INPS, osservatorio beneficiari 2024", sourceUrl: "https://servizi2.inps.it/servizi/osservatoristatistici/api/getAllegato/?idAllegato=1007", year: "2024", unit: "% di categorie di beneficiari", perimeter: "categorie sovrapposte, una persona può comparire più volte" }}
-    />
-    <ChartNote label="INPS, osservatorio beneficiari al 31 dicembre 2024." detail="Le righe si sovrappongono: una persona può comparire in più categorie." />
-  </div>
-);
+  );
+};
 
 export const MacroChart = ({
   points,
@@ -419,6 +437,9 @@ export const MacroChart = ({
   baseline: MacroPoint[];
   scenarioBands: { low: MacroPoint[]; central: MacroPoint[]; high: MacroPoint[] };
 }) => {
+  const { language } = useLanguage();
+  const copy = getChartCopy(language).macro;
+  const format = useLocalizedFormat();
   const visible = points.filter((point) => point.year >= 2025 && point.year <= 2050);
   const base = baseline.filter((point) => point.year >= 2025 && point.year <= 2050);
   const low = scenarioBands.low.filter((point) => point.year >= 2025 && point.year <= 2050);
@@ -441,13 +462,13 @@ export const MacroChart = ({
     <div className="chart-shell chart-shell--macro">
       <div className="chart-heading">
         <div>
-          <span className="eyebrow">La leva che scegli</span>
-          <h3>Pressione, aliquota e prestazione nello stesso foglio</h3>
+          <span className="eyebrow">{copy.eyebrow}</span>
+          <h3>{copy.title}</h3>
         </div>
-        <span className="truth-badge truth-badge--model">STIMA DEL MODELLO</span>
+        <ChartTruthBadge label="STIMA DEL MODELLO" />
       </div>
-      <svg className="chart-svg" viewBox={`0 0 ${chartWidth} ${chartHeight}`} role="img" aria-label="Grafico del modello macro con pressione, aliquota PAYG necessaria e sostituzione media proxy">
-        <GridLines min={min} max={max} format={(value) => numberIt(value, 1)} />
+      <svg className="chart-svg" viewBox={`0 0 ${chartWidth} ${chartHeight}`} role="img" aria-label={copy.aria}>
+        <GridLines min={min} max={max} format={(value) => format.number(value, 1)} />
         <path className="scenario-band" d={scenarioBandPath} />
         <path className="line line--muted" d={basePath} />
         <path className="line line--red" d={pressurePath} />
@@ -460,59 +481,66 @@ export const MacroChart = ({
           </g>
         ) : null)}
       </svg>
-      <div className="chart-legend"><span><i className="legend-swatch legend-swatch--band" /> Scenario basso</span><span><i className="legend-swatch legend-swatch--red" /> Scenario centrale</span><span><i className="legend-swatch legend-swatch--band" /> Scenario alto</span><span><i className="legend-swatch legend-swatch--yellow" /> Aliquota necessaria / 20</span><span><i className="legend-swatch legend-swatch--blue" /> Sostituzione media proxy</span></div>
+      <div className="chart-legend"><span><i className="legend-swatch legend-swatch--band" /> {copy.low}</span><span><i className="legend-swatch legend-swatch--red" /> {copy.central}</span><span><i className="legend-swatch legend-swatch--band" /> {copy.high}</span><span><i className="legend-swatch legend-swatch--yellow" /> {copy.rate}</span><span><i className="legend-swatch legend-swatch--blue" /> {copy.replacement}</span></div>
       <DataTable
-        label="Apri i risultati macro in tabella"
-        columns={[{ key: "year", label: "Anno" }, { key: "pressure", label: "Pressione" }, { key: "workers", label: "Occupati / beneficiario" }, { key: "rate", label: "Aliquota necessaria" }, { key: "balance", label: "Bilancio proxy" }, { key: "replacement", label: "Sostituzione proxy" }]}
-        rows={visible.filter((point) => selectedYears.includes(point.year)).map((point) => ({ year: point.year, pressure: numberIt(point.pressureIndex, 2), workers: numberIt(point.workersPerBeneficiary, 2), rate: percentPoints(point.requiredPaygRate * 100), balance: numberIt(point.balanceProxy, 2), replacement: percentPoints(point.benefitReplacementProxy * 100) }))}
-        metadata={{ truth: "STIMA DEL MODELLO", source: "Modello macro locale", sourceUrl: "#fonti", year: "2025-2050", unit: "indici, percentuali e rapporti", perimeter: "proxy di flusso, non bilancio pubblico" }}
+        label={copy.open}
+        columns={[{ key: "year", label: copy.columns.year }, { key: "pressure", label: copy.columns.pressure }, { key: "workers", label: copy.columns.workers }, { key: "rate", label: copy.columns.rate }, { key: "balance", label: copy.columns.balance }, { key: "replacement", label: copy.columns.replacement }]}
+        rows={visible.filter((point) => selectedYears.includes(point.year)).map((point) => ({ year: point.year, pressure: format.number(point.pressureIndex, 2), workers: format.number(point.workersPerBeneficiary, 2), rate: format.percentPoints(point.requiredPaygRate * 100), balance: format.number(point.balanceProxy, 2), replacement: format.percentPoints(point.benefitReplacementProxy * 100) }))}
+        metadata={{ truth: "STIMA DEL MODELLO", source: copy.source, sourceUrl: "#fonti", year: "2025-2050", unit: copy.unit, perimeter: copy.scope }}
       />
-      <ChartNote label="Stima del modello, base 2025, valori indicizzati." detail="La linea gialla è divisa per 20 per stare nello stesso riquadro. Non è un bilancio INPS, né una previsione di contabilità pubblica." />
+      <ChartNote label={copy.note} detail={copy.detail} />
     </div>
   );
 };
 
 export const InternationalBarChart = ({ metric }: { metric: Record<string, any> }) => {
+  const { language } = useLanguage();
+  const copy = getChartCopy(language).international;
+  const format = useLocalizedFormat();
+  const countryNames = copy.countries as Record<string, string>;
+  const metricLabels = copy.metricLabels as Record<string, string>;
+  const metricNotes = copy.metricNotes as Record<string, string>;
   const countries = [
-    ["IT", "Italia"],
-    ["CH", "Svizzera"],
-    ["SE", "Svezia"],
-    ["NL", "Paesi Bassi"],
+    ["IT", countryNames.IT],
+    ["CH", countryNames.CH],
+    ["SE", countryNames.SE],
+    ["NL", countryNames.NL],
   ] as const;
   const values = countries.map(([code]) => Number(metric.values?.[code] ?? 0));
   const max = Math.max(...values) * 1.12;
   const metricId = String(metric.id ?? "");
+  const oecdSource = language === "it" ? "OECD, Panorama delle pensioni 2025" : "OECD, Pensions at a Glance 2025";
   const internationalMetadata: Record<string, DataTableMetadata> = {
-    public_pension_expenditure_gdp: { truth: "FATTO", source: "OECD, Panorama delle pensioni 2025", sourceUrl: "https://www.oecd.org/en/publications/pensions-at-a-glance-2025_e40274c1-en/full-report/public-expenditure-on-pensions_ddc9a2dd.html", year: "2021", unit: "% del PIL", perimeter: "prestazioni pubbliche in denaro per vecchiaia e superstiti" },
-    pension_provider_assets_gdp: { truth: "FATTO", source: "OECD, Panorama delle pensioni 2025", sourceUrl: "https://www.oecd.org/en/publications/pensions-at-a-glance-2025_e40274c1-en/full-report/assets-earmarked-for-retirement_089c3f13.html", year: "2024", unit: "% del PIL", perimeter: "attività di gestori pensionistici in schemi finanziati" },
-    mandatory_effective_contribution_rate: { truth: "FATTO", source: "OECD, Panorama delle pensioni 2025", sourceUrl: "https://www.oecd.org/en/publications/pensions-at-a-glance-2025_e40274c1-en/full-report/mandatory-pension-contributions_3aa18139.html", year: "2024", unit: "% della retribuzione lorda media", perimeter: "aliquota effettiva obbligatoria o quasi obbligatoria" },
-    old_age_dependency_ratio: { truth: "FATTO", source: "Eurostat, indicatore OLDDEP1", sourceUrl: "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_pjanind?format=JSON&lang=en&indic_de=OLDDEP1&geo=IT&geo=NL&geo=SE&geo=CH", year: "2025", unit: "%", perimeter: "residenti di almeno 65 anni rispetto ai residenti tra 15 e 64 anni" },
+    public_pension_expenditure_gdp: { truth: "FATTO", source: oecdSource, sourceUrl: "https://www.oecd.org/en/publications/pensions-at-a-glance-2025_e40274c1-en/full-report/public-expenditure-on-pensions_ddc9a2dd.html", year: "2021", unit: language === "it" ? "% del PIL" : "% of GDP", perimeter: language === "it" ? "prestazioni pubbliche in denaro per vecchiaia e superstiti" : "public cash benefits for old age and survivors" },
+    pension_provider_assets_gdp: { truth: "FATTO", source: oecdSource, sourceUrl: "https://www.oecd.org/en/publications/pensions-at-a-glance-2025_e40274c1-en/full-report/assets-earmarked-for-retirement_089c3f13.html", year: "2024", unit: language === "it" ? "% del PIL" : "% of GDP", perimeter: language === "it" ? "attività di gestori pensionistici in schemi finanziati" : "pension provider assets in funded arrangements" },
+    mandatory_effective_contribution_rate: { truth: "FATTO", source: oecdSource, sourceUrl: "https://www.oecd.org/en/publications/pensions-at-a-glance-2025_e40274c1-en/full-report/mandatory-pension-contributions_3aa18139.html", year: "2024", unit: language === "it" ? "% della retribuzione lorda media" : "% of average gross earnings", perimeter: language === "it" ? "aliquota effettiva obbligatoria o quasi obbligatoria" : "effective mandatory or quasi-mandatory rate" },
+    old_age_dependency_ratio: { truth: "FATTO", source: language === "it" ? "Eurostat, indicatore OLDDEP1" : "Eurostat, OLDDEP1 indicator", sourceUrl: "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/demo_pjanind?format=JSON&lang=en&indic_de=OLDDEP1&geo=IT&geo=NL&geo=SE&geo=CH", year: "2025", unit: "%", perimeter: language === "it" ? "residenti di almeno 65 anni rispetto ai residenti tra 15 e 64 anni" : "residents aged 65 or over relative to residents aged 15 to 64" },
   };
   return (
     <div className="chart-shell chart-shell--international">
       <div className="chart-heading">
         <div>
-          <span className="eyebrow">Confronto armonizzato</span>
-          <h3>{internationalMetricLabels[metricId] ?? String(metric.label)}</h3>
+          <span className="eyebrow">{copy.eyebrow}</span>
+          <h3>{metricLabels[metricId] ?? String(metric.label)}</h3>
         </div>
-        <span className="truth-badge truth-badge--fact">FATTO</span>
+        <ChartTruthBadge label="FATTO" />
       </div>
-      <div className="international-bars" role="img" aria-label={`${internationalMetricLabels[metricId] ?? String(metric.label)}, confronto tra Italia, Svizzera, Svezia e Paesi Bassi`}>
+      <div className="international-bars" role="img" aria-label={`${metricLabels[metricId] ?? String(metric.label)}, ${copy.aria}`}>
         {countries.map(([code, name], index) => (
           <div className={`international-row ${code === "IT" ? "international-row--italy" : ""}`} key={code}>
             <div className="international-name"><strong>{code}</strong><span>{name}</span></div>
             <div className="international-track"><span style={{ width: `${(values[index] / max) * 100}%` }} /></div>
-            <strong className="international-value">{numberIt(values[index], 1)}%</strong>
+            <strong className="international-value">{format.number(values[index], 1)}%</strong>
           </div>
         ))}
       </div>
       <DataTable
-        label="Apri il confronto in tabella"
-        columns={[{ key: "country", label: "Paese" }, { key: "value", label: "Valore" }]}
-        rows={countries.map(([, name], index) => ({ country: name, value: `${numberIt(values[index] ?? 0, 1)}%` }))}
-        metadata={internationalMetadata[metricId] ?? { truth: "FATTO", source: "Fonte comparativa", sourceUrl: "#fonti", year: String(metric.observedYear ?? "non indicato"), unit: String(metric.unit ?? "non indicata"), perimeter: "quattro paesi, definizione indicata dalla fonte" }}
+        label={copy.open}
+        columns={[{ key: "country", label: copy.columns.country }, { key: "value", label: copy.columns.value }]}
+        rows={countries.map(([, name], index) => ({ country: name, value: `${format.number(values[index] ?? 0, 1)}%` }))}
+        metadata={internationalMetadata[metricId] ?? { truth: "FATTO", source: copy.fallbackSource, sourceUrl: "#fonti", year: String(metric.observedYear ?? copy.missingYear), unit: String(metric.unit ?? copy.missingUnit), perimeter: copy.fallbackScope }}
       />
-      <ChartNote label={`OECD, ${String(metric.observedYear)}, comparabilità ${String(metric.comparability) === "high" ? "alta" : String(metric.comparability) === "medium" ? "media" : "bassa"}.`} detail={internationalMetricNotes[metricId] ?? "La definizione è quella indicata dalla fonte."} />
+      <ChartNote label={`OECD, ${String(metric.observedYear)}, ${copy.comparability} ${String(metric.comparability) === "high" ? copy.high : String(metric.comparability) === "medium" ? copy.medium : copy.low}.`} detail={metricNotes[metricId] ?? copy.fallbackNote} />
     </div>
   );
 };

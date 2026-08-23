@@ -1,6 +1,6 @@
 # Il conto della pensione
 
-An Italian-language, one-page editorial explainer for workers aged 20 to 45. It combines verified Italy and international pension data with two transparent browser-local simulators. The visual language is urgent, but the product never turns a conditional projection into a collapse date.
+An Italian and English one-page editorial explainer for workers aged 20 to 45. It combines verified Italy and international pension data with two transparent browser-local simulators. The visual language is urgent, but the product never turns a conditional projection into a collapse date.
 
 ## Run locally
 
@@ -25,8 +25,10 @@ The site loads the untouched JSON packs from `public/data/italy.json` and `publi
 
 - `src/App.tsx` contains the seven-scene narrative and simulator controls.
 - `src/components/Charts.tsx` contains accessible SVG data visualizations.
+- `src/lib/i18n.tsx` owns the persistent language state and document metadata.
+- `src/lib/copy.ts` contains the Italian and English interface copy.
 - `src/lib/simulators.ts` contains the personal and macro formulas.
 - `src/lib/data-integrity.test.ts` checks source links and country scope.
 - `research/` and `public/data/` are source-of-truth inputs and must not be rewritten by the UI.
 
-All public copy is Italian. Source links, truth labels, years, units and perimeter notes are shown near the claims they support.
+The header language control switches all public copy, chart labels, data tables and number formats between Italian and English. The selection stays in browser storage. Source links, truth labels, years, units and scope notes remain beside the claims they support.

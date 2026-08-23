@@ -87,6 +87,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 .mobile-nav, .mobile-nav-label { display: none; }
 
+.language-switch { border: 1px solid rgba(244, 237, 221, .42); display: flex; flex: 0 0 auto; }
+.language-switch button { background: transparent; border: 0; color: rgba(244, 237, 221, .7); font-size: .65rem; font-weight: 900; letter-spacing: .06em; min-height: 44px; min-width: 34px; padding: 0 .45rem; }
+.language-switch button + button { border-left: 1px solid rgba(244, 237, 221, .24); }
+.language-switch button:hover { color: var(--cream); }
+.language-switch button[aria-pressed="true"] { background: var(--cream); color: var(--ink); }
+
 .scene { scroll-margin-top: 72px; }
 
 .section-inner { margin: 0 auto; max-width: var(--max); min-width: 0; padding: clamp(4.5rem, 8vw, 8rem) clamp(1.1rem, 4vw, 3.5rem); position: relative; }
@@ -584,10 +590,11 @@ input[type="range"]::-moz-range-thumb { background: var(--red); border: 3px soli
 }
 
 @media (max-width: 390px) {
-  .site-header { gap: .65rem; }
+  .site-header { gap: .4rem; padding-left: .75rem; padding-right: .75rem; }
   .site-logo { font-size: .58rem; }
   .mobile-nav-label { display: none; }
-  .mobile-nav { max-width: 130px; }
+  .mobile-nav { max-width: 104px; }
+  .language-switch button { min-width: 30px; padding-left: .35rem; padding-right: .35rem; }
   .hero__content { padding-left: 1rem; padding-right: 1rem; }
   .hero h1 { font-size: 3.3rem; }
   .section-inner { padding-left: 1rem; padding-right: 1rem; }

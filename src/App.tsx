@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import {
   CashFlowChart,
@@ -10,8 +10,11 @@ import {
   SpendingChart,
   TimelineChart,
 } from "./components/Charts";
-import { euro, millions, numberIt, percent, percentPoints } from "./lib/format";
+import { useLocalizedFormat } from "./lib/format";
 import { deriveEmploymentContext, type EmploymentContext } from "./lib/employmentContext";
+import { FUNDING_LABELS, getAppCopy, MANDATE_LABELS } from "./lib/copy";
+import { useLanguage } from "./lib/i18n";
+import type { Language } from "./lib/i18n";
 import {
   calculateMacro,
   calculatePersonal,
@@ -30,17 +33,6 @@ import type {
   TruthLabel,
 } from "./lib/types";
 import "./styles.css";
-
-const navItems = [
-  ["alert", "L'allarme", "1"],
-  ["anni", "I tuoi anni", "2"],
-  ["patto", "Il patto", "3"],
-  ["pressione", "La pressione", "4"],
-  ["risultato", "Il risultato", "5"],
-  ["leve", "Le leve", "6"],
-  ["confronto", "Il confronto", "7"],
-  ["fonti", "Fonti", "∞"],
-] as const;
 
 const defaultPersonal: PersonalInputs = {
   age: 32,
@@ -62,53 +54,16 @@ const truthClass: Record<TruthLabel, string> = {
   "ANALOGIA RETORICA": "truth-badge--rhetorical",
 };
 
-const truthText = (label: TruthLabel): string => label;
+const translateFunding = (value: string, language: Language): string => FUNDING_LABELS[language][value] ?? value;
+const translateMandate = (value: string, language: Language): string => MANDATE_LABELS[language][value] ?? value;
 
-const getYear = sourceMetadataLabel;
-
-const pillarLabels: Record<string, string> = {
-  first_pillar: "Primo pilastro pubblico",
-  second_pillar: "Pilastro occupazionale",
-  third_pillar: "Pilastro personale volontario",
-};
-
-const fundingLabels: Record<string, string> = {
-  PAYG: "a ripartizione",
-  "PAYG mixed with NDC transition": "a ripartizione, transizione NDC",
-  "PAYG NDC plus funded premium account": "NDC a ripartizione, conto finanziato",
-  "funded": "finanziato",
-  "funded capitalisation": "capitalizzazione finanziata",
-  "funded, transitioning to defined contribution": "finanziato, verso contributi definiti",
-};
-
-const mandateLabels: Record<string, string> = {
-  mandatory: "obbligatorio",
-  "mandatory public pension": "pensione pubblica obbligatoria",
-  "mandatory above statutory threshold": "obbligatorio sopra la soglia prevista",
-  "broad collective-agreement or employer coverage": "copertura ampia da contratto o datore",
-  "quasi-mandatory where sector or employer arrangement applies": "quasi obbligatorio dove vale un accordo",
-  "compulsory social insurance for insured residents and workers": "assicurazione sociale obbligatoria per residenti e lavoratori assicurati",
-  "generally voluntary": "generalmente volontario",
-  voluntary: "volontario",
-};
-
-const countryNamesItalian: Record<string, string> = { CH: "Svizzera", SE: "Svezia", NL: "Paesi Bassi" };
-const countryDescriptionsItalian: Record<string, string> = {
-  CH: "Tre pilastri: AVS/OASI pubblico a ripartizione, previdenza professionale finanziata sopra la soglia prevista e risparmio individuale volontario.",
-  SE: "Pensione pubblica NDC a ripartizione, premio finanziato, garanzia pubblica e una previdenza occupazionale molto diffusa.",
-  NL: "AOW pubblico a ripartizione, previdenza occupazionale finanziata e prodotti individuali. Il pilastro occupazionale passa verso contributi definiti.",
-};
-
-const translateFunding = (value: string): string => fundingLabels[value] ?? value.replace("funded", "finanziato").replace("PAYG", "a ripartizione");
-const translateMandate = (value: string): string => mandateLabels[value] ?? value;
-
-const formatMetric = (metric: Record<string, unknown>): string => {
+const formatMetric = (metric: Record<string, unknown>, format: ReturnType<typeof useLocalizedFormat>): string => {
   const unit = String(metric.unit ?? "");
   const value = Number(metric.value);
-  if (unit.includes("million")) return millions(value, 1);
-  if (unit.includes("percent")) return percentPoints(value, 1);
-  if (unit === "benefits") return millions(value / 1_000_000, 1);
-  return numberIt(value, 1);
+  if (unit.includes("million")) return format.millions(value, 1);
+  if (unit.includes("percent")) return format.percentPoints(value, 1);
+  if (unit === "benefits") return format.millions(value / 1_000_000, 1);
+  return format.number(value, 1);
 };
 
 const sourceMap = (italy: ItalyData, international: InternationalData): Record<string, Source> => ({
@@ -117,20 +72,23 @@ const sourceMap = (italy: ItalyData, international: InternationalData): Record<s
 });
 
 const SourceChip = ({ id, sources }: { id: string; sources: Record<string, Source> }) => {
+  const { language } = useLanguage();
   const source = sources[id];
   if (!source) return null;
+  const year = sourceMetadataLabel(source, language);
   return (
-    <a className="source-chip" href={source.url} target="_blank" rel="noreferrer" title={`${sourceCardTitle(source)}, ${getYear(source)}`}>
+    <a className="source-chip" href={source.url} target="_blank" rel="noreferrer" title={`${sourceCardTitle(source, language)}, ${year}`}>
       <span className="source-chip__mark" aria-hidden="true">↗</span>
       <span>{source.publisher}</span>
-      <span className="source-chip__year">{getYear(source)}</span>
+      <span className="source-chip__year">{year}</span>
     </a>
   );
 };
 
-const TruthBadge = ({ label }: { label: TruthLabel }) => (
-  <span className={`truth-badge ${truthClass[label]}`}>{truthText(label)}</span>
-);
+const TruthBadge = ({ label }: { label: TruthLabel }) => {
+  const { language } = useLanguage();
+  return <span className={`truth-badge ${truthClass[label]}`}>{getAppCopy(language).truth[label]}</span>;
+};
 
 const SectionKicker = ({ number, label }: { number: string; label: string }) => (
   <div className="section-kicker"><span>{number}</span><strong>{label}</strong></div>
@@ -184,6 +142,8 @@ const Control = ({
   onChange: (value: number) => void;
   help?: string;
 }) => {
+  const { language } = useLanguage();
+  const copy = getAppCopy(language);
   const [draft, setDraft] = useState(() => String(value));
   const [isEditing, setIsEditing] = useState(false);
   const helpId = help ? `${id}-help` : undefined;
@@ -211,7 +171,7 @@ const Control = ({
       <span className="control__head"><label htmlFor={id}>{label}</label><output htmlFor={id}>{display}</output></span>
       <input id={id} type="range" min={min} max={max} step={step} value={value} style={rangeStyle} aria-describedby={helpId} aria-label={label} aria-valuetext={display} onChange={(event) => onChange(Number(event.target.value))} />
       <div className="control__precise">
-        <label htmlFor={`${id}-precise`}>Valore preciso</label>
+        <label htmlFor={`${id}-precise`}>{copy.common.preciseValue}</label>
         <input
           id={`${id}-precise`}
           type="number"
@@ -221,7 +181,7 @@ const Control = ({
           step={step}
           value={draft}
           aria-describedby={helpId}
-          aria-label={`${label}, inserimento numerico`}
+          aria-label={`${label}, ${copy.common.numericEntry}`}
           onBlur={commitDraft}
           onChange={(event) => setDraft(event.target.value)}
           onFocus={() => setIsEditing(true)}
@@ -241,39 +201,57 @@ const StatCard = ({ label, value, note, accent = "red" }: { label: string; value
   </article>
 );
 
-const MethodDetails = ({ title, children }: { title: string; children: ReactNode }) => (
-  <details className="method-details">
-    <summary><span>{title}</span><span className="method-details__toggle">Apri il metodo</span></summary>
-    <div className="method-details__body">{children}</div>
-  </details>
-);
+const MethodDetails = ({ title, children }: { title: string; children: ReactNode }) => {
+  const { language } = useLanguage();
+  return (
+    <details className="method-details">
+      <summary><span>{title}</span><span className="method-details__toggle">{getAppCopy(language).common.openMethod}</span></summary>
+      <div className="method-details__body">{children}</div>
+    </details>
+  );
+};
 
-const LoadingShell = ({ error, retry }: { error: string | null; retry: () => void }) => (
-  <main className="loading-shell" id="contenuto">
-    <div className="brand-line"><span className="brand-mark">/</span><span>IL CONTO DELLA PENSIONE</span></div>
-    <div className="loading-card">
-      <TruthBadge label={error ? "STIMA DEL MODELLO" : "FATTO"} />
-      <h1>{error ? "Il dato non arriva. Il conto resta leggibile." : "Stiamo aprendo i registri."}</h1>
-      <p>{error ?? "Carichiamo i pack pubblici, poi puoi cambiare le leve. Nessun dato personale esce dal tuo browser."}</p>
-      {error ? <button className="button button--red" type="button" onClick={retry}>Riprova</button> : <div className="loading-bar" role="progressbar" aria-label="Caricamento dati" />}
-    </div>
-  </main>
-);
+const LoadingShell = ({ error, retry }: { error: boolean; retry: () => void }) => {
+  const { language } = useLanguage();
+  const copy = getAppCopy(language);
+  return (
+    <main className="loading-shell" id="contenuto">
+      <div className="brand-line"><span className="brand-mark">/</span><span>{copy.loading.brand}</span></div>
+      <div className="loading-card">
+        <TruthBadge label={error ? "STIMA DEL MODELLO" : "FATTO"} />
+        <h1>{error ? copy.loading.errorTitle : copy.loading.title}</h1>
+        <p>{error ? copy.loading.failed : copy.loading.body}</p>
+        {error ? <button className="button button--red" type="button" onClick={retry}>{copy.loading.retry}</button> : <div className="loading-bar" role="progressbar" aria-label={copy.loading.progress} />}
+      </div>
+    </main>
+  );
+};
 
-const Header = ({ activeId, onNavigate }: { activeId: string; onNavigate: (id: string) => void }) => (
-  <header className="site-header">
-    <a className="site-logo" href="#alert" aria-label="Torna all'inizio"><span className="site-logo__mark">/</span><span>IL CONTO<br />DELLA PENSIONE</span></a>
-    <nav className="desktop-nav" aria-label="Navigazione narrativa">
-      {navItems.map(([id, label, number]) => <a className={activeId === id ? "is-active" : ""} href={`#${id}`} aria-current={activeId === id ? "location" : undefined} key={id}><span>{number}</span>{label}</a>)}
-    </nav>
-    <label className="mobile-nav-label" htmlFor="mobile-nav">Vai a una sezione</label>
-    <select id="mobile-nav" className="mobile-nav" value={activeId} aria-label="Vai a una sezione" onChange={(event) => onNavigate(event.target.value)}>
-      {navItems.map(([id, label]) => <option value={id} key={id}>{label}</option>)}
-    </select>
-  </header>
-);
+const Header = ({ activeId, onNavigate }: { activeId: string; onNavigate: (id: string) => void }) => {
+  const { language, setLanguage } = useLanguage();
+  const copy = getAppCopy(language);
+  return (
+    <header className="site-header">
+      <a className="site-logo" href="#alert" aria-label={copy.header.home}><span className="site-logo__mark">/</span><span>{copy.header.brandTop}<br />{copy.header.brandBottom}</span></a>
+      <nav className="desktop-nav" aria-label={copy.header.navigation}>
+        {copy.nav.map(({ id, label, number }) => <a className={activeId === id ? "is-active" : ""} href={`#${id}`} aria-current={activeId === id ? "location" : undefined} key={id}><span>{number}</span>{label}</a>)}
+      </nav>
+      <label className="mobile-nav-label" htmlFor="mobile-nav">{copy.header.mobileLabel}</label>
+      <select id="mobile-nav" className="mobile-nav" value={activeId} aria-label={copy.header.mobileLabel} onChange={(event) => onNavigate(event.target.value)}>
+        {copy.nav.map(({ id, mobileLabel }) => <option value={id} key={id}>{mobileLabel}</option>)}
+      </select>
+      <div className="language-switch" role="group" aria-label={copy.header.language}>
+        <button type="button" lang="it" aria-label={copy.header.italian} aria-pressed={language === "it"} onClick={() => setLanguage("it")}>IT</button>
+        <button type="button" lang="en" aria-label={copy.header.english} aria-pressed={language === "en"} onClick={() => setLanguage("en")}>EN</button>
+      </div>
+    </header>
+  );
+};
 
 const Hero = ({ italy, sources }: { italy: ItalyData; sources: Record<string, Source> }) => {
+  const { language } = useLanguage();
+  const copy = getAppCopy(language);
+  const format = useLocalizedFormat();
   const findMetric = (id: string) => italy.headlineMetrics.find((metric) => metric.id === id);
   const currentBenefits = findMetric("inps_current_benefits");
   const peak = findMetric("public_pension_expenditure_peak");
@@ -281,19 +259,19 @@ const Hero = ({ italy, sources }: { italy: ItalyData; sources: Record<string, So
   return (
     <section className="hero scene" id="alert" aria-labelledby="hero-title">
       <div className="hero__content">
-        <div className="alert-strip"><span className="alert-strip__signal" /> Nessun conto alla rovescia. Il problema è già nel flusso.</div>
-        <div className="hero__eyebrow"><span className="hero__slash">/</span> DATI, SCENARI, COMPROMESSI <span className="hero__date">aggiornato al 23 agosto 2026</span></div>
-        <h1 id="hero-title">La pensione non esplode.<br /><em>Si restringe,</em> busta paga dopo busta paga.</h1>
+        <div className="alert-strip"><span className="alert-strip__signal" /> {copy.hero.alert}</div>
+        <div className="hero__eyebrow"><span className="hero__slash">/</span> {copy.hero.eyebrow} <span className="hero__date">{copy.hero.updated}</span></div>
+        <h1 id="hero-title">{copy.hero.titleStart}<br /><em>{copy.hero.titleEmphasis}</em> {copy.hero.titleEnd}</h1>
         <div className="hero__bottom">
           <div>
-            <p className="hero__lead">Non serve indovinare il giorno del disastro. Serve capire chi versa, chi riceve e quali regole spostano il conto.</p>
-            <div className="truth-line"><TruthBadge label="ANALOGIA RETORICA" /><span>La frase è una provocazione editoriale, non una previsione.</span></div>
-            <a className="button button--cream" href="#anni">Scorri il conto <span aria-hidden="true">↓</span></a>
+            <p className="hero__lead">{copy.hero.lead}</p>
+            <div className="truth-line"><TruthBadge label="ANALOGIA RETORICA" /><span>{copy.hero.rhetorical}</span></div>
+            <a className="button button--cream" href="#anni">{copy.hero.cta} <span aria-hidden="true">↓</span></a>
           </div>
-          <div className="hero__facts" role="group" aria-label="Tre fatti di contesto">
-            <MetricCard value={currentBenefits ? formatMetric(currentBenefits) : "n.d."} label="prestazioni INPS in vigore" note="Contate come prestazioni, non come persone." truth="FATTO" sourceId="inps_observatory_2026" sources={sources} />
-            <MetricCard value={peak ? formatMetric(peak) : "n.d."} label="picco spesa pubblica sul PIL" note="Baseline Ageing Report, anno 2036." truth="PROIEZIONE UFFICIALE" sourceId="ec_ageing_2024_italy" sources={sources} />
-            <MetricCard value={population ? formatMetric(population) : "n.d."} label="residenti nello scenario Istat 2050" note="Scenario mediano, milioni di persone." truth="PROIEZIONE UFFICIALE" sourceId="istat_population_2025" sources={sources} />
+          <div className="hero__facts" role="group" aria-label={copy.hero.factsAria}>
+            <MetricCard value={currentBenefits ? formatMetric(currentBenefits, format) : copy.common.notAvailable} label={copy.hero.benefitsLabel} note={copy.hero.benefitsNote} truth="FATTO" sourceId="inps_observatory_2026" sources={sources} />
+            <MetricCard value={peak ? formatMetric(peak, format) : copy.common.notAvailable} label={copy.hero.peakLabel} note={copy.hero.peakNote} truth="PROIEZIONE UFFICIALE" sourceId="ec_ageing_2024_italy" sources={sources} />
+            <MetricCard value={population ? formatMetric(population, format) : copy.common.notAvailable} label={copy.hero.populationLabel} note={copy.hero.populationNote} truth="PROIEZIONE UFFICIALE" sourceId="istat_population_2025" sources={sources} />
           </div>
         </div>
       </div>
@@ -314,6 +292,9 @@ const PersonalScene = ({
   announcedResult: ReturnType<typeof calculatePersonal>;
   sources: Record<string, Source>;
 }) => {
+  const { language } = useLanguage();
+  const copy = getAppCopy(language);
+  const format = useLocalizedFormat();
   const change = (key: keyof PersonalInputs, value: number) => {
     setPersonal((previous) => {
       const next = { ...previous, [key]: value };
@@ -331,39 +312,39 @@ const PersonalScene = ({
   return (
     <section className="scene section section--cream" id="anni" aria-labelledby="anni-title">
       <div className="section-inner">
-        <SectionKicker number="01" label="I tuoi anni" />
+        <SectionKicker number="01" label={copy.personal.kicker} />
         <div className="section-heading section-heading--split">
-          <div><h2 id="anni-title">Il tuo futuro non arriva a 67 anni.<br /><em>Comincia dal primo versamento.</em></h2></div>
-          <div><TruthBadge label="SCENARIO" /><p className="section-intro">Metti cinque numeri nel conto. Il risultato è un assegno simulato in euro costanti 2026, non il tuo estratto conto INPS.</p></div>
+          <div><h2 id="anni-title">{copy.personal.titleStart}<br /><em>{copy.personal.titleEmphasis}</em></h2></div>
+          <div><TruthBadge label="SCENARIO" /><p className="section-intro">{copy.personal.intro}</p></div>
         </div>
         <div className="personal-grid">
           <div className="panel panel--dark personal-controls">
-            <div className="panel-heading"><span className="eyebrow eyebrow--light">Input personali</span><div className="panel-heading__actions"><span className="panel-status">calcolo locale</span><button className="reset-button reset-button--light" type="button" onClick={() => setPersonal(() => ({ ...defaultPersonal }))}>reset</button></div></div>
-            <Control id="personal-age" label="Quanti anni hai?" value={personal.age} min={18} max={64} step={1} display={`${personal.age} anni`} onChange={(value) => change("age", value)} />
-            <Control id="personal-salary" label="Quanto guadagni lordi?" value={personal.grossSalaryAnnualReal} min={12_000} max={100_000} step={500} display={euro(personal.grossSalaryAnnualReal)} onChange={(value) => change("grossSalaryAnnualReal", value)} help="Euro costanti 2026, prima di imposte e contributi." />
-            <Control id="personal-career" label="A che età hai iniziato a versare?" value={personal.careerStartAge} min={16} max={personal.age} step={1} display={`${personal.careerStartAge} anni`} onChange={(value) => change("careerStartAge", value)} />
-            <Control id="personal-years" label="Anni di contributi già indicati" value={personal.contributionYearsToDate} min={0} max={Math.max(0, personal.age - personal.careerStartAge)} step={1} display={`${personal.contributionYearsToDate} anni`} onChange={(value) => change("contributionYearsToDate", value)} />
-            <Control id="personal-growth" label="Crescita reale annua dello stipendio" value={personal.salaryGrowthReal} min={-0.02} max={0.04} step={0.001} display={percent(personal.salaryGrowthReal, 1)} onChange={(value) => change("salaryGrowthReal", value)} help="È una scelta di scenario, non una promessa di carriera." />
-            <details className="advanced-controls"><summary>Ipotesi avanzate</summary>
-              <Control id="personal-retirement" label="Età di pensionamento simulata" value={personal.retirementAge} min={personal.age + 1} max={75} step={1} display={`${personal.retirementAge} anni`} onChange={(value) => change("retirementAge", value)} help="La regola ordinaria INPS è 67 anni nel 2026. Il futuro può cambiare." />
-              <Control id="personal-rate" label="Aliquota contributiva" value={personal.contributionRate} min={0.2} max={0.45} step={0.005} display={percent(personal.contributionRate, 1)} onChange={(value) => change("contributionRate", value)} />
-              <Control id="personal-benefit" label="Fattore della prestazione pubblica" value={personal.publicBenefitFactor} min={0.6} max={1.2} step={0.01} display={numberIt(personal.publicBenefitFactor, 2)} onChange={(value) => change("publicBenefitFactor", value)} />
-              <Control id="personal-funded" label="Quota di contribuzione finanziata" value={personal.fundedShare} min={0} max={0.4} step={0.01} display={percent(personal.fundedShare, 0)} onChange={(value) => change("fundedShare", value)} />
+            <div className="panel-heading"><span className="eyebrow eyebrow--light">{copy.personal.inputs}</span><div className="panel-heading__actions"><span className="panel-status">{copy.personal.local}</span><button className="reset-button reset-button--light" type="button" onClick={() => setPersonal(() => ({ ...defaultPersonal }))}>{copy.common.reset}</button></div></div>
+            <Control id="personal-age" label={copy.personal.age} value={personal.age} min={18} max={64} step={1} display={`${personal.age} ${copy.common.years}`} onChange={(value) => change("age", value)} />
+            <Control id="personal-salary" label={copy.personal.salary} value={personal.grossSalaryAnnualReal} min={12_000} max={100_000} step={500} display={format.euro(personal.grossSalaryAnnualReal)} onChange={(value) => change("grossSalaryAnnualReal", value)} help={copy.personal.salaryHelp} />
+            <Control id="personal-career" label={copy.personal.career} value={personal.careerStartAge} min={16} max={personal.age} step={1} display={`${personal.careerStartAge} ${copy.common.years}`} onChange={(value) => change("careerStartAge", value)} />
+            <Control id="personal-years" label={copy.personal.contributed} value={personal.contributionYearsToDate} min={0} max={Math.max(0, personal.age - personal.careerStartAge)} step={1} display={`${personal.contributionYearsToDate} ${copy.common.years}`} onChange={(value) => change("contributionYearsToDate", value)} />
+            <Control id="personal-growth" label={copy.personal.growth} value={personal.salaryGrowthReal} min={-0.02} max={0.04} step={0.001} display={format.percent(personal.salaryGrowthReal, 1)} onChange={(value) => change("salaryGrowthReal", value)} help={copy.personal.growthHelp} />
+            <details className="advanced-controls"><summary>{copy.personal.advanced}</summary>
+              <Control id="personal-retirement" label={copy.personal.retirement} value={personal.retirementAge} min={personal.age + 1} max={75} step={1} display={`${personal.retirementAge} ${copy.common.years}`} onChange={(value) => change("retirementAge", value)} help={copy.personal.retirementHelp} />
+              <Control id="personal-rate" label={copy.personal.rate} value={personal.contributionRate} min={0.2} max={0.45} step={0.005} display={format.percent(personal.contributionRate, 1)} onChange={(value) => change("contributionRate", value)} />
+              <Control id="personal-benefit" label={copy.personal.benefit} value={personal.publicBenefitFactor} min={0.6} max={1.2} step={0.01} display={format.number(personal.publicBenefitFactor, 2)} onChange={(value) => change("publicBenefitFactor", value)} />
+              <Control id="personal-funded" label={copy.personal.funded} value={personal.fundedShare} min={0} max={0.4} step={0.01} display={format.percent(personal.fundedShare, 0)} onChange={(value) => change("fundedShare", value)} />
             </details>
           </div>
           <div className="personal-output">
             <TimelineChart age={personal.age} careerStartAge={personal.careerStartAge} retirementAge={personal.retirementAge} yearsContributed={personal.contributionYearsToDate} />
             <div className="result-lead">
-              <div aria-hidden="true"><span className="eyebrow">Output locale, aggiornato ora</span><p>Con queste ipotesi, l'assegno simulato sarebbe</p><strong>{euro(result.monthlyPension)} <small>al mese</small></strong><span className="result-lead__annual">{euro(result.annualPension)} lordi all'anno, in euro costanti 2026</span></div>
-              <span className="sr-only" aria-live="polite" aria-atomic="true">Output aggiornato: assegno simulato di {euro(announcedResult.monthlyPension)} al mese, {euro(announcedResult.annualPension)} lordi all'anno.</span>
+              <div aria-hidden="true"><span className="eyebrow">{copy.personal.output}</span><p>{copy.personal.outputLead}</p><strong>{format.euro(result.monthlyPension)} <small>{copy.personal.perMonth}</small></strong><span className="result-lead__annual">{format.euro(result.annualPension)} {copy.personal.grossAnnual}</span></div>
+              <span className="sr-only" aria-live="polite" aria-atomic="true">{copy.personal.liveStart} {format.euro(announcedResult.monthlyPension)} {copy.personal.liveMiddle}, {format.euro(announcedResult.annualPension)} {copy.personal.liveEnd}</span>
             </div>
             <SourceLine sourceIds={["inps_retirement_age", "ec_ageing_2024_italy"]} sources={sources} />
           </div>
         </div>
-        <MethodDetails title="Le ipotesi del calcolo personale">
-          <p><TruthBadge label="STIMA DEL MODELLO" /> Il modello somma i versamenti pubblici e una quota finanziata separata. Trasforma il saldo in una rendita reale su 22 anni. Il rendimento finanziato ipotizzato è del 3% reale annuo.</p>
-          <p>Non calcola tasse, commissioni, reversibilità, invalidità, minimi, carriere discontinue o coefficienti INPS. La crescita prima dell'anno corrente è ricostruita a ritroso dal tuo stipendio dichiarato. È un dispositivo didattico.</p>
-          <code>pensione = fattore pubblico × saldo pubblico / 22 + saldo finanziato × rendita al 3%</code>
+        <MethodDetails title={copy.personal.methodTitle}>
+          <p><TruthBadge label="STIMA DEL MODELLO" /> {copy.personal.methodOne}</p>
+          <p>{copy.personal.methodTwo}</p>
+          <code>{copy.personal.formula}</code>
         </MethodDetails>
       </div>
     </section>
@@ -371,35 +352,40 @@ const PersonalScene = ({
 };
 
 const PactScene = ({ italy, employmentContext, sources }: { italy: ItalyData; employmentContext: EmploymentContext | null; sources: Record<string, Source> }) => {
+  const { language } = useLanguage();
+  const copy = getAppCopy(language);
+  const format = useLocalizedFormat();
   const cashRows = italy.cashFlow.annualCurrentRevenueHistory as Array<Record<string, number>>;
   const latest = italy.cashFlow.latest2025 as Record<string, number>;
+  const employmentUnit = language === "it" ? employmentContext?.unit : "million people, source value in thousands";
+  const employmentScope = language === "it" ? employmentContext?.perimeter : "employment in the Ageing Report baseline, not INPS contributors";
   return (
     <section className="scene section section--ink" id="patto" aria-labelledby="patto-title">
       <div className="section-inner">
-        <SectionKicker number="02" label="Il patto" />
+        <SectionKicker number="02" label={copy.pact.kicker} />
         <div className="section-heading section-heading--split section-heading--light">
-          <div><h2 id="patto-title">Ogni pensione futura dipende da redditi, lavoro e regole che ancora <em>non conosciamo.</em></h2></div>
-          <div><TruthBadge label="STIMA DEL MODELLO" /><p className="section-intro">Il PAYG non è un salvadanaio personale. I contributi di oggi finanziano le prestazioni di oggi, dentro conti pubblici più ampi.</p></div>
+          <div><h2 id="patto-title">{copy.pact.titleStart} <em>{copy.pact.titleEmphasis}</em></h2></div>
+          <div><TruthBadge label="STIMA DEL MODELLO" /><p className="section-intro">{copy.pact.intro}</p></div>
         </div>
         <div className="pact-grid">
           <CashFlowChart rows={cashRows as any} />
           <div className="pact-side">
             <div className="flow-card">
-              <div className="flow-card__from"><span className="flow-number">{employmentContext ? numberIt(employmentContext.valueMillions, 3) : "n.d."}</span><span>milioni di occupati<br /><small>{employmentContext ? `baseline Ageing Report, ${employmentContext.year}` : "dato non disponibile nel pack"}</small></span></div>
-              {employmentContext ? <div className="employment-source-meta"><span>sourceId: {employmentContext.sourceId}</span><span>unità: {employmentContext.unit}</span><span>perimetro: {employmentContext.perimeter}</span><SourceChip id={employmentContext.sourceId} sources={sources} /></div> : null}
+              <div className="flow-card__from"><span className="flow-number">{employmentContext ? format.number(employmentContext.valueMillions, 3) : copy.common.notAvailable}</span><span>{copy.pact.workers}<br /><small>{employmentContext ? `${copy.pact.baseline}, ${employmentContext.year}` : copy.pact.noData}</small></span></div>
+              {employmentContext ? <div className="employment-source-meta"><span>{copy.pact.sourceId}: {employmentContext.sourceId}</span><span>{copy.pact.unit}: {employmentUnit}</span><span>{copy.pact.scope}: {employmentScope}</span><SourceChip id={employmentContext.sourceId} sources={sources} /></div> : null}
               <div className="flow-arrow" aria-hidden="true">↓</div>
-              <div className="flow-card__to"><span className="flow-number">16,3</span><span>milioni di pensionati<br /><small>beneficiari unici, 2024</small></span></div>
-              <div className="flow-warning"><TruthBadge label="STIMA DEL MODELLO" /><p>È un rapporto orientativo. Le due serie non hanno la stessa definizione statistica.</p></div>
+              <div className="flow-card__to"><span className="flow-number">{format.number(16.3, 1)}</span><span>{copy.pact.pensioners}<br /><small>{copy.pact.unique}</small></span></div>
+              <div className="flow-warning"><TruthBadge label="STIMA DEL MODELLO" /><p>{copy.pact.ratioNote}</p></div>
             </div>
-            <div className="fact-note"><TruthBadge label="FATTO" /><strong>{euro(latest.contributionRevenue * 1_000_000, true)} di contributi nel 2025</strong><p>Le prestazioni pensionistiche INPS registrate nel bilancio sono {euro(latest.pensionOutlays * 1_000_000, true)}. Confrontare due righe non equivale a calcolare un disavanzo.</p><SourceLine sourceIds={["inps_budget_2025"]} sources={sources} /></div>
+            <div className="fact-note"><TruthBadge label="FATTO" /><strong>{format.euro(latest.contributionRevenue * 1_000_000, true)} {copy.pact.contributions}</strong><p>{copy.pact.outlaysStart} {format.euro(latest.pensionOutlays * 1_000_000, true)}. {copy.pact.outlaysEnd}</p><SourceLine sourceIds={["inps_budget_2025"]} sources={sources} /></div>
           </div>
         </div>
-        <div className="rule-strip"><div><span className="eyebrow eyebrow--light">Regola osservata</span><strong>Vecchiaia ordinaria: 67 anni e 20 di contributi nel 2026</strong></div><div><span className="eyebrow eyebrow--light">Prossimi scatti</span><strong>67 anni e 1 mese nel 2027, 67 anni e 3 mesi nel 2028</strong></div><SourceChip id="inps_requirements_2026" sources={sources} /></div>
-        <MethodDetails title="Perché il patto è più grande del grafico">
-          <p>Il bilancio INPS usa conti di competenza. Dentro ci sono trasferimenti statali, assistenza e più gestioni. La storia sopra serve a leggere il flusso, non a sostituire i conti nazionali.</p>
-          <p>La formula contributiva italiana capitalizza i contributi a un tasso legato alla crescita nominale del PIL e applica coefficienti legati a mortalità e speranza di vita. Le regole miste dipendono dalla storia contributiva.</p>
+        <div className="rule-strip"><div><span className="eyebrow eyebrow--light">{copy.pact.observedRule}</span><strong>{copy.pact.observedRuleText}</strong></div><div><span className="eyebrow eyebrow--light">{copy.pact.nextSteps}</span><strong>{copy.pact.nextStepsText}</strong></div><SourceChip id="inps_requirements_2026" sources={sources} /></div>
+        <MethodDetails title={copy.pact.methodTitle}>
+          <p>{copy.pact.methodOne}</p>
+          <p>{copy.pact.methodTwo}</p>
           <SourceLine sourceIds={["ec_ageing_2024_italy", "inps_budget_2025"]} sources={sources} />
-          <p className="method-footnote">Nel grafico: entrate correnti totali, contributi e trasferimenti. Anni e unità restano visibili nelle etichette della fonte.</p>
+          <p className="method-footnote">{copy.pact.footnote}</p>
         </MethodDetails>
       </div>
     </section>
@@ -407,6 +393,9 @@ const PactScene = ({ italy, employmentContext, sources }: { italy: ItalyData; em
 };
 
 const PressureScene = ({ italy, sources }: { italy: ItalyData; sources: Record<string, Source> }) => {
+  const { language } = useLanguage();
+  const copy = getAppCopy(language);
+  const format = useLocalizedFormat();
   const spendingRows = italy.spendingProjection.baselineByYear as Array<Record<string, number>>;
   const ageShares = italy.demography.istatAgeShares as Array<Record<string, number>>;
   const averageAge = italy.demography.istatAverageAge as Array<Record<string, number>>;
@@ -414,23 +403,23 @@ const PressureScene = ({ italy, sources }: { italy: ItalyData; sources: Record<s
   return (
     <section className="scene section section--sand" id="pressione" aria-labelledby="pressione-title">
       <div className="section-inner">
-        <SectionKicker number="03" label="La pressione" />
+        <SectionKicker number="03" label={copy.pressure.kicker} />
         <div className="section-heading section-heading--split">
-          <div><h2 id="pressione-title">Meno persone in età lavorativa.<br /><em>Più persone fuori dal lavoro.</em></h2></div>
-          <div><TruthBadge label="PROIEZIONE UFFICIALE" /><p className="section-intro">È una traiettoria pubblicata, non una profezia. Cambia se cambiano nascite, migrazioni, occupazione, produttività e regole.</p></div>
+          <div><h2 id="pressione-title">{copy.pressure.titleStart}<br /><em>{copy.pressure.titleEmphasis}</em></h2></div>
+          <div><TruthBadge label="PROIEZIONE UFFICIALE" /><p className="section-intro">{copy.pressure.intro}</p></div>
         </div>
         <div className="pressure-grid">
           <DemographyChart ageShares={ageShares} averageAge={averageAge} />
           <SpendingChart rows={spendingRows as any} />
         </div>
         <div className="pressure-band">
-          <div><span className="eyebrow">Il punto più alto nel baseline</span><strong>{numberIt(peak.grossPublicPensionExpenditure, 1)}% del PIL</strong><span>anno {peak.year}, spesa pubblica lorda</span></div>
-          <div><span className="eyebrow">Quello che il grafico non dice</span><strong>non c'è una data magica</strong><span>un modello condizionale non è un conto alla rovescia</span></div>
+          <div><span className="eyebrow">{copy.pressure.peak}</span><strong>{format.number(peak.grossPublicPensionExpenditure, 1)}% {copy.pressure.gdp}</strong><span>{language === "it" ? "anno" : "year"} {peak.year}, {copy.pressure.peakNote}</span></div>
+          <div><span className="eyebrow">{copy.pressure.omission}</span><strong>{copy.pressure.noDate}</strong><span>{copy.pressure.noCountdown}</span></div>
           <SourceLine sourceIds={["ec_ageing_2024_italy", "istat_population_2025"]} sources={sources} />
         </div>
-        <MethodDetails title="Leggere una proiezione senza trasformarla in profezia">
-          <p>Il baseline Ageing Report raggiunge il picco di spesa lorda nel 2036 e poi scende nel suo percorso di policy. Istat, con un'altra popolazione di base e un altro modello, porta i residenti a 54,7 milioni nel 2050 nello scenario mediano.</p>
-          <p>Le bande di incertezza Istat per il 2050 vanno da 52,5 a 56,8 milioni. Sono scenari ufficiali, non probabilità su cui puntare una data.</p>
+        <MethodDetails title={copy.pressure.methodTitle}>
+          <p>{copy.pressure.methodOne}</p>
+          <p>{copy.pressure.methodTwo}</p>
           <SourceLine sourceIds={["ec_ageing_2024_italy", "istat_population_2025"]} sources={sources} />
         </MethodDetails>
       </div>
@@ -439,6 +428,9 @@ const PressureScene = ({ italy, sources }: { italy: ItalyData; sources: Record<s
 };
 
 const ResultScene = ({ personal, result, macroPoint, italy, sources }: { personal: PersonalInputs; result: ReturnType<typeof calculatePersonal>; macroPoint: ReturnType<typeof interpolateMacroPoint>; italy: ItalyData; sources: Record<string, Source> }) => {
+  const { language } = useLanguage();
+  const copy = getAppCopy(language);
+  const format = useLocalizedFormat();
   const distribution = italy.amountDistribution.benefitsByMonthlyAmount2024 as Array<Record<string, number | string>>;
   const multiple = italy.multipleBenefits.categories as Array<Record<string, number | string>>;
   const comparisonAges = [25, 35, 45];
@@ -452,30 +444,30 @@ const ResultScene = ({ personal, result, macroPoint, italy, sources }: { persona
   return (
     <section className="scene section section--cream" id="risultato" aria-labelledby="risultato-title">
       <div className="section-inner">
-        <SectionKicker number="04" label="Il risultato" />
+        <SectionKicker number="04" label={copy.result.kicker} />
         <div className="section-heading section-heading--split">
-          <div><h2 id="risultato-title">Adesso metti il tuo numero<br /><em>nel conto.</em></h2></div>
-          <div><TruthBadge label="STIMA DEL MODELLO" /><p className="section-intro">Un output leggibile vale più di un numero urlato. Qui vedi anche cosa resta fuori.</p></div>
+          <div><h2 id="risultato-title">{copy.result.titleStart}<br /><em>{copy.result.titleEmphasis}</em></h2></div>
+          <div><TruthBadge label="STIMA DEL MODELLO" /><p className="section-intro">{copy.result.intro}</p></div>
         </div>
         <div className="result-grid">
-          <StatCard label="Pensione annua simulata" value={euro(result.annualPension)} note={`${euro(result.monthlyPension)} al mese, conversione su 12 mesi`} accent="red" />
-          <StatCard label="Tasso di sostituzione lordo" value={percent(result.replacementRatio, 1)} note={`su uno stipendio finale di ${euro(result.finalSalary)}`} accent="navy" />
-          <StatCard label="Contributo annuo oggi" value={euro(result.annualContributionToday)} note={`${percent(personal.contributionRate, 1)} dello stipendio lordo`} accent="yellow" />
-          <StatCard label="Versamenti simulati" value={euro(result.totalContributions)} note={`${euro(result.publicContributions)} pubblici, ${euro(result.fundedContributions)} finanziati`} accent="navy" />
-          <StatCard label={`Pressione al tuo anno, ${result.retirementYear}`} value={numberIt(macroPoint.pressureIndex, 2)} note="Indice del modello macro, base 2025 = 1,00" accent="red" />
+          <StatCard label={copy.result.annualPension} value={format.euro(result.annualPension)} note={`${format.euro(result.monthlyPension)} ${copy.result.monthConversion}`} accent="red" />
+          <StatCard label={copy.result.replacement} value={format.percent(result.replacementRatio, 1)} note={`${copy.result.finalSalary} ${format.euro(result.finalSalary)}`} accent="navy" />
+          <StatCard label={copy.result.annualContribution} value={format.euro(result.annualContributionToday)} note={`${format.percent(personal.contributionRate, 1)} ${copy.result.grossSalary}`} accent="yellow" />
+          <StatCard label={copy.result.simulatedPayments} value={format.euro(result.totalContributions)} note={`${format.euro(result.publicContributions)} ${copy.result.public}, ${format.euro(result.fundedContributions)} ${copy.result.funded}`} accent="navy" />
+          <StatCard label={`${copy.result.pressureAtYear}, ${result.retirementYear}`} value={format.number(macroPoint.pressureIndex, 2)} note={copy.result.pressureNote} accent="red" />
         </div>
         <div className="generation-compare">
-          <div className="compare-title"><span className="eyebrow">Confronto controllato</span><h3>Stesse ipotesi, età diverse</h3><p>Non sono tre persone reali. Cambia solo l'età e il tempo residuo, mentre stipendio, carriera e leve restano leggibili.</p></div>
-          {comparison.map(({ age, result: ageResult }) => <div className={`compare-cell ${age === personal.age ? "compare-cell--active" : ""}`} key={age}><span>{age} anni</span><strong>{euro(ageResult.monthlyPension)}</strong><small>al mese simulati<br />ritiro a {ageResult.retirementYear}</small></div>)}
+          <div className="compare-title"><span className="eyebrow">{copy.result.controlled}</span><h3>{copy.result.sameInputs}</h3><p>{copy.result.comparisonNote}</p></div>
+          {comparison.map(({ age, result: ageResult }) => <div className={`compare-cell ${age === personal.age ? "compare-cell--active" : ""}`} key={age}><span>{age} {copy.common.years}</span><strong>{format.euro(ageResult.monthlyPension)}</strong><small>{copy.result.simulatedMonthly}<br />{copy.result.retirement} {ageResult.retirementYear}</small></div>)}
         </div>
         <div className="distribution-grid">
           <DistributionChart rows={distribution} />
           <MultipleBenefitsChart rows={multiple} />
         </div>
-        <div className="callout callout--yellow"><strong>Un importo alto è una distribuzione, non una sentenza.</strong><span>Le combinazioni tra vecchiaia, reversibilità, invalidità e assistenza possono essere previste dalle regole. I dati non dimostrano da soli un abuso.</span><SourceLine sourceIds={["inps_beneficiaries_2024", "inps_observatory_2026"]} sources={sources} /></div>
-        <MethodDetails title="I limiti da tenere accanto al risultato">
-          <p>Il risultato non si chiama pensione INPS perché non ricostruisce la tua posizione, la tua gestione, la fiscalità o la storia dei contributi. È un scenario didattico in euro costanti 2026.</p>
-          <p>Il dato INPS 2024 distingue 16,306 milioni di beneficiari unici da 23,015 milioni di prestazioni. Le bande di importo descrivono unità diverse e non si possono sommare senza controllare l'overlap.</p>
+        <div className="callout callout--yellow"><strong>{copy.result.calloutTitle}</strong><span>{copy.result.calloutBody}</span><SourceLine sourceIds={["inps_beneficiaries_2024", "inps_observatory_2026"]} sources={sources} /></div>
+        <MethodDetails title={copy.result.methodTitle}>
+          <p>{copy.result.methodOne}</p>
+          <p>{copy.result.methodTwo}</p>
           <SourceLine sourceIds={["inps_beneficiaries_2024"]} sources={sources} />
         </MethodDetails>
       </div>
@@ -484,6 +476,9 @@ const ResultScene = ({ personal, result, macroPoint, italy, sources }: { persona
 };
 
 const MacroScene = ({ macro, setMacro, points, baseline, announcedPoints, employmentContext, sources }: { macro: MacroInputs; setMacro: (updater: (previous: MacroInputs) => MacroInputs) => void; points: ReturnType<typeof calculateMacro>; baseline: ReturnType<typeof calculateMacro>; announcedPoints: ReturnType<typeof calculateMacro>; employmentContext: EmploymentContext | null; sources: Record<string, Source> }) => {
+  const { language } = useLanguage();
+  const copy = getAppCopy(language);
+  const format = useLocalizedFormat();
   const update = (key: keyof MacroInputs, value: number) => setMacro((previous) => ({ ...previous, [key]: value }));
   const reset = () => setMacro(() => ({ ...DEFAULT_MACRO_INPUTS }));
   const preset = (name: string) => {
@@ -521,49 +516,51 @@ const MacroScene = ({ macro, setMacro, points, baseline, announcedPoints, employ
     const retirementYear = MODEL_BASE_YEAR + Math.max(0, macro.retirementAge - age);
     return { age, retirementYear, point: interpolateMacroPoint(points, retirementYear) };
   });
+  const employmentUnit = language === "it" ? employmentContext?.unit : "million people, source value in thousands";
+  const employmentScope = language === "it" ? employmentContext?.perimeter : "employment in the Ageing Report baseline, not INPS contributors";
   return (
     <section className="scene section section--red" id="leve" aria-labelledby="leve-title">
       <div className="section-inner">
-        <SectionKicker number="05" label="Le leve" />
+        <SectionKicker number="05" label={copy.macro.kicker} />
         <div className="section-heading section-heading--split section-heading--light">
-          <div><h2 id="leve-title">Sposta una leva.<br /><em>Guarda quale prezzo compare.</em></h2></div>
-          <div><TruthBadge label="ANALOGIA RETORICA" /><p className="section-intro">Questo simulatore non predice. Tiene ferme le altre variabili e mostra la direzione di un compromesso.</p></div>
+          <div><h2 id="leve-title">{copy.macro.titleStart}<br /><em>{copy.macro.titleEmphasis}</em></h2></div>
+          <div><TruthBadge label="ANALOGIA RETORICA" /><p className="section-intro">{copy.macro.intro}</p></div>
         </div>
-        <div className="macro-presets" role="group" aria-label="Scenari preimpostati"><span>Scorciatoie:</span><button type="button" aria-pressed={isDefaultScenario} onClick={() => reset()}>Scenario di partenza</button><button type="button" aria-pressed={matches({ employmentGrowth: 0.005, netMigration: 250_000 })} onClick={() => preset("workers")}>Più persone al lavoro</button><button type="button" aria-pressed={matches({ productivityGrowthReal: 0.02 })} onClick={() => preset("output")}>Più valore per ora</button><button type="button" aria-pressed={matches({ retirementAge: 70 })} onClick={() => preset("later")}>Tre anni in più</button><button type="button" aria-pressed={matches({ fundedShare: 0.2 })} onClick={() => preset("funded")}>Più capitale, più transizione</button></div>
+        <div className="macro-presets" role="group" aria-label={copy.macro.presetsAria}><span>{copy.macro.shortcuts}</span><button type="button" aria-pressed={isDefaultScenario} onClick={() => reset()}>{copy.macro.start}</button><button type="button" aria-pressed={matches({ employmentGrowth: 0.005, netMigration: 250_000 })} onClick={() => preset("workers")}>{copy.macro.workers}</button><button type="button" aria-pressed={matches({ productivityGrowthReal: 0.02 })} onClick={() => preset("output")}>{copy.macro.output}</button><button type="button" aria-pressed={matches({ retirementAge: 70 })} onClick={() => preset("later")}>{copy.macro.later}</button><button type="button" aria-pressed={matches({ fundedShare: 0.2 })} onClick={() => preset("funded")}>{copy.macro.funded}</button></div>
         <div className="macro-grid">
           <div className="panel panel--cream macro-controls">
-            <div className="panel-heading"><span className="eyebrow">Leve visibili</span><button className="reset-button" type="button" onClick={reset}>reset</button></div>
-            <Control id="macro-employment" label="Crescita annua dell'occupazione" value={macro.employmentGrowth} min={-0.02} max={0.02} step={0.001} display={percent(macro.employmentGrowth, 1)} onChange={(value) => update("employmentGrowth", value)} />
-            <Control id="macro-migration" label="Migrazione netta nel bacino di lavoro" value={macro.netMigration} min={-200_000} max={400_000} step={10_000} display={`${numberIt(macro.netMigration / 1_000, 0)} mila/anno`} onChange={(value) => update("netMigration", value)} />
-            <Control id="macro-productivity" label="Crescita reale della produttività" value={macro.productivityGrowthReal} min={-0.01} max={0.03} step={0.001} display={percent(macro.productivityGrowthReal, 1)} onChange={(value) => update("productivityGrowthReal", value)} />
-            <Control id="macro-retirement" label="Età media di pensionamento simulata" value={macro.retirementAge} min={60} max={75} step={1} display={`${macro.retirementAge} anni`} onChange={(value) => update("retirementAge", value)} help="La sensibilità dell'occupazione è una scelta del modello." />
-            <Control id="macro-rate" label="Aliquota contributiva" value={macro.contributionRate} min={0.2} max={0.45} step={0.005} display={percent(macro.contributionRate, 1)} onChange={(value) => update("contributionRate", value)} />
-            <Control id="macro-benefit" label="Fattore della prestazione" value={macro.benefitFactor} min={0.7} max={1.2} step={0.01} display={numberIt(macro.benefitFactor, 2)} onChange={(value) => update("benefitFactor", value)} />
-            <Control id="macro-indexation" label="Quota crescita trasferita alle prestazioni" value={macro.indexationPassThrough} min={0} max={1.25} step={0.05} display={numberIt(macro.indexationPassThrough, 2)} onChange={(value) => update("indexationPassThrough", value)} />
-            <Control id="macro-funded" label="Quota finanziata" value={macro.fundedShare} min={0} max={0.4} step={0.01} display={percent(macro.fundedShare, 0)} onChange={(value) => update("fundedShare", value)} help="Devia il flusso corrente nel modello. Non sostituisce subito le prestazioni PAYG." />
+            <div className="panel-heading"><span className="eyebrow">{copy.macro.visible}</span><button className="reset-button" type="button" onClick={reset}>{copy.common.reset}</button></div>
+            <Control id="macro-employment" label={copy.macro.employment} value={macro.employmentGrowth} min={-0.02} max={0.02} step={0.001} display={format.percent(macro.employmentGrowth, 1)} onChange={(value) => update("employmentGrowth", value)} />
+            <Control id="macro-migration" label={copy.macro.migration} value={macro.netMigration} min={-200_000} max={400_000} step={10_000} display={`${format.number(macro.netMigration / 1_000, 0)} ${copy.macro.thousandYear}`} onChange={(value) => update("netMigration", value)} />
+            <Control id="macro-productivity" label={copy.macro.productivity} value={macro.productivityGrowthReal} min={-0.01} max={0.03} step={0.001} display={format.percent(macro.productivityGrowthReal, 1)} onChange={(value) => update("productivityGrowthReal", value)} />
+            <Control id="macro-retirement" label={copy.macro.retirement} value={macro.retirementAge} min={60} max={75} step={1} display={`${macro.retirementAge} ${copy.common.years}`} onChange={(value) => update("retirementAge", value)} help={copy.macro.retirementHelp} />
+            <Control id="macro-rate" label={copy.macro.rate} value={macro.contributionRate} min={0.2} max={0.45} step={0.005} display={format.percent(macro.contributionRate, 1)} onChange={(value) => update("contributionRate", value)} />
+            <Control id="macro-benefit" label={copy.macro.benefit} value={macro.benefitFactor} min={0.7} max={1.2} step={0.01} display={format.number(macro.benefitFactor, 2)} onChange={(value) => update("benefitFactor", value)} />
+            <Control id="macro-indexation" label={copy.macro.indexation} value={macro.indexationPassThrough} min={0} max={1.25} step={0.05} display={format.number(macro.indexationPassThrough, 2)} onChange={(value) => update("indexationPassThrough", value)} />
+            <Control id="macro-funded" label={copy.macro.fundedShare} value={macro.fundedShare} min={0} max={0.4} step={0.01} display={format.percent(macro.fundedShare, 0)} onChange={(value) => update("fundedShare", value)} help={copy.macro.fundedHelp} />
           </div>
           <div className="macro-output">
             <MacroChart points={points} baseline={baseline} scenarioBands={{ low: lowScenario, central: points, high: highScenario }} />
-            <div className="macro-checkpoints">{checkpoint.map((point) => <div className="macro-checkpoint" key={point.year}><span>{point.year}</span><strong>{numberIt(point.pressureIndex, 2)}</strong><small>pressione<br />base = 1,00</small><b>{percent(point.requiredPaygRate, 1)}</b><small>aliquota necessaria</small></div>)}</div>
+            <div className="macro-checkpoints">{checkpoint.map((point) => <div className="macro-checkpoint" key={point.year}><span>{point.year}</span><strong>{format.number(point.pressureIndex, 2)}</strong><small>{copy.macro.pressure}<br />{copy.macro.base}</small><b>{format.percent(point.requiredPaygRate, 1)}</b><small>{copy.macro.requiredRate}</small></div>)}</div>
             <div className="macro-output-grid">
-              <div className="macro-output-card"><span>Pressione del sistema</span><strong>{numberIt(at2050?.pressureIndex ?? 0, 2)}</strong><small>2050, indice base 2025 = 1,00</small></div>
-              <div className="macro-output-card"><span>Occupati per beneficiario</span><strong>{numberIt(at2050?.workersPerBeneficiary ?? 0, 2)}</strong><small>proxy nel 2050</small></div>
-              <div className="macro-output-card"><span>Aliquota PAYG necessaria</span><strong>{percent(at2050?.requiredPaygRate ?? 0, 1)}</strong><small>monte salari modellato</small></div>
-              <div className="macro-output-card"><span>Bilancio di flusso proxy</span><strong>{numberIt(at2050?.balanceProxy ?? 0, 2)}</strong><small>1,00 significa flussi uguali</small></div>
-              <div className="macro-output-card"><span>Sostituzione media proxy</span><strong>{percent(at2050?.benefitReplacementProxy ?? 0, 1)}</strong><small>prestazione / salario</small></div>
-              <div className="macro-output-card"><span>Flusso finanziato</span><strong>{euro(at2050?.fundedContributionFlow ?? 0, true)}</strong><small>{percent(macro.fundedShare, 0)} dei contributi</small></div>
+              <div className="macro-output-card"><span>{copy.macro.systemPressure}</span><strong>{format.number(at2050?.pressureIndex ?? 0, 2)}</strong><small>{copy.macro.systemPressureNote}</small></div>
+              <div className="macro-output-card"><span>{copy.macro.workersPerBeneficiary}</span><strong>{format.number(at2050?.workersPerBeneficiary ?? 0, 2)}</strong><small>{copy.macro.proxy2050}</small></div>
+              <div className="macro-output-card"><span>{copy.macro.paygRate}</span><strong>{format.percent(at2050?.requiredPaygRate ?? 0, 1)}</strong><small>{copy.macro.wageBill}</small></div>
+              <div className="macro-output-card"><span>{copy.macro.flowBalance}</span><strong>{format.number(at2050?.balanceProxy ?? 0, 2)}</strong><small>{copy.macro.equalFlows}</small></div>
+              <div className="macro-output-card"><span>{copy.macro.averageReplacement}</span><strong>{format.percent(at2050?.benefitReplacementProxy ?? 0, 1)}</strong><small>{copy.macro.benefitWage}</small></div>
+              <div className="macro-output-card"><span>{copy.macro.fundedFlow}</span><strong>{format.euro(at2050?.fundedContributionFlow ?? 0, true)}</strong><small>{format.percent(macro.fundedShare, 0)} {copy.macro.ofContributions}</small></div>
             </div>
-            <div className="macro-bands"><span className="eyebrow">Banda di scenario al 2050</span><div><span><i className="legend-swatch legend-swatch--band" /> Basso <strong>{numberIt(scenario2050.low?.pressureIndex ?? 0, 2)}</strong></span><span><i className="legend-swatch legend-swatch--red" /> Centrale <strong>{numberIt(scenario2050.central?.pressureIndex ?? 0, 2)}</strong></span><span><i className="legend-swatch legend-swatch--blue" /> Alto <strong>{numberIt(scenario2050.high?.pressureIndex ?? 0, 2)}</strong></span></div><small>La banda varia occupazione di ±0,5 punti, migrazione di ±50 mila persone, crescita dei beneficiari di ±0,2 punti e produttività di ±0,5 punti. Non è una distribuzione di probabilità.</small></div>
-            <div className="macro-generational"><div className="macro-generational__heading"><span className="eyebrow">Confronto generazionale</span><span>stessa politica, anni di ritiro diversi</span></div>{cohortRows.map(({ age, retirementYear, point }) => <div className="macro-generational__row" key={age}><strong>{age} anni</strong><span>ritiro {retirementYear}</span><span>{numberIt(point.pressureIndex, 2)} pressione</span><span>{numberIt(point.workersPerBeneficiary, 2)} occupati / beneficiario</span><span>{percent(point.benefitReplacementProxy, 1)} sostituzione</span></div>)}</div>
-            <div className="macro-readout"><TruthBadge label="STIMA DEL MODELLO" /><strong>Nel 2050, con queste leve, il flusso copre {percent(at2050?.balanceProxy ?? 0, 0)} della spesa modellata.</strong><p>Pressione, aliquota, sostituzione e bilancio sono proxy. Non sono la contabilità dello Stato.</p></div>
-            <span className="sr-only" aria-live="polite" aria-atomic="true">Simulatore macro aggiornato: pressione {numberIt(announcedAt2050.pressureIndex, 2)}, aliquota PAYG necessaria {percent(announcedAt2050.requiredPaygRate, 1)}, sostituzione media {percent(announcedAt2050.benefitReplacementProxy, 1)} nel 2050.</span>
+            <div className="macro-bands"><span className="eyebrow">{copy.macro.band}</span><div><span><i className="legend-swatch legend-swatch--band" /> {copy.macro.low} <strong>{format.number(scenario2050.low?.pressureIndex ?? 0, 2)}</strong></span><span><i className="legend-swatch legend-swatch--red" /> {copy.macro.central} <strong>{format.number(scenario2050.central?.pressureIndex ?? 0, 2)}</strong></span><span><i className="legend-swatch legend-swatch--blue" /> {copy.macro.high} <strong>{format.number(scenario2050.high?.pressureIndex ?? 0, 2)}</strong></span></div><small>{copy.macro.bandNote}</small></div>
+            <div className="macro-generational"><div className="macro-generational__heading"><span className="eyebrow">{copy.macro.generational}</span><span>{copy.macro.samePolicy}</span></div>{cohortRows.map(({ age, retirementYear, point }) => <div className="macro-generational__row" key={age}><strong>{age} {copy.common.years}</strong><span>{copy.macro.retirementShort} {retirementYear}</span><span>{format.number(point.pressureIndex, 2)} {copy.macro.pressure}</span><span>{format.number(point.workersPerBeneficiary, 2)} {copy.macro.workerShort}</span><span>{format.percent(point.benefitReplacementProxy, 1)} {copy.macro.replacementShort}</span></div>)}</div>
+            <div className="macro-readout"><TruthBadge label="STIMA DEL MODELLO" /><strong>{copy.macro.readoutStart} {format.percent(at2050?.balanceProxy ?? 0, 0)} {copy.macro.readoutEnd}</strong><p>{copy.macro.readoutNote}</p></div>
+            <span className="sr-only" aria-live="polite" aria-atomic="true">{copy.macro.liveStart} {format.number(announcedAt2050.pressureIndex, 2)}, {copy.macro.liveRate} {format.percent(announcedAt2050.requiredPaygRate, 1)}, {copy.macro.liveReplacement} {format.percent(announcedAt2050.benefitReplacementProxy, 1)} 2050.</span>
           </div>
         </div>
-        <div className="transition-note"><span className="transition-note__mark">!</span><div><strong>La quota finanziata non cancella il PAYG domani mattina.</strong><p>Se una parte dei contributi correnti va in un conto finanziato, le promesse PAYG già maturate restano da pagare. Per la transizione serve un'altra fonte di finanziamento: più imposte, più debito, più spesa pubblica o un passaggio graduale.</p><SourceLine sourceIds={["oecd_pensions_outlook_2022_transition", "world_bank_transition_costs"]} sources={sources} /></div></div>
-        <MethodDetails title="Formula e limiti del modello macro">
-          <p><TruthBadge label="STIMA DEL MODELLO" /> La calibrazione usa una base occupazionale come proxy. Il riferimento ufficiale disponibile nel pack è {employmentContext ? `${numberIt(employmentContext.valueMillions, 3)} milioni nel ${employmentContext.year}` : "non disponibile"}, in {employmentContext?.unit ?? "unità non indicata"}, per il perimetro {employmentContext?.perimeter ?? "non indicato"}. Beneficiari e reddito pensionistico annualizzato hanno serie e definizioni diverse.</p>
-          <code>E(t+1) = E(t) × (1 + crescita occupazione) + migrazione<br />pressione = (beneficiari / occupati) / rapporto di base<br />aliquota PAYG necessaria = uscite modellate / monte salari</code>
-          <p>L'età di pensionamento modifica occupati e beneficiari con elasticità didattiche fissate dal modello. Non sono elasticità ufficiali. Gli scenari non hanno probabilità.</p>
+        <div className="transition-note"><span className="transition-note__mark">!</span><div><strong>{copy.macro.transitionTitle}</strong><p>{copy.macro.transitionBody}</p><SourceLine sourceIds={["oecd_pensions_outlook_2022_transition", "world_bank_transition_costs"]} sources={sources} /></div></div>
+        <MethodDetails title={copy.macro.methodTitle}>
+          <p><TruthBadge label="STIMA DEL MODELLO" /> {copy.macro.methodStart} {employmentContext ? `${format.number(employmentContext.valueMillions, 3)} ${copy.common.million} ${language === "it" ? "nel" : "in"} ${employmentContext.year}` : copy.macro.unavailable}, {copy.macro.inUnit} {employmentUnit ?? copy.macro.unitMissing}, {copy.macro.forScope} {employmentScope ?? copy.macro.scopeMissing}. {copy.macro.methodEnd}</p>
+          <code>{copy.macro.formula.split("\n").map((line, index, lines) => <span key={line}>{line}{index < lines.length - 1 ? <br /> : null}</span>)}</code>
+          <p>{copy.macro.elasticity}</p>
           <SourceLine sourceIds={["ec_ageing_2024_italy", "inps_beneficiaries_2024", "inps_budget_2025"]} sources={sources} />
         </MethodDetails>
       </div>
@@ -572,20 +569,25 @@ const MacroScene = ({ macro, setMacro, points, baseline, announcedPoints, employ
 };
 
 const ComparisonScene = ({ international, sources }: { international: InternationalData; sources: Record<string, Source> }) => {
+  const { language } = useLanguage();
+  const copy = getAppCopy(language);
   const publicExpenditure = international.comparableMetrics.find((metric) => metric.id === "public_pension_expenditure_gdp") as Record<string, any>;
   const fundedAssets = international.comparableMetrics.find((metric) => metric.id === "pension_provider_assets_gdp") as Record<string, any>;
   const contributionRates = international.comparableMetrics.find((metric) => metric.id === "mandatory_effective_contribution_rate") as Record<string, any>;
   const dependency = international.comparableMetrics.find((metric) => metric.id === "old_age_dependency_ratio") as Record<string, any>;
   const pillarRows = international.pillarMatrix.rows;
   const countryOrder = ["IT", "CH", "SE", "NL"];
-  const countryNames: Record<string, string> = { IT: "Italia", CH: "Svizzera", SE: "Svezia", NL: "Paesi Bassi" };
+  const countryNames = copy.comparison.countryNames as Record<string, string>;
+  const countryDescriptions = copy.comparison.countryDescriptions as Record<string, string>;
+  const countryLines = copy.comparison.countryLines as Record<string, { title: string; body: string }>;
+  const pillarLabels = copy.comparison.pillarLabels as Record<string, string>;
   return (
     <section className="scene section section--ink" id="confronto" aria-labelledby="confronto-title">
       <div className="section-inner">
-        <SectionKicker number="06" label="Il confronto" />
+        <SectionKicker number="06" label={copy.comparison.kicker} />
         <div className="section-heading section-heading--split section-heading--light">
-          <div><h2 id="confronto-title">Tre paesi.<br /><em>Tre modi di distribuire il rischio.</em></h2></div>
-          <div><TruthBadge label="ANALOGIA RETORICA" /><p className="section-intro">Non c'è un paese con il pulsante "risolto". Ci sono pilastri diversi, regole diverse e rischi spostati in posti diversi.</p></div>
+          <div><h2 id="confronto-title">{copy.comparison.titleStart}<br /><em>{copy.comparison.titleEmphasis}</em></h2></div>
+          <div><TruthBadge label="ANALOGIA RETORICA" /><p className="section-intro">{copy.comparison.intro}</p></div>
         </div>
         <div className="comparison-charts">
           <InternationalBarChart metric={publicExpenditure} />
@@ -594,54 +596,60 @@ const ComparisonScene = ({ international, sources }: { international: Internatio
           <InternationalBarChart metric={dependency} />
         </div>
         <div className="pillar-matrix-wrap">
-          <div className="matrix-heading"><span className="eyebrow eyebrow--light">Architetture, non classifiche</span><h3>Chi paga cosa</h3><p>Il primo pilastro svizzero è PAYG. Gli asset enormi appartengono soprattutto al secondo pilastro finanziato.</p></div>
-          <p className="scroll-hint" id="pillar-scroll-hint">Su schermi stretti, scorri orizzontalmente per confrontare tutti i paesi.</p>
-          <div className="pillar-matrix" role="table" aria-label="Confronto dei pilastri pensionistici" aria-describedby="pillar-scroll-hint" tabIndex={0}>
-            <div className="pillar-matrix__row pillar-matrix__row--head" role="row"><div role="columnheader">Pilastro</div>{countryOrder.map((code) => <div role="columnheader" key={code}>{countryNames[code]}</div>)}</div>
-            {pillarRows.slice(0, 3).map((row) => <div className="pillar-matrix__row" role="row" key={String(row.id)}><div role="rowheader"><strong>{pillarLabels[String(row.id)] ?? String(row.label)}</strong></div>{countryOrder.map((code) => { const value = row.values?.[code]; const funding = String(value?.funding ?? ""); return <div role="cell" key={code}><span className={`funding-pill funding-pill--${funding.includes("funded") ? "funded" : "payg"}`}>{translateFunding(funding)}</span><small>{translateMandate(String(value?.mandate ?? ""))}</small><SourceChip id={String(value?.sourceIds?.[0] ?? "")} sources={sources} /></div>; })}</div>)}
+          <div className="matrix-heading"><span className="eyebrow eyebrow--light">{copy.comparison.architectures}</span><h3>{copy.comparison.whoPays}</h3><p>{copy.comparison.matrixIntro}</p></div>
+          <p className="scroll-hint" id="pillar-scroll-hint">{copy.comparison.scroll}</p>
+          <div className="pillar-matrix" role="table" aria-label={copy.comparison.tableAria} aria-describedby="pillar-scroll-hint" tabIndex={0}>
+            <div className="pillar-matrix__row pillar-matrix__row--head" role="row"><div role="columnheader">{copy.comparison.pillar}</div>{countryOrder.map((code) => <div role="columnheader" key={code}>{countryNames[code]}</div>)}</div>
+            {pillarRows.slice(0, 3).map((row) => <div className="pillar-matrix__row" role="row" key={String(row.id)}><div role="rowheader"><strong>{pillarLabels[String(row.id)] ?? String(row.label)}</strong></div>{countryOrder.map((code) => { const value = row.values?.[code]; const funding = String(value?.funding ?? ""); return <div role="cell" key={code}><span className={`funding-pill funding-pill--${funding.includes("funded") ? "funded" : "payg"}`}>{translateFunding(funding, language)}</span><small>{translateMandate(String(value?.mandate ?? ""), language)}</small><SourceChip id={String(value?.sourceIds?.[0] ?? "")} sources={sources} /></div>; })}</div>)}
           </div>
         </div>
-        <div className="country-cards">{["CH", "SE", "NL"].map((code) => { const country = international.countries[code]; return <article className="country-card" key={code}><div className="country-card__code">{code}</div><h3>{countryNamesItalian[code]}</h3><p>{countryDescriptionsItalian[code]}</p><div className="country-card__line"><strong>{code === "CH" ? "Primo pilastro a ripartizione" : code === "SE" ? "Bilanciamento automatico" : "AOW separata dal pilastro finanziato"}</strong><span>{code === "CH" ? "Le contribuzioni correnti vanno ai pensionati correnti." : code === "SE" ? "L'indice di equilibrio riduce l'indicizzazione se passività e attività divergono." : "La legge del 2023 porta i fondi verso contributi definiti entro il 2028."}</span></div><SourceLine sourceIds={country.sourceIds?.slice(0, 2) ?? []} sources={sources} /></article>; })}</div>
-        <div className="transition-note transition-note--dark"><span className="transition-note__mark">+</span><div><strong>Il caso svizzero corregge un equivoco comune.</strong><p>Un sistema può avere grandi asset finanziati e mantenere un primo pilastro pubblico a ripartizione. Passare da PAYG a finanziato può aumentare il capitale nel tempo, ma nel passaggio crea un buco da finanziare. Non è magia contabile.</p><SourceLine sourceIds={["bsv_ch_oasi_payg", "bsv_ch_occupational_funding", "oecd_pensions_outlook_2022_transition"]} sources={sources} /></div></div>
-        <div className="final-checkpoint"><div><SectionKicker number="07" label="La chiusura" /><h2>Nessuna data magica.<br /><em>Solo pressione misurabile.</em></h2></div><div><p>Puoi cambiare il modello. Non puoi farlo diventare una profezia. Il punto della pensione è distribuire un rischio lungo decenni, non indovinare un giorno sul calendario.</p><a className="button button--cream" href="#fonti">Vedi fonti e metodo <span aria-hidden="true">↓</span></a></div></div>
+        <div className="country-cards">{["CH", "SE", "NL"].map((code) => { const country = international.countries[code]; return <article className="country-card" key={code}><div className="country-card__code">{code}</div><h3>{countryNames[code]}</h3><p>{countryDescriptions[code]}</p><div className="country-card__line"><strong>{countryLines[code]?.title}</strong><span>{countryLines[code]?.body}</span></div><SourceLine sourceIds={country.sourceIds?.slice(0, 2) ?? []} sources={sources} /></article>; })}</div>
+        <div className="transition-note transition-note--dark"><span className="transition-note__mark">+</span><div><strong>{copy.comparison.swissTitle}</strong><p>{copy.comparison.swissBody}</p><SourceLine sourceIds={["bsv_ch_oasi_payg", "bsv_ch_occupational_funding", "oecd_pensions_outlook_2022_transition"]} sources={sources} /></div></div>
+        <div className="final-checkpoint"><div><SectionKicker number="07" label={copy.comparison.closing} /><h2>{copy.comparison.closingTitle}<br /><em>{copy.comparison.closingEmphasis}</em></h2></div><div><p>{copy.comparison.closingBody}</p><a className="button button--cream" href="#fonti">{copy.comparison.sourcesCta} <span aria-hidden="true">↓</span></a></div></div>
       </div>
     </section>
   );
 };
 
-const SourcesSection = ({ sources }: { sources: Record<string, Source> }) => (
-  <section className="scene sources-section" id="fonti" aria-labelledby="fonti-title">
-    <div className="section-inner">
-      <SectionKicker number="∞" label="Fonti e metodo" />
-      <div className="sources-heading"><h2 id="fonti-title">Il conto è aperto.</h2><p>Ogni numero qui sopra rimanda a una fonte. Gli anni e i perimetri restano visibili perché il contesto fa parte del dato.</p></div>
-      <div className="sources-grid">{Object.values(sources).map((source) => <a className="source-card" href={source.url} target="_blank" rel="noreferrer" key={source.id}><span className="source-card__top">{source.publisher} · {getYear(source)}</span><strong>{sourceCardTitle(source)}</strong><span>{sourceCardNote(source)}</span><span className="source-card__arrow" aria-hidden="true">↗</span></a>)}</div>
-      <div className="methodology-grid"><div><span className="eyebrow">Vocabolario</span><h3>Come leggere le etichette</h3><p><strong>FATTO</strong> è osservato. <strong>PROIEZIONE UFFICIALE</strong> viene da un modello istituzionale. <strong>STIMA DEL MODELLO</strong> è calcolata qui. <strong>SCENARIO</strong> è una scelta controllabile. <strong>ANALOGIA RETORICA</strong> è linguaggio, non statistica.</p></div><div><span className="eyebrow">Perimetri</span><h3>Non sommare mele e persone</h3><p>Prestazioni, pensionati unici, beneficiari di categoria, conti INPS, ESSPROS e Ageing Report hanno definizioni diverse. Un valore non diventa falso perché un'altra fonte misura un perimetro diverso.</p></div><div><span className="eyebrow">Privacy</span><h3>Nessun dato esce dal browser</h3><p>Età, stipendio e leve restano nella sessione locale. Il progetto non raccoglie nomi, email, codici fiscali o eventi analitici.</p></div></div>
-      <p className="footer-note">Progetto editoriale locale, versione 0.1. Dati caricati da <code>public/data/italy.json</code> e <code>public/data/international.json</code>. Il modello non calcola una data di collasso.</p>
-    </div>
-  </section>
-);
+const SourcesSection = ({ sources }: { sources: Record<string, Source> }) => {
+  const { language } = useLanguage();
+  const copy = getAppCopy(language);
+  return (
+    <section className="scene sources-section" id="fonti" aria-labelledby="fonti-title">
+      <div className="section-inner">
+        <SectionKicker number="∞" label={copy.sources.kicker} />
+        <div className="sources-heading"><h2 id="fonti-title">{copy.sources.title}</h2><p>{copy.sources.intro}</p></div>
+        <div className="sources-grid">{Object.values(sources).map((source) => <a className="source-card" href={source.url} target="_blank" rel="noreferrer" key={source.id}><span className="source-card__top">{source.publisher} · {sourceMetadataLabel(source, language)}</span><strong>{sourceCardTitle(source, language)}</strong><span>{sourceCardNote(source, language)}</span><span className="source-card__arrow" aria-hidden="true">↗</span></a>)}</div>
+        <div className="methodology-grid"><div><span className="eyebrow">{copy.sources.vocabulary}</span><h3>{copy.sources.labelsTitle}</h3><p>{copy.sources.labelsBody}</p></div><div><span className="eyebrow">{copy.sources.scopes}</span><h3>{copy.sources.scopesTitle}</h3><p>{copy.sources.scopesBody}</p></div><div><span className="eyebrow">{copy.sources.privacy}</span><h3>{copy.sources.privacyTitle}</h3><p>{copy.sources.privacyBody}</p></div></div>
+        <p className="footer-note">{copy.sources.footerStart} <code>public/data/italy.json</code> {copy.sources.footerMiddle} <code>public/data/international.json</code>. {copy.sources.footerEnd}</p>
+      </div>
+    </section>
+  );
+};
 
 export default function App() {
+  const { language } = useLanguage();
+  const copy = getAppCopy(language);
   const [italy, setItaly] = useState<ItalyData | null>(null);
   const [international, setInternational] = useState<InternationalData | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(false);
   const [activeId, setActiveId] = useState("alert");
   const [personal, setPersonal] = useState<PersonalInputs>(defaultPersonal);
   const [macro, setMacro] = useState<MacroInputs>({ ...DEFAULT_MACRO_INPUTS });
   const [reducedMotion, setReducedMotion] = useState(false);
 
-  const loadData = () => {
-    setError(null);
+  const loadData = useCallback(() => {
+    setError(false);
     Promise.all([fetch("/data/italy.json"), fetch("/data/international.json")])
       .then(async ([italyResponse, internationalResponse]) => {
-        if (!italyResponse.ok || !internationalResponse.ok) throw new Error("I pack dati non sono disponibili.");
+        if (!italyResponse.ok || !internationalResponse.ok) throw new Error("Data packs unavailable");
         return Promise.all([italyResponse.json() as Promise<ItalyData>, internationalResponse.json() as Promise<InternationalData>]);
       })
       .then(([italyData, internationalData]) => { setItaly(italyData); setInternational(internationalData); })
-      .catch(() => setError("I pack pubblici non si sono caricati. Controlla che il server locale stia servendo /data e riprova."));
-  };
+      .catch(() => setError(true));
+  }, []);
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => { loadData(); }, [loadData]);
   useEffect(() => {
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
     const updateMotion = () => setReducedMotion(media.matches);
@@ -651,7 +659,7 @@ export default function App() {
   }, []);
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
-    navItems.forEach(([id]) => {
+    copy.nav.forEach(({ id }) => {
       const element = document.getElementById(id);
       if (!element) return;
       const observer = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) setActiveId(id); }, { rootMargin: "-30% 0px -60% 0px", threshold: 0 });
@@ -659,7 +667,7 @@ export default function App() {
       observers.push(observer);
     });
     return () => observers.forEach((observer) => observer.disconnect());
-  }, [italy]);
+  }, [copy.nav, italy]);
 
   const sources = useMemo(() => italy && international ? sourceMap(italy, international) : {}, [italy, international]);
   const personalResult = useMemo(() => calculatePersonal(personal), [personal]);
@@ -671,20 +679,23 @@ export default function App() {
   const pressurePoint = useMemo(() => interpolateMacroPoint(macroPoints, personalResult.retirementYear), [macroPoints, personalResult.retirementYear]);
   const employmentContext = useMemo(() => italy ? deriveEmploymentContext(italy) : null, [italy]);
 
-  if (!italy || !international) return <LoadingShell error={error} retry={loadData} />;
+  if (!italy || !international) return <><a className="skip-link" href="#contenuto">{copy.common.skip}</a><LoadingShell error={error} retry={loadData} /></>;
   return (
-    <div className={`app ${reducedMotion ? "prefers-reduced-motion" : ""}`}>
-      <Header activeId={activeId} onNavigate={(id) => { setActiveId(id); document.getElementById(id)?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" }); window.history.replaceState(null, "", `#${id}`); }} />
-      <main id="contenuto">
-        <Hero italy={italy} sources={sources} />
-        <PersonalScene personal={personal} setPersonal={setPersonal} result={personalResult} announcedResult={announcedPersonalResult} sources={sources} />
-        <PactScene italy={italy} employmentContext={employmentContext} sources={sources} />
-        <PressureScene italy={italy} sources={sources} />
-        <ResultScene personal={personal} result={personalResult} macroPoint={pressurePoint} italy={italy} sources={sources} />
-        <MacroScene macro={macro} setMacro={setMacro} points={macroPoints} baseline={baselinePoints} announcedPoints={announcedMacroPoints} employmentContext={employmentContext} sources={sources} />
-        <ComparisonScene international={international} sources={sources} />
-        <SourcesSection sources={sources} />
-      </main>
-    </div>
+    <>
+      <a className="skip-link" href="#contenuto">{copy.common.skip}</a>
+      <div className={`app ${reducedMotion ? "prefers-reduced-motion" : ""}`}>
+        <Header activeId={activeId} onNavigate={(id) => { setActiveId(id); document.getElementById(id)?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" }); window.history.replaceState(null, "", `#${id}`); }} />
+        <main id="contenuto">
+          <Hero italy={italy} sources={sources} />
+          <PersonalScene personal={personal} setPersonal={setPersonal} result={personalResult} announcedResult={announcedPersonalResult} sources={sources} />
+          <PactScene italy={italy} employmentContext={employmentContext} sources={sources} />
+          <PressureScene italy={italy} sources={sources} />
+          <ResultScene personal={personal} result={personalResult} macroPoint={pressurePoint} italy={italy} sources={sources} />
+          <MacroScene macro={macro} setMacro={setMacro} points={macroPoints} baseline={baselinePoints} announcedPoints={announcedMacroPoints} employmentContext={employmentContext} sources={sources} />
+          <ComparisonScene international={international} sources={sources} />
+          <SourcesSection sources={sources} />
+        </main>
+      </div>
+    </>
   );
 }
