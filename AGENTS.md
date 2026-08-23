@@ -16,7 +16,7 @@ pnpm lint
 pnpm build
 ```
 
-Railway builds the root `Dockerfile` and serves the Vite output through Caddy. The container listens on Railway's `PORT`, exposes `/health`, and supports SPA fallbacks. No runtime variables are required.
+Railway uses Railpack to build the Vite application and serves the output through the root `Caddyfile`. The container listens on Railway's `PORT`, exposes `/health`, and supports SPA fallbacks. No runtime variables are required.
 
 ## Current status and recent changes
 
