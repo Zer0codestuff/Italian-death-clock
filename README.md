@@ -25,6 +25,8 @@ The site loads the untouched JSON packs from `public/data/italy.json` and `publi
 
 Railway builds the production image from `Dockerfile`. The build stage compiles the Vite app, then Caddy serves the generated `dist` directory on Railway's assigned `PORT`. The service exposes `/health` for deployment checks and falls back to `index.html` for client-side routes.
 
+Live site: [italian-death-clock-production.up.railway.app](https://italian-death-clock-production.up.railway.app)
+
 Deploy the public GitHub repository and select the branch to publish:
 
 ```text

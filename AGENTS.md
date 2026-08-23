@@ -20,7 +20,7 @@ Railway builds the root `Dockerfile` and serves the Vite output through Caddy. T
 
 ## Current status and recent changes
 
-The complete local site, responsive narrative, source catalog, simulators, chart layer, tests and SVG favicon are implemented. The interface audit fixed color contrast, control sizing, range progress, numeric input editing, section navigation and responsive layouts. The source catalog is now part of the header navigation. Personal inputs precede their output on narrow screens, and dense comparisons expose clear horizontal-scroll or stacked layouts. A persistent header control switches the full interface, charts, tables, source metadata and number formatting between Italian and English. A production Docker and Caddy setup is ready for Railway deployment from GitHub.
+The complete local site, responsive narrative, source catalog, simulators, chart layer, tests and SVG favicon are implemented. The interface audit fixed color contrast, control sizing, range progress, numeric input editing, section navigation and responsive layouts. The source catalog is now part of the header navigation. Personal inputs precede their output on narrow screens, and dense comparisons expose clear horizontal-scroll or stacked layouts. A persistent header control switches the full interface, charts, tables, source metadata and number formatting between Italian and English. Railway production tracks `codex/railway-deployment` and publishes at `https://italian-death-clock-production.up.railway.app`.
 
 The current UI has been checked at 1440px, 901px, 768px, 375px and 320px, including both languages and the production preview. Automated axe checks report no violations at desktop and 375px. The production build, TypeScript check and 17 tests pass.
 
