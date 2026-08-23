@@ -55,15 +55,15 @@ const DataTable = ({
     <summary>{label}</summary>
     <div className="chart-data-table__meta">
       <span className="chart-data-table__truth">{metadata.truth}</span>
-      <a href={metadata.sourceUrl}>{metadata.source}</a>
+      <a href={metadata.sourceUrl} target={metadata.sourceUrl.startsWith("#") ? undefined : "_blank"} rel={metadata.sourceUrl.startsWith("#") ? undefined : "noreferrer"}>{metadata.source}</a>
       <span>anno: {metadata.year}</span>
       <span>unità: {metadata.unit}</span>
       <span>perimetro: {metadata.perimeter}</span>
     </div>
-    <div className="chart-data-table__scroll">
+    <div className="chart-data-table__scroll" role="region" aria-label={`Tabella: ${label}`} tabIndex={0}>
       <table>
         <thead><tr>{columns.map((column) => <th scope="col" key={column.key}>{column.label}</th>)}</tr></thead>
-        <tbody>{rows.map((row, rowIndex) => <tr key={`${String(row[columns[0]?.key ?? "row"])}-${rowIndex}`}>{columns.map((column) => <td key={column.key}>{String(row[column.key] ?? "n.d.")}</td>)}</tr>)}</tbody>
+        <tbody>{rows.map((row, rowIndex) => <tr key={`${String(row[columns[0]?.key ?? "row"])}-${rowIndex}`}>{columns.map((column, columnIndex) => columnIndex === 0 ? <th scope="row" key={column.key}>{String(row[column.key] ?? "n.d.")}</th> : <td key={column.key}>{String(row[column.key] ?? "n.d.")}</td>)}</tr>)}</tbody>
       </table>
     </div>
   </details>

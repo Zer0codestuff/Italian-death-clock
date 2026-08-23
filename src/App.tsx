@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import {
   CashFlowChart,
   DemographyChart,
@@ -182,14 +182,55 @@ const Control = ({
   display: string;
   onChange: (value: number) => void;
   help?: string;
-}) => (
-  <div className="control">
-    <span className="control__head"><label htmlFor={id}>{label}</label><output htmlFor={id}>{display}</output></span>
-    <input id={id} type="range" min={min} max={max} step={step} value={value} aria-label={label} aria-valuetext={display} onChange={(event) => onChange(Number(event.target.value))} />
-    <div className="control__precise"><label htmlFor={`${id}-precise`}>Valore preciso</label><input id={`${id}-precise`} type="number" inputMode="decimal" min={min} max={max} step={step} value={value} aria-label={`${label}, inserimento numerico`} onChange={(event) => { if (event.target.value !== "") onChange(Math.min(max, Math.max(min, Number(event.target.value)))); }} /></div>
-    {help ? <small>{help}</small> : null}
-  </div>
-);
+}) => {
+  const [draft, setDraft] = useState(() => String(value));
+  const [isEditing, setIsEditing] = useState(false);
+  const helpId = help ? `${id}-help` : undefined;
+  const progress = max === min ? 0 : ((value - min) / (max - min)) * 100;
+  const rangeStyle = { "--range-progress": `${Math.min(100, Math.max(0, progress))}%` } as CSSProperties;
+
+  useEffect(() => {
+    if (!isEditing) setDraft(String(value));
+  }, [isEditing, value]);
+
+  const commitDraft = () => {
+    const parsed = draft.trim() === "" ? Number.NaN : Number(draft);
+    if (Number.isFinite(parsed)) {
+      const nextValue = Math.min(max, Math.max(min, parsed));
+      onChange(nextValue);
+      setDraft(String(nextValue));
+    } else {
+      setDraft(String(value));
+    }
+    setIsEditing(false);
+  };
+
+  return (
+    <div className="control">
+      <span className="control__head"><label htmlFor={id}>{label}</label><output htmlFor={id}>{display}</output></span>
+      <input id={id} type="range" min={min} max={max} step={step} value={value} style={rangeStyle} aria-describedby={helpId} aria-label={label} aria-valuetext={display} onChange={(event) => onChange(Number(event.target.value))} />
+      <div className="control__precise">
+        <label htmlFor={`${id}-precise`}>Valore preciso</label>
+        <input
+          id={`${id}-precise`}
+          type="number"
+          inputMode="decimal"
+          min={min}
+          max={max}
+          step={step}
+          value={draft}
+          aria-describedby={helpId}
+          aria-label={`${label}, inserimento numerico`}
+          onBlur={commitDraft}
+          onChange={(event) => setDraft(event.target.value)}
+          onFocus={() => setIsEditing(true)}
+          onKeyDown={(event) => { if (event.key === "Enter") event.currentTarget.blur(); }}
+        />
+      </div>
+      {help ? <small id={helpId}>{help}</small> : null}
+    </div>
+  );
+};
 
 const StatCard = ({ label, value, note, accent = "red" }: { label: string; value: string; note: string; accent?: "red" | "navy" | "yellow" }) => (
   <article className={`stat-card stat-card--${accent}`}>
@@ -213,7 +254,7 @@ const LoadingShell = ({ error, retry }: { error: string | null; retry: () => voi
       <TruthBadge label={error ? "STIMA DEL MODELLO" : "FATTO"} />
       <h1>{error ? "Il dato non arriva. Il conto resta leggibile." : "Stiamo aprendo i registri."}</h1>
       <p>{error ?? "Carichiamo i pack pubblici, poi puoi cambiare le leve. Nessun dato personale esce dal tuo browser."}</p>
-      {error ? <button className="button button--red" type="button" onClick={retry}>Riprova</button> : <div className="loading-bar" aria-label="Caricamento dati" />}
+      {error ? <button className="button button--red" type="button" onClick={retry}>Riprova</button> : <div className="loading-bar" role="progressbar" aria-label="Caricamento dati" />}
     </div>
   </main>
 );
@@ -222,10 +263,10 @@ const Header = ({ activeId, onNavigate }: { activeId: string; onNavigate: (id: s
   <header className="site-header">
     <a className="site-logo" href="#alert" aria-label="Torna all'inizio"><span className="site-logo__mark">/</span><span>IL CONTO<br />DELLA PENSIONE</span></a>
     <nav className="desktop-nav" aria-label="Navigazione narrativa">
-      {navItems.map(([id, label]) => <a className={activeId === id ? "is-active" : ""} href={`#${id}`} key={id}><span>{navItems.findIndex((item) => item[0] === id) + 1}</span>{label}</a>)}
+      {navItems.map(([id, label]) => <a className={activeId === id ? "is-active" : ""} href={`#${id}`} aria-current={activeId === id ? "location" : undefined} key={id}><span>{navItems.findIndex((item) => item[0] === id) + 1}</span>{label}</a>)}
     </nav>
     <label className="mobile-nav-label" htmlFor="mobile-nav">Vai a una scena</label>
-    <select id="mobile-nav" className="mobile-nav" value={activeId} onChange={(event) => onNavigate(event.target.value)}>
+    <select id="mobile-nav" className="mobile-nav" value={activeId} aria-label="Vai a una scena" onChange={(event) => onNavigate(event.target.value)}>
       {navItems.map(([id, label]) => <option value={id} key={id}>{label}</option>)}
     </select>
   </header>
@@ -238,7 +279,6 @@ const Hero = ({ italy, sources }: { italy: ItalyData; sources: Record<string, So
   const population = findMetric("istat_population_2050");
   return (
     <section className="hero scene" id="alert" aria-labelledby="hero-title">
-      <div className="hero__texture" aria-hidden="true" />
       <div className="hero__content">
         <div className="alert-strip"><span className="alert-strip__signal" /> Nessun conto alla rovescia. Il problema è già nel flusso.</div>
         <div className="hero__eyebrow"><span className="hero__slash">/</span> DATI, SCENARI, COMPROMESSI <span className="hero__date">aggiornato al 23 agosto 2026</span></div>
@@ -249,7 +289,7 @@ const Hero = ({ italy, sources }: { italy: ItalyData; sources: Record<string, So
             <div className="truth-line"><TruthBadge label="ANALOGIA RETORICA" /><span>La frase è una provocazione editoriale, non una previsione.</span></div>
             <a className="button button--cream" href="#anni">Scorri il conto <span aria-hidden="true">↓</span></a>
           </div>
-          <div className="hero__facts" aria-label="Tre fatti di contesto">
+          <div className="hero__facts" role="group" aria-label="Tre fatti di contesto">
             <MetricCard value={currentBenefits ? formatMetric(currentBenefits) : "n.d."} label="prestazioni INPS in vigore" note="Contate come prestazioni, non come persone." truth="FATTO" sourceId="inps_observatory_2026" sources={sources} />
             <MetricCard value={peak ? formatMetric(peak) : "n.d."} label="picco spesa pubblica sul PIL" note="Baseline Ageing Report, anno 2036." truth="PROIEZIONE UFFICIALE" sourceId="ec_ageing_2024_italy" sources={sources} />
             <MetricCard value={population ? formatMetric(population) : "n.d."} label="residenti nello scenario Istat 2050" note="Scenario mediano, milioni di persone." truth="PROIEZIONE UFFICIALE" sourceId="istat_population_2025" sources={sources} />
@@ -452,6 +492,8 @@ const MacroScene = ({ macro, setMacro, points, baseline, announcedPoints, employ
     if (name === "funded") setMacro((previous) => ({ ...previous, fundedShare: 0.2 }));
     if (name === "protection") setMacro((previous) => ({ ...previous, benefitFactor: 1.1, indexationPassThrough: 1 }));
   };
+  const matches = (values: Partial<MacroInputs>) => Object.entries(values).every(([key, expected]) => macro[key as keyof MacroInputs] === expected);
+  const isDefaultScenario = matches(DEFAULT_MACRO_INPUTS);
   const checkpoint = [2030, 2040, 2050].map((year) => interpolateMacroPoint(points, year));
   const at2050 = checkpoint.at(-1);
   const announcedAt2050 = interpolateMacroPoint(announcedPoints, 2050);
@@ -486,7 +528,7 @@ const MacroScene = ({ macro, setMacro, points, baseline, announcedPoints, employ
           <div><h2 id="leve-title">Sposta una leva.<br /><em>Guarda quale prezzo compare.</em></h2></div>
           <div><TruthBadge label="ANALOGIA RETORICA" /><p className="section-intro">Questo simulatore non predice. Tiene ferme le altre variabili e mostra la direzione di un compromesso.</p></div>
         </div>
-        <div className="macro-presets" aria-label="Scenari preimpostati"><span>Scorciatoie:</span><button type="button" onClick={() => reset()}>Scenario di partenza</button><button type="button" onClick={() => preset("workers")}>Più persone al lavoro</button><button type="button" onClick={() => preset("output")}>Più valore per ora</button><button type="button" onClick={() => preset("later")}>Tre anni in più</button><button type="button" onClick={() => preset("funded")}>Più capitale, più transizione</button></div>
+        <div className="macro-presets" role="group" aria-label="Scenari preimpostati"><span>Scorciatoie:</span><button type="button" aria-pressed={isDefaultScenario} onClick={() => reset()}>Scenario di partenza</button><button type="button" aria-pressed={matches({ employmentGrowth: 0.005, netMigration: 250_000 })} onClick={() => preset("workers")}>Più persone al lavoro</button><button type="button" aria-pressed={matches({ productivityGrowthReal: 0.02 })} onClick={() => preset("output")}>Più valore per ora</button><button type="button" aria-pressed={matches({ retirementAge: 70 })} onClick={() => preset("later")}>Tre anni in più</button><button type="button" aria-pressed={matches({ fundedShare: 0.2 })} onClick={() => preset("funded")}>Più capitale, più transizione</button></div>
         <div className="macro-grid">
           <div className="panel panel--cream macro-controls">
             <div className="panel-heading"><span className="eyebrow">Leve visibili</span><button className="reset-button" type="button" onClick={reset}>reset</button></div>
@@ -630,7 +672,7 @@ export default function App() {
   if (!italy || !international) return <LoadingShell error={error} retry={loadData} />;
   return (
     <div className={`app ${reducedMotion ? "prefers-reduced-motion" : ""}`}>
-      <Header activeId={activeId} onNavigate={(id) => { setActiveId(id); document.getElementById(id)?.scrollIntoView({ behavior: "smooth" }); }} />
+      <Header activeId={activeId} onNavigate={(id) => { setActiveId(id); document.getElementById(id)?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" }); window.history.replaceState(null, "", `#${id}`); }} />
       <main id="contenuto">
         <Hero italy={italy} sources={sources} />
         <PersonalScene personal={personal} setPersonal={setPersonal} result={personalResult} announcedResult={announcedPersonalResult} sources={sources} />
