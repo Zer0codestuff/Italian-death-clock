@@ -2,9 +2,9 @@
 
 ## Purpose and architecture
 
-`Italian Death Clock` is a Vite React TypeScript one-page data story that explains the Italian pension system to a general audience. `src/App.tsx` composes six minimal scenes and the source footer. `src/lib/statementCopy.ts` contains the bilingual narrative, `src/lib/storyMath.ts` owns the replacement-rate interpolation and real-to-nominal example, and `src/lib/i18n.tsx` persists the selected language. The live story loads official Italian data from `public/data/italy.json`. The international pack remains in the repository but is not required by the page.
+`Italian Death Clock` is a Vite React TypeScript one-page data story that explains the Italian pension system to a general audience. `src/App.tsx` composes six immersive scenes and the source footer. `src/lib/statementCopy.ts` contains the bilingual narrative, `src/lib/storyMath.ts` owns the replacement-rate interpolation and real-to-nominal example, and `src/lib/i18n.tsx` persists the selected language. The live story loads official Italian data from `public/data/italy.json`. The international pack remains in the repository but is not required by the page.
 
-The interface uses pure black, warm white and signal red. Scroll progress drives sticky story scenes without scroll hijacking. The two transparent editorial illustrations are `public/assets/payg-flow.png` and `public/assets/demographic-load.png`; exact data remains in HTML, CSS and SVG.
+The interface uses pure black, warm white and signal red. Scroll progress drives sticky story scenes without scroll hijacking. The six transparent cut-paper illustrations are `hero-peak.png`, `payg-flow.png`, `demographic-load.png`, `spending-peak.png`, `purchasing-power.png` and `policy-levers.png` in `public/assets/`. Exact data remains in HTML, CSS and SVG.
 
 ## Run, build and test
 
@@ -24,7 +24,7 @@ Railway builds the root `Dockerfile` and serves the Vite output through Caddy. T
 
 The statement redesign replaces the former dashboard, macro controls and personal pension estimate. The opening timer is anchored to 1 January 2036 only as a visual countdown to the official peak year, not as a collapse date. The personal example shows a projected gross replacement rate, 13 annual payments, 2026 purchasing power and the matching future face value under an explicit 2% inflation scenario. It is not an INPS pension calculation.
 
-Italian and English are complete. The current implementation has been visually checked at 1440px and 375px, including scroll states, language switching, loading, source links and horizontal bounds. TypeScript, the production build and 18 tests pass locally. Railway production remains at `https://italian-death-clock-production.up.railway.app`; publish this branch only after its pull request is ready.
+Italian and English are complete. The immersive pass added four transparent assets, scroll-linked reveals, a chart-and-sculpture composition, a balanced purchasing-power scene and sequential lever choreography. The current implementation has been visually checked at 1440px and 375px, including scroll states, language switching, loading, source links and horizontal bounds. TypeScript, the production build and 18 tests pass locally. Railway production remains at `https://italian-death-clock-production.up.railway.app`; publish this branch only after its pull request is ready.
 
 ## Constraints and known issues
 

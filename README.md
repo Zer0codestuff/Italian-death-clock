@@ -1,6 +1,8 @@
-# Il conto della pensione
+# Italian Death Clock
 
-An Italian and English one-page editorial explainer for workers aged 20 to 45. It combines verified Italy and international pension data with two transparent browser-local simulators. The visual language is urgent, but the product never turns a conditional projection into a collapse date.
+An Italian and English one-page data story about the Italian pension system. It combines official projections, observed demographic data and a clearly labelled purchasing-power example. The countdown points to the projected 2036 spending peak, not to a collapse date.
+
+Six scroll-driven scenes use transparent cut-paper illustrations, accessible HTML and SVG data. Motion follows reading progress, never hijacks scrolling, and falls back to a static presentation when reduced motion is enabled.
 
 ## Run locally
 
@@ -19,7 +21,7 @@ pnpm lint
 pnpm build
 ```
 
-The site loads the untouched JSON packs from `public/data/italy.json` and `public/data/international.json` at runtime. Simulator inputs stay in the browser and are not submitted anywhere.
+The site loads the untouched Italian data pack from `public/data/italy.json` at runtime. The international pack remains available in the repository but is not required by the published story. Interactive inputs stay in the browser and are not submitted anywhere.
 
 ## Deploy on Railway
 
@@ -37,13 +39,14 @@ No runtime environment variables are required.
 
 ## Structure
 
-- `src/App.tsx` contains the seven-scene narrative and simulator controls.
-- `src/components/Charts.tsx` contains accessible SVG data visualizations.
+- `src/App.tsx` composes the six scenes, scroll choreography and interactive example.
+- `src/styles.css` owns the responsive black, warm-white and signal-red visual system.
+- `src/lib/statementCopy.ts` contains the complete Italian and English narrative.
+- `src/lib/storyMath.ts` contains the replacement-rate interpolation and inflation example.
 - `src/lib/i18n.tsx` owns the persistent language state and document metadata.
 - `src/lib/language.ts` exposes the language context and hook.
-- `src/lib/copy.ts` contains the Italian and English interface copy.
-- `src/lib/simulators.ts` contains the personal and macro formulas.
-- `src/lib/data-integrity.test.ts` checks source links and country scope.
+- `public/assets/` contains six transparent editorial illustrations.
+- `src/lib/data-integrity.test.ts` and related tests check data, sources, localization and story calculations.
 - `research/` and `public/data/` are source-of-truth inputs and must not be rewritten by the UI.
 
-The header language control switches all public copy, chart labels, data tables and number formats between Italian and English. The selection stays in browser storage. Source links, truth labels, years, units and scope notes remain beside the claims they support.
+The header language control switches all public copy, chart labels and number formats between Italian and English. The selection stays in browser storage. Source links, truth labels, years, units and scope notes remain beside the claims they support.
