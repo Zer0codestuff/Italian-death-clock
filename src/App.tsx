@@ -4,7 +4,10 @@ import { useLanguage } from "./lib/language";
 import { getStoryCopy } from "./lib/statementCopy";
 import {
   countdownToPeakYear,
-  projectedPaymentExample,
+  EARLIEST_CONTRIBUTION_AGE,
+  estimatePensionPayment,
+  ILLUSTRATIVE_INFLATION_RATE,
+  MINIMUM_ORDINARY_CONTRIBUTION_YEARS,
   type ReplacementProjection,
 } from "./lib/storyMath";
 import type { ItalyData, Source } from "./lib/types";
@@ -215,22 +218,65 @@ const SpendingScene = ({ source, points }: { source?: Source; points: SpendingPo
   );
 };
 
-const PersonalScene = ({ source, projections }: { source?: Source; projections: ReplacementProjection[] }) => {
+const PersonalScene = ({
+  source,
+  requirementSource,
+  projections,
+}: {
+  source?: Source;
+  requirementSource?: Source;
+  projections: ReplacementProjection[];
+}) => {
   const { language } = useLanguage();
   const copy = getStoryCopy(language);
   const [age, setAge] = useState(32);
+  const [contributionYearsToday, setContributionYearsToday] = useState(10);
   const [grossAnnualPay, setGrossAnnualPay] = useState(32_000);
-  const result = useMemo(() => projectedPaymentExample({ age, grossAnnualPay, projections }), [age, grossAnnualPay, projections]);
+  const [inflationPercent, setInflationPercent] = useState(ILLUSTRATIVE_INFLATION_RATE * 100);
+  const maximumContributionYearsToday = Math.max(0, age - EARLIEST_CONTRIBUTION_AGE);
+  const result = useMemo(() => estimatePensionPayment({
+    age,
+    grossAnnualPay,
+    contributionYearsToday,
+    inflationRate: inflationPercent / 100,
+    projections,
+  }), [age, contributionYearsToday, grossAnnualPay, inflationPercent, projections]);
   const currency = useMemo(() => new Intl.NumberFormat(language === "it" ? "it-IT" : "en-GB", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }), [language]);
   const number = useMemo(() => new Intl.NumberFormat(language === "it" ? "it-IT" : "en-GB", { maximumFractionDigits: 1 }), [language]);
+  const handleAgeChange = (nextAge: number) => {
+    setAge(nextAge);
+    setContributionYearsToday((current) => Math.min(
+      current,
+      Math.max(0, nextAge - EARLIEST_CONTRIBUTION_AGE),
+    ));
+  };
+  const equivalence = copy.personal.equivalence({
+    futureAmount: currency.format(result.nominalPayment),
+    currentAmount: currency.format(result.realPayment),
+    retirementYear: result.retirementYear,
+    years: result.years,
+    inflationPercent: number.format(inflationPercent),
+  });
+  const eligibility = copy.personal.eligibility({
+    projectedYears: number.format(result.projectedContributionYears),
+    minimumYears: MINIMUM_ORDINARY_CONTRIBUTION_YEARS,
+  });
   return (
     <section className="scroll-scene scroll-scene--personal" data-scroll-scene><div className="scene-sticky scene-shell personal-layout">
       <SectionHeading kicker={copy.personal.kicker} body={copy.personal.body}>{copy.personal.title}</SectionHeading>
-      <div className="personal-controls"><label htmlFor="story-age"><span>{copy.personal.age}</span><output>{age}</output><input id="story-age" aria-label={copy.personal.age} type="range" min="20" max="55" step="1" value={age} onChange={(event) => setAge(Number(event.target.value))} /></label><label htmlFor="story-salary"><span>{copy.personal.salary}</span><output>{currency.format(grossAnnualPay)}</output><input id="story-salary" aria-label={copy.personal.salary} type="range" min="15000" max="100000" step="1000" value={grossAnnualPay} onChange={(event) => setGrossAnnualPay(Number(event.target.value))} /></label></div>
-      <div className="personal-stage"><div className="personal-context" aria-live="polite"><span>{copy.personal.retirement}<strong>{result.retirementYear}</strong></span><span>{copy.personal.replacement}<strong>{number.format(result.replacementRatePercent)}%</strong></span></div>
+      <div className="personal-controls">
+        <label htmlFor="story-age"><span>{copy.personal.age}</span><output htmlFor="story-age">{age}</output><input id="story-age" type="range" min="20" max="55" step="1" value={age} onChange={(event) => handleAgeChange(Number(event.target.value))} /></label>
+        <label htmlFor="story-contributions"><span>{copy.personal.contributions}</span><output htmlFor="story-contributions">{contributionYearsToday} {copy.personal.years}</output><input id="story-contributions" type="range" min="0" max={maximumContributionYearsToday} step="1" value={contributionYearsToday} aria-valuetext={`${contributionYearsToday} ${copy.personal.years}`} onChange={(event) => setContributionYearsToday(Number(event.target.value))} /></label>
+        <label htmlFor="story-salary"><span>{copy.personal.salary}</span><output htmlFor="story-salary">{currency.format(grossAnnualPay)}</output><input id="story-salary" type="range" min="15000" max="100000" step="1000" value={grossAnnualPay} aria-valuetext={currency.format(grossAnnualPay)} onChange={(event) => setGrossAnnualPay(Number(event.target.value))} /></label>
+        <label htmlFor="story-inflation"><span>{copy.personal.inflation}</span><output htmlFor="story-inflation">{number.format(inflationPercent)}%</output><input id="story-inflation" type="range" min="0" max="5" step="0.1" value={inflationPercent} aria-valuetext={`${number.format(inflationPercent)}%`} onChange={(event) => setInflationPercent(Number(event.target.value))} /></label>
+      </div>
+      <div className="personal-stage"><div className="personal-context"><span>{copy.personal.retirement}<strong>{result.retirementYear}</strong></span><span>{copy.personal.contributionsAtRetirement}<strong>{number.format(result.projectedContributionYears)} {copy.personal.years}</strong></span><span>{copy.personal.replacement}<strong>{number.format(result.estimatedReplacementRatePercent)}%</strong></span></div>
         <DecorativeArtwork className="money-art" src="/assets/purchasing-power.png" width={1672} height={941} />
-        <div className="money-compare"><div className="money-column money-column--real"><span>{copy.personal.realTitle}</span><strong>{currency.format(result.realPayment)}</strong><small>{copy.personal.realNote}</small></div><div className="money-equals" aria-hidden="true">=</div><div className="money-column money-column--nominal"><span>{copy.personal.nominalTitle}</span><strong>{currency.format(result.nominalPayment)}</strong><small>{copy.personal.nominalNote}</small></div></div>
-        <p className="money-explanation">{copy.personal.equal}</p></div><div className="assumption-line"><TruthLine kind="scenario" /><p>{copy.personal.assumptions}</p><SourceLink source={source} compact /></div>
+        {result.meetsOrdinaryContributionRequirement ? <>
+          <div className="money-compare" aria-live="polite" aria-atomic="true"><div className="money-column money-column--nominal"><span>{copy.personal.nominalTitle}</span><strong>{currency.format(result.nominalPayment)}</strong><small>{copy.personal.nominalNote(result.retirementYear)}</small></div><div className="money-arrow" aria-hidden="true">→</div><div className="money-column money-column--real"><span>{copy.personal.realTitle}</span><strong>{currency.format(result.realPayment)}</strong><small>{copy.personal.realNote}</small></div></div>
+          <p className="money-explanation">{equivalence}</p>
+        </> : <div className="eligibility-message" role="status" aria-live="polite"><strong>{MINIMUM_ORDINARY_CONTRIBUTION_YEARS}</strong><p>{eligibility}</p></div>}
+      </div><div className="assumption-line"><TruthLine kind="scenario" /><p>{copy.personal.assumptions}</p><div className="personal-sources"><SourceLink source={source} compact /><SourceLink source={requirementSource} compact /></div></div>
     </div></section>
   );
 };
@@ -246,7 +292,7 @@ const LeversScene = () => {
 const Closing = ({ sources }: { sources: Record<string, Source> }) => {
   const { language } = useLanguage();
   const copy = getStoryCopy(language);
-  const primaryIds = ["ec_ageing_2024_italy", "istat_population_2025", "inps_observatory_2026"];
+  const primaryIds = ["ec_ageing_2024_italy", "istat_population_2025", "inps_observatory_2026", "inps_retirement_age"];
   return (
     <footer className="closing" data-scroll-scene><div className="scene-shell closing__inner"><h2>{copy.closing.title}<br /><em>{copy.closing.accent}</em></h2><p className="closing__body">{copy.closing.body}</p><details className="sources-drawer" id="sources"><summary>{copy.common.method}<span aria-hidden="true">+</span></summary><div className="sources-drawer__body"><div><h3>{copy.closing.sourceList}</h3><p>{copy.closing.sourcesIntro}</p></div><ul>{primaryIds.map((id) => sources[id] ? <li key={id}><a href={sources[id].url} target="_blank" rel="noreferrer"><span>{sources[id].title}</span><span aria-hidden="true">↗</span></a></li> : null)}<li><a href="https://www.ecb.europa.eu/mopo/strategy/strategy-review/ecb.strategyreview202506_strategy_statement.en.html" target="_blank" rel="noreferrer"><span>European Central Bank, 2% medium-term inflation target</span><span aria-hidden="true">↗</span></a></li></ul><p className="privacy-note">{copy.closing.privacy}</p></div></details><div className="closing__mark"><span aria-hidden="true">●</span>{copy.common.brand}<b>2026</b></div></div></footer>
   );
@@ -277,7 +323,7 @@ const App = () => {
   const shares = italy.demography.istatAgeShares as Array<{ year: number; age15to64: number; age65Plus: number }>;
   const spending = italy.spendingProjection.baselineByYear as SpendingPoint[];
   const projections = italy.spendingProjection.benefitAndReplacementProfile as ReplacementProjection[];
-  return <div className="app"><SiteChrome /><main><Hero source={sources.ec_ageing_2024_italy} /><PaygScene source={sources.ec_ageing_2024_italy} /><DemographyScene source={sources.istat_population_2025} shares={shares} /><SpendingScene source={sources.ec_ageing_2024_italy} points={spending} /><PersonalScene source={sources.ec_ageing_2024_italy} projections={projections} /><LeversScene /></main><Closing sources={sources} /></div>;
+  return <div className="app"><SiteChrome /><main><Hero source={sources.ec_ageing_2024_italy} /><PaygScene source={sources.ec_ageing_2024_italy} /><DemographyScene source={sources.istat_population_2025} shares={shares} /><SpendingScene source={sources.ec_ageing_2024_italy} points={spending} /><PersonalScene source={sources.ec_ageing_2024_italy} requirementSource={sources.inps_retirement_age} projections={projections} /><LeversScene /></main><Closing sources={sources} /></div>;
 };
 
 export default App;

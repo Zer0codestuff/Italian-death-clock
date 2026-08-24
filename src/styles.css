@@ -571,8 +571,8 @@ em { color: var(--red); font-style: normal; }
 
 .personal-controls {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(2rem, 7vw, 7rem);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(1.2rem, 2.5vw, 3rem);
   padding: .8rem 0 1.2rem;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
@@ -587,14 +587,14 @@ em { color: var(--red); font-style: normal; }
 }
 
 .personal-controls label > span { color: var(--muted); font-size: .8rem; }
-.personal-controls output { font-family: "Big Shoulders Display", "Arial Narrow", sans-serif; font-size: clamp(2.1rem, 3.6vw, 4rem); font-weight: 800; line-height: .9; }
+.personal-controls output { font-family: "Big Shoulders Display", "Arial Narrow", sans-serif; font-size: clamp(1.8rem, 2.5vw, 3rem); font-weight: 800; line-height: .9; white-space: nowrap; }
 .personal-controls input { grid-column: 1 / -1; width: 100%; height: 44px; margin: 0; appearance: none; background: transparent; }
 .personal-controls input::-webkit-slider-runnable-track { height: 3px; background: var(--line); }
 .personal-controls input::-moz-range-track { height: 3px; background: var(--line); }
 .personal-controls input::-webkit-slider-thumb { width: 22px; height: 22px; margin-top: -9.5px; appearance: none; border: 2px solid #000; border-radius: 0; background: var(--red); }
 .personal-controls input::-moz-range-thumb { width: 22px; height: 22px; border: 2px solid #000; border-radius: 0; background: var(--red); }
 
-.personal-context { display: flex; gap: clamp(2rem, 8vw, 8rem); }
+.personal-context { display: flex; flex-wrap: wrap; gap: 1rem clamp(2rem, 6vw, 6rem); }
 .personal-context span { display: flex; flex-direction: column; gap: .35rem; color: var(--muted); font-size: .72rem; }
 .personal-context strong { color: var(--paper); font-size: 1.2rem; }
 
@@ -632,11 +632,27 @@ em { color: var(--red); font-style: normal; }
 
 .money-column { min-width: 0; }
 .money-column > span { display: block; min-height: 2.5em; color: var(--muted); font-size: .78rem; line-height: 1.25; text-transform: uppercase; letter-spacing: .08em; }
-.money-column > strong { display: block; margin: .7rem 0 .5rem; font-family: "Big Shoulders Display", "Arial Narrow", sans-serif; font-size: clamp(4.5rem, 9.5vw, 10rem); font-weight: 800; line-height: .72; letter-spacing: -.035em; white-space: nowrap; }
+.money-column > strong { display: block; margin: .7rem 0 .5rem; font-family: "Big Shoulders Display", "Arial Narrow", sans-serif; font-size: clamp(4rem, 7.8vw, 8.2rem); font-weight: 800; line-height: .72; letter-spacing: -.035em; white-space: nowrap; }
 .money-column--nominal > strong { color: var(--red); }
 .money-column small { display: block; max-width: 38ch; color: var(--muted); font-size: .75rem; line-height: 1.4; }
-.money-equals { color: var(--dim); font-family: "Big Shoulders Display", sans-serif; font-size: clamp(2rem, 4vw, 4rem); }
-.money-explanation { margin: -1.8rem 0 0; color: var(--paper); font-size: clamp(1rem, 1.5vw, 1.25rem); text-align: center; }
+.money-arrow { color: var(--dim); font-family: "Big Shoulders Display", sans-serif; font-size: clamp(2rem, 4vw, 4rem); }
+.money-explanation { max-width: 72ch; margin: -1.2rem auto 0; padding: 0 .8rem; background: #000; color: var(--paper); font-size: clamp(.9rem, 1.25vw, 1.08rem); line-height: 1.45; text-align: center; }
+
+.eligibility-message {
+  position: relative;
+  z-index: 1;
+  align-self: center;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(1.5rem, 4vw, 4rem);
+  padding: clamp(1.5rem, 4vh, 3.5rem) 0;
+  border-top: 1px solid var(--paper);
+  border-bottom: 1px solid var(--paper);
+}
+
+.eligibility-message > strong { color: var(--red); font-family: "Big Shoulders Display", "Arial Narrow", sans-serif; font-size: clamp(6rem, 13vw, 12rem); line-height: .75; }
+.eligibility-message p { max-width: 52ch; margin: 0; font-size: clamp(1rem, 1.7vw, 1.35rem); line-height: 1.45; }
 
 .assumption-line {
   display: grid;
@@ -646,6 +662,7 @@ em { color: var(--red); font-style: normal; }
 }
 
 .assumption-line p { margin: 0; color: var(--muted); font-size: .75rem; line-height: 1.45; }
+.personal-sources { display: grid; justify-items: end; gap: .45rem; }
 
 .levers-layout {
   min-height: 100svh;
@@ -730,6 +747,7 @@ em { color: var(--red); font-style: normal; }
   .demography-visual { grid-template-rows: minmax(0, .75fr) auto; gap: 0; }
   .demography-visual img { max-height: 30vh; }
   .share-shift { width: min(100%, 45rem); margin: 0 auto; }
+  .personal-controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .sources-drawer__body .privacy-note { grid-column: 1; }
 }
 
@@ -789,17 +807,21 @@ em { color: var(--red); font-style: normal; }
   .personal-layout { min-height: auto; grid-template-rows: auto; padding-top: 6.5rem; padding-bottom: 6.5rem; gap: 2rem; }
   .personal-controls { grid-template-columns: 1fr; gap: 1.4rem; padding: 1rem 0; }
   .personal-stage { display: block; }
-  .personal-context { justify-content: space-between; gap: 1rem; }
-  .personal-context span:last-child { text-align: right; }
+  .personal-context { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .personal-context span:nth-child(2) { text-align: right; }
+  .personal-context span:last-child { grid-column: 1 / -1; padding-top: 1rem; border-top: 1px solid var(--line); }
   .money-art { position: relative; inset: auto; width: 128%; height: 12rem; margin: 1rem 0 -2.5rem -14%; opacity: .64; transform: none; }
   .money-compare { grid-template-columns: 1fr; gap: 1.4rem; padding: 2rem 0; }
   .money-column > span { min-height: auto; }
   .money-column > strong { font-size: clamp(5rem, 23vw, 7rem); }
-  .money-column--nominal { text-align: right; }
-  .money-column--nominal small { margin-left: auto; }
-  .money-equals { display: none; }
+  .money-column--real { text-align: right; }
+  .money-column--real small { margin-left: auto; }
+  .money-arrow { display: none; }
   .money-explanation { margin: -1rem 0 0; font-size: .9rem; }
+  .eligibility-message { grid-template-columns: 1fr; gap: 1.2rem; }
+  .eligibility-message > strong { font-size: 7rem; }
   .assumption-line { grid-template-columns: 1fr; gap: .7rem; }
+  .personal-sources { justify-items: start; }
 
   .levers-layout { min-height: auto; grid-template-rows: auto; padding-top: 7rem; padding-bottom: 7rem; gap: 2.2rem; }
   .levers-art { width: 145%; height: 12rem; margin-left: -22.5%; clip-path: none; opacity: 1; transform: none; }

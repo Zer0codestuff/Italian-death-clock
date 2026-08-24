@@ -2,10 +2,11 @@ import { describe, expect, it } from "vitest";
 import {
   countdownToPeakYear,
   currentRealValue,
+  estimatePensionPayment,
   futureNominalValue,
   grossPaymentFromAnnual,
+  interpolateAverageContributionYears,
   interpolateReplacementRate,
-  projectedPaymentExample,
   retirementYearForAge,
 } from "./storyMath";
 
@@ -36,16 +37,55 @@ describe("story pension example", () => {
     expect(currentRealValue(nominal, 35, 0.02)).toBeCloseTo(2_000, 6);
   });
 
+  it("shows what a future amount is worth in 2026 euros", () => {
+    expect(currentRealValue(1_000, 60, 0.02)).toBeCloseTo(304.78, 2);
+  });
+
   it("keeps zero-inflation nominal and real values equal", () => {
     expect(futureNominalValue(2_000, 35, 0)).toBe(2_000);
   });
 
-  it("builds a transparent illustrative scenario", () => {
-    const example = projectedPaymentExample({ age: 32, grossAnnualPay: 32_000, projections });
+  it("interpolates the official average contribution period", () => {
+    expect(interpolateAverageContributionYears(2061)).toBeCloseTo(36.17, 6);
+  });
+
+  it("uses accrued and future contribution years in the estimate", () => {
+    const example = estimatePensionPayment({
+      age: 32,
+      grossAnnualPay: 32_000,
+      contributionYearsToday: 10,
+      projections,
+    });
     expect(example.retirementYear).toBe(2061);
-    expect(example.replacementRatePercent).toBeCloseTo(50.2, 6);
-    expect(example.realPayment).toBeCloseTo(1_235.69, 2);
-    expect(example.nominalPayment).toBeCloseTo(2_471.25, 2);
+    expect(example.projectedContributionYears).toBe(45);
+    expect(example.officialReplacementRatePercent).toBeCloseTo(50.2, 6);
+    expect(example.estimatedReplacementRatePercent).toBeCloseTo(62.455, 3);
+    expect(example.realPayment).toBeCloseTo(1_537.36, 2);
+    expect(example.nominalPayment).toBeCloseTo(3_074.54, 2);
+  });
+
+  it("does not show an amount below the current ordinary contribution requirement", () => {
+    const example = estimatePensionPayment({
+      age: 55,
+      grossAnnualPay: 32_000,
+      contributionYearsToday: 0,
+      projections,
+    });
+    expect(example.projectedContributionYears).toBe(12);
+    expect(example.meetsOrdinaryContributionRequirement).toBe(false);
+    expect(example.realPayment).toBe(0);
+    expect(example.nominalPayment).toBe(0);
+  });
+
+  it("uses the selected inflation rate", () => {
+    const example = estimatePensionPayment({
+      age: 32,
+      grossAnnualPay: 32_000,
+      contributionYearsToday: 10,
+      inflationRate: 0,
+      projections,
+    });
+    expect(example.nominalPayment).toBeCloseTo(example.realPayment, 6);
   });
 });
 
