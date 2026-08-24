@@ -61,11 +61,9 @@ const useScrollChoreography = (reducedMotion: boolean, ready: boolean) => {
         const rect = scene.getBoundingClientRect();
         const stickyTravel = Math.max(1, rect.height - viewport);
         const regularTravel = viewport * 0.82 + Math.min(rect.height, viewport) * 0.65;
-        const progress = scene.classList.contains("hero")
-          ? clampProgress(-rect.top / Math.max(rect.height, viewport))
-          : scene.classList.contains("scroll-scene")
-            ? clampProgress(-rect.top / stickyTravel)
-            : clampProgress((viewport * 0.82 - rect.top) / regularTravel);
+        const progress = scene.classList.contains("hero") || scene.classList.contains("scroll-scene")
+          ? clampProgress(-rect.top / stickyTravel)
+          : clampProgress((viewport * 0.82 - rect.top) / regularTravel);
         scene.style.setProperty("--scene-progress", String(progress));
         scene.classList.toggle("is-visible", rect.top < viewport * 0.82 && rect.bottom > viewport * 0.18);
       });
@@ -144,14 +142,16 @@ const Hero = ({ source }: { source?: Source }) => {
   ];
   return (
     <section className="hero" id="top" data-scroll-scene>
-      <DecorativeArtwork className="hero-art" src="/assets/hero-peak.png" width={1536} height={1024} priority />
-      <div className="hero__inner">
-      <span className="hero__eyebrow">{copy.hero.eyebrow}</span>
-      <div className="countdown" aria-hidden="true">{units.map((unit, index) => <div className="countdown__unit" key={unit.label}><div className="countdown__value">{index > 0 ? <span className="countdown__separator">:</span> : null}<span>{unit.value}</span></div><span className="countdown__label">{unit.label}</span></div>)}</div>
-      <p className="sr-only">{copy.hero.screenReaderCountdown}</p>
-      <div className="hero__statement"><h1>{copy.hero.title}<br /><em>{copy.hero.titleAccent}</em></h1><div className="hero__explanation"><p>{copy.hero.body}</p><TruthLine kind="official" source={source} /></div></div>
-      <div className="hero__metric" aria-label={`${copy.hero.metric}, ${copy.hero.metricLabel}`}><strong>{copy.hero.metric}</strong><span>{copy.hero.metricLabel}</span></div>
-      <a className="scroll-cue" href="#story"><span>{copy.common.scroll}</span><i aria-hidden="true" /></a>
+      <div className="hero__stage">
+        <DecorativeArtwork className="hero-art" src="/assets/hero-peak.png" width={1536} height={1024} priority />
+        <div className="hero__inner">
+          <span className="hero__eyebrow">{copy.hero.eyebrow}</span>
+          <div className="countdown" aria-hidden="true">{units.map((unit, index) => <div className="countdown__unit" key={unit.label}><div className="countdown__value">{index > 0 ? <span className="countdown__separator">:</span> : null}<span>{unit.value}</span></div><span className="countdown__label">{unit.label}</span></div>)}</div>
+          <p className="sr-only">{copy.hero.screenReaderCountdown}</p>
+          <div className="hero__statement"><h1>{copy.hero.title}<br /><em>{copy.hero.titleAccent}</em></h1><div className="hero__explanation"><p>{copy.hero.body}</p><TruthLine kind="official" source={source} /></div></div>
+          <div className="hero__metric" aria-label={`${copy.hero.metric}, ${copy.hero.metricLabel}`}><strong>{copy.hero.metric}</strong><span>{copy.hero.metricLabel}</span></div>
+          <a className="scroll-cue" href="#story"><span>{copy.common.scroll}</span><i aria-hidden="true" /></a>
+        </div>
       </div>
     </section>
   );
